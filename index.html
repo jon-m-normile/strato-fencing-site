@@ -321,6 +321,12 @@
 
     /* ── COACHING HISTORY ── */
     #coaching { background: var(--off); padding: 0; }
+    .coaching-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
     .coaching-list { list-style: none; }
     .coaching-list li {
       display: flex;
@@ -407,6 +413,7 @@
       .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
       .hero-content { padding: 0 2rem 3rem; }
       .comp-grid { grid-template-columns: 1fr; }
+      .coaching-two-col { grid-template-columns: 1fr; }
       section { padding: 3.5rem 1.5rem; }
       .stats-inner { flex-wrap: wrap; }
       .stat { flex: 1 1 50%; }
@@ -533,35 +540,37 @@
     <div class="section-label">Background</div>
     <h2 class="section-title">Coaching History</h2>
     <div class="section-rule"></div>
-    <ul class="coaching-list">
-      <li>
-        <a href="https://www.nyac.org/web/pages/fencing" target="_blank">New York Athletic Club</a>
-        <span class="coaching-meta">NYC · Junior Program, 1999–2000</span>
-      </li>
-      <li>
-        <a href="https://www.cobrafencing.com/" target="_blank">Cobra Fencing Club</a>
-        <span class="coaching-meta">Jersey City, NJ · Épée &amp; Foil, 2007–2011</span>
-      </li>
-      <li>
-        <a href="https://www.fencingsports.net/" target="_blank">Fencing Sports Academy</a>
-        <span class="coaching-meta">Fairfax, VA · Épée &amp; Foil, 2011–2017</span>
-      </li>
-      <li>
-        <a href="https://www.facebook.com/celerityfencing/" target="_blank">Celerity Fencing Academy</a>
-        <span class="coaching-meta">Fairfax, VA · Épée, 2017–2019</span>
-      </li>
-      <li>
-        <a href="https://www.excelfencers.com/" target="_blank">Excel Fencing Academy</a>
-        <span class="coaching-meta">Millburn, NJ · Épée, 2019</span>
-      </li>
-      <li>
-        <a href="https://www.medeofencing.com/" target="_blank">Medeo Fencing Club</a>
-        <span class="coaching-meta">Bridgewater, NJ · Épée, 2022–present</span>
-      </li>
-    </ul>
-    <div class="notable-students" style="margin-top:0;">
-      <strong>Notable Students</strong>
-      <span>Zeyad Elashry, Damien Lehfeldt, Guillermo Madrigal-Salinas, Doug Tableman, Sean White, Joseph Doan, Jayden Chen, Leo Chen, Solomon Liou, Nicholas Normile</span>
+    <div class="coaching-two-col">
+      <ul class="coaching-list">
+        <li>
+          <a href="https://www.nyac.org/web/pages/fencing" target="_blank">New York Athletic Club</a>
+          <span class="coaching-meta">NYC · Junior Program, 1999–2000</span>
+        </li>
+        <li>
+          <a href="https://www.cobrafencing.com/" target="_blank">Cobra Fencing Club</a>
+          <span class="coaching-meta">Jersey City, NJ · Épée &amp; Foil, 2007–2011</span>
+        </li>
+        <li>
+          <a href="https://www.fencingsports.net/" target="_blank">Fencing Sports Academy</a>
+          <span class="coaching-meta">Fairfax, VA · Épée &amp; Foil, 2011–2017</span>
+        </li>
+        <li>
+          <a href="https://www.facebook.com/celerityfencing/" target="_blank">Celerity Fencing Academy</a>
+          <span class="coaching-meta">Fairfax, VA · Épée, 2017–2019</span>
+        </li>
+        <li>
+          <a href="https://www.excelfencers.com/" target="_blank">Excel Fencing Academy</a>
+          <span class="coaching-meta">Millburn, NJ · Épée, 2019</span>
+        </li>
+        <li>
+          <a href="https://www.medeofencing.com/" target="_blank">Medeo Fencing Club</a>
+          <span class="coaching-meta">Bridgewater, NJ · Épée, 2022–present</span>
+        </li>
+      </ul>
+      <div class="notable-students">
+        <strong>Notable Students</strong>
+        <span>Zeyad Elashry, Damien Lehfeldt, Guillermo Madrigal-Salinas, Doug Tableman, Sean White, Joseph Doan, Jayden Chen, Leo Chen, Solomon Liou, Nicholas Normile</span>
+      </div>
     </div>
   </div>
 </section>
