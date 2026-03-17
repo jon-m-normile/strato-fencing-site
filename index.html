@@ -8,13 +8,496 @@
   <meta name="keywords" content="fencing lessons Millburn NJ, epee coach New Jersey, fencing instructor NJ, private fencing lessons, Jon Normile" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --dark:    #141414;
+      --white:   #ffffff;
+      --off:     #f4f4f4;
+      --accent:  #1b3d7a;
+      --accent2: #2a5cad;
+      --text:    #1a1a1a;
+      --muted:   #666666;
+      --light:   #e8e8e8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      font-size: 17px;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 3px solid var(--accent);
+    }
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: #7aaaff; }
+    .nav-links { display: flex; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      padding: 0 1.1rem;
+      height: 64px;
+      display: flex; align-items: center;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--white); border-bottom-color: var(--accent); }
+
+    /* ── HERO SLIDESHOW ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    /* Pan keyframes — 4 directions */
+    @keyframes panRight  { from { transform: scale(1.12) translateX(-3%); } to { transform: scale(1.12) translateX(3%); } }
+    @keyframes panLeft   { from { transform: scale(1.12) translateX(3%);  } to { transform: scale(1.12) translateX(-3%); } }
+    @keyframes panUp     { from { transform: scale(1.12) translateY(3%);  } to { transform: scale(1.12) translateY(-3%); } }
+    @keyframes panDown   { from { transform: scale(1.12) translateY(-3%); } to { transform: scale(1.12) translateY(3%); } }
+
+    .slide {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out;
+      will-change: transform, opacity;
+    }
+    .slide.active { opacity: 1; }
+
+    /* Each slide gets a different pan direction */
+    .slide-1  { background-image: url('homepage.jpg'); background-position: center top; }
+    .slide-2  { background-image: url('gallery1.jpg'); }
+    .slide-3  { background-image: url('gallery2.jpg'); }
+    .slide-4  { background-image: url('gallery3.jpg'); }
+    .slide-5  { background-image: url('gallery4.jpg'); }
+    .slide-6  { background-image: url('gallery5.jpg'); }
+    .slide-7  { background-image: url('gallery6.jpg'); }
+    .slide-8  { background-image: url('gallery7.jpg'); }
+    .slide-9  { background-image: url('gallery8.jpg'); }
+
+    .slide-1.active  { animation: panRight 12s ease-in-out infinite alternate; }
+    .slide-2.active  { animation: panLeft  12s ease-in-out infinite alternate; }
+    .slide-3.active  { animation: panUp    12s ease-in-out infinite alternate; }
+    .slide-4.active  { animation: panDown  12s ease-in-out infinite alternate; }
+    .slide-5.active  { animation: panRight 12s ease-in-out infinite alternate; }
+    .slide-6.active  { animation: panLeft  12s ease-in-out infinite alternate; }
+    .slide-7.active  { animation: panUp    12s ease-in-out infinite alternate; }
+    .slide-8.active  { animation: panDown  12s ease-in-out infinite alternate; }
+    .slide-9.active  { animation: panRight 12s ease-in-out infinite alternate; }
+
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.35) 0%,
+        rgba(0,0,0,0.15) 40%,
+        rgba(0,0,0,0.6) 100%
+      );
+    }
+    .hero-content {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 0 5rem 4rem;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      opacity: 0;
+      animation: slideUp 0.8s 0.3s forwards;
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: slideUp 0.8s 0.5s forwards;
+    }
+    .hero-title span { color: var(--accent); }
+    .hero-sub {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 2rem;
+      max-width: 500px;
+      line-height: 1.6;
+      opacity: 0;
+      animation: slideUp 0.8s 0.7s forwards;
+    }
+    .hero-badges {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: slideUp 0.8s 0.85s forwards;
+    }
+    .hero-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      background: rgba(27,61,122,0.85);
+      color: var(--white);
+      backdrop-filter: blur(4px);
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0;
+      animation: slideUp 0.8s 1s forwards;
+    }
+    .btn-primary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.2rem;
+      background: var(--accent);
+      color: var(--white);
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+    .btn-outline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.2rem;
+      border: 2px solid rgba(255,255,255,0.6);
+      color: var(--white);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
+
+    /* slide dots */
+    .slide-dots {
+      position: absolute; bottom: 1.5rem; right: 3rem; z-index: 4;
+      display: flex; gap: 0.5rem;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      border: none;
+    }
+    .dot.active { background: var(--accent); transform: scale(1.3); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--dark);
+      display: flex;
+      justify-content: center;
+    }
+    .stats-inner {
+      display: flex;
+      width: 100%;
+      max-width: 1100px;
+    }
+    .stat {
+      flex: 1;
+      padding: 1.8rem 2rem;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 3rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--black);
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+    }
+    .section-rule {
+      width: 50px; height: 3px;
+      background: var(--accent);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--white); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 1.2rem;
+    }
+    .services-list {
+      list-style: none;
+      margin: 1rem 0 1.5rem;
+    }
+    .services-list li {
+      font-size: 1rem;
+      font-weight: 400;
+      padding: 0.5rem 0 0.5rem 1.2rem;
+      border-bottom: 1px solid var(--light);
+      position: relative;
+      color: var(--text);
+    }
+    .services-list li::before {
+      content: '';
+      position: absolute; left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 6px; height: 6px;
+      background: var(--accent);
+    }
+    .experience-note {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    /* ── COACHING HISTORY ── */
+    #coaching { background: var(--off); }
+    .coaching-list { list-style: none; }
+    .coaching-list li {
+      display: flex;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--light);
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+    .coaching-list li:last-child { border-bottom: none; }
+    .coaching-list a {
+      font-weight: 600;
+      color: var(--black);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .coaching-list a:hover { color: var(--accent); }
+    .coaching-meta {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .notable-students {
+      margin-top: 2rem;
+      padding: 1.2rem 1.5rem;
+      background: var(--white);
+      border-left: 3px solid var(--accent);
+    }
+    .notable-students strong {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .notable-students span { font-size: 0.95rem; color: var(--muted); font-style: italic; }
+
+    /* ── COMPETITION ── */
+    #competition { background: var(--black); }
+    #competition .section-title { color: var(--white); }
+    #competition .section-label { color: var(--accent); }
+    .comp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-top: 1rem;
+    }
+    .comp-item {
+      background: var(--dark);
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: background 0.2s;
+    }
+    .comp-item:hover { background: #1e1e1e; }
+    .comp-bullet {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+    .comp-text {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+    }
+    .comp-text strong { color: var(--white); font-weight: 500; }
+
+    /* ── SCHOLA ── */
+    .schola-band {
+      background: var(--accent);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .schola-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .schola-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      border-top: 3px solid var(--accent);
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .footer-logo span { color: #7aaaff; }
+    .footer-schola {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.2rem;
+    }
+    .footer-copy {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
+      .hero-content { padding: 0 2rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .comp-grid { grid-template-columns: 1fr; }
+      section { padding: 3.5rem 1.5rem; }
+      .stats-inner { flex-wrap: wrap; }
+      .stat { flex: 1 1 50%; }
+      footer { flex-direction: column; gap: 0.5rem; padding: 1.2rem; text-align: center; }
+    }
+    @media (max-width: 500px) {
+      .nav-links a { padding: 0 0.4rem; font-size: 0.65rem; letter-spacing: 0.08em; }
+      .hero-content { padding: 0 1.2rem 2.5rem; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a class="nav-logo" href="index.html">Strato Fencing Academy</a>
+  <a class="nav-logo" href="index.html">Strato <span>Fencing</span></a>
   <ul class="nav-links">
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="products.html">Products</a></li>
@@ -25,99 +508,217 @@
   </ul>
 </nav>
 
-<div class="page-body">
+<!-- HERO SLIDESHOW -->
+<div class="hero">
+  <div class="slide slide-1 active"></div>
+  <div class="slide slide-2"></div>
+  <div class="slide slide-3"></div>
+  <div class="slide slide-4"></div>
+  <div class="slide slide-5"></div>
+  <div class="slide slide-6"></div>
+  <div class="slide slide-7"></div>
+  <div class="slide slide-8"></div>
+  <div class="slide slide-9"></div>
 
-  <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-crest">Strato Fencing Academy</div>
-      <h1 class="hero-title">Fencing Coach Jon Normile</h1>
-      <div class="hero-subtitle">Épée and Foil Fencing Instruction</div>
-      <div class="hero-location">Located in Millburn, NJ</div>
-      <a class="btn-book" href="https://calendar.app.google/FZzLGqVo8ZLfsFh5A" target="_blank">By Appointment Only</a>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Strato Fencing Academy &nbsp;·&nbsp; Millburn, NJ</div>
+    <h1 class="hero-title">Fencing Coach<br><span>Jon Normile</span></h1>
+    <p class="hero-sub">Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only.</p>
+    <div class="hero-badges">
+      <span class="hero-badge">1992 Olympian</span>
+      <span class="hero-badge">2023 Veteran World Champion</span>
+      <span class="hero-badge">3× U.S. National Champion</span>
+      <span class="hero-badge">Hall of Fame 2019</span>
     </div>
-    <img class="hero-photo" src="homepage.jpg" alt="Jon Normile — fencing coach, Olympian, World Champion" />
+    <div class="hero-cta">
+      <a class="btn-primary" href="https://calendar.app.google/FZzLGqVo8ZLfsFh5A" target="_blank">Book a Lesson</a>
+      <a class="btn-outline" href="products.html">View Services</a>
+    </div>
   </div>
 
-  <div class="content-wrap">
-
-    <section class="ruled-section">
-      <p class="intro-text">
-        I am an Olympic fencer, a world champion in the veterans category, a multiple-time former national champion, and a member of the US Fencing Hall of Fame. I give individual fencing lessons to dedicated and enthusiastic fencing students.
-      </p>
-      <p class="intro-text">
-        With my lessons, I pass along the art, science, and wisdom of fencing that I learned from my coaches before me, Dr. Aladar Kogler and Bill Reith, and that I've taught myself through a lifetime of fencing.
-      </p>
-      <p class="intro-text">Please contact me if you would like:</p>
-      <ul class="services-list">
-        <li>Private lessons in épée or foil fencing</li>
-        <li>Focused instruction in fencing footwork</li>
-        <li>Tactical analysis of your pre-recorded fencing matches</li>
-      </ul>
-      <p class="experience-note">I have been fencing for 45+ years and coaching for 20+ years.</p>
-    </section>
-
-    <section class="ruled-section" id="coaching">
-      <h2 class="section-heading">Coaching History</h2>
-      <ul class="coaching-list">
-        <li>
-          <a href="https://www.nyac.org/web/pages/fencing" target="_blank">New York Athletic Club</a>
-          <span class="coaching-meta">— NYC &nbsp;·&nbsp; Coach of junior fencing program, 1999–2000</span>
-        </li>
-        <li>
-          <a href="https://www.cobrafencing.com/" target="_blank">Cobra Fencing Club</a>
-          <span class="coaching-meta">— Jersey City, NJ &nbsp;·&nbsp; Épée &amp; foil coach, 2007–2011</span>
-        </li>
-        <li>
-          <a href="https://www.fencingsports.net/" target="_blank">Fencing Sports Academy</a>
-          <span class="coaching-meta">— Fairfax, VA &nbsp;·&nbsp; Épée &amp; foil coach, 2011–2017</span>
-        </li>
-        <li>
-          <a href="https://www.facebook.com/celerityfencing/" target="_blank">Celerity Fencing Academy</a>
-          <span class="coaching-meta">— Fairfax, VA &nbsp;·&nbsp; Épée coach, 2017–2019</span>
-        </li>
-        <li>
-          <a href="https://www.excelfencers.com/" target="_blank">Excel Fencing Academy</a>
-          <span class="coaching-meta">— Millburn, NJ &nbsp;·&nbsp; Épée coach, 2019</span>
-        </li>
-        <li>
-          <a href="https://www.medeofencing.com/" target="_blank">Medeo Fencing Club</a>
-          <span class="coaching-meta">— Bridgewater, NJ &nbsp;·&nbsp; Épée coach, 2022–present</span>
-        </li>
-      </ul>
-      <div class="notable-students">
-        <strong>Notable Students</strong>
-        Zeyad Elashry, Damien Lehfeldt, Guillermo Madrigal-Salinas, Doug Tableman, Sean White, Joseph Doan, Jayden Chen, Leo Chen, Solomon Liou, Nicholas Normile
-      </div>
-    </section>
-
-    <section class="ruled-section" id="competition">
-      <h2 class="section-heading">Personal Competition History</h2>
-      <ul class="comp-list">
-        <li>Veteran World Champion, Men's Épée (Veteran-50), 2023</li>
-        <li>Veteran World Championships Teams: 2017 (Gold — Team), 2018 (Gold — Team), 2019 (Gold — Team), 2020, 2021, 2023 (Gold — Team)</li>
-        <li>Olympic Team: 1992</li>
-        <li>Senior World Championship Teams: 1989, 1990, 1991, 1994, 1998, 1999</li>
-        <li>Pan American Games Teams: 1991 (Silver — Individual, Bronze — Team)</li>
-        <li>Junior World Championship Teams: 1987</li>
-        <li>Montreal World Cup '99: 3rd place</li>
-        <li>U.S. National Épée Champion: 1988, 1991, 1997</li>
-        <li>NCAA Champion: 1988, 1989</li>
-      </ul>
-    </section>
-
-  </div>
-
-  <div class="schola-band">
-    <div class="schola-title">Schola Gladii Veritatis</div>
-    <div class="schola-sub">School of the Sword of Truth</div>
-  </div>
-
+  <div class="slide-dots" id="slideDots"></div>
 </div>
 
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat">
+      <div class="stat-number">45+</div>
+      <div class="stat-label">Years Fencing</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">20+</div>
+      <div class="stat-label">Years Coaching</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">3×</div>
+      <div class="stat-label">U.S. Champion</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">1992</div>
+      <div class="stat-label">Olympian</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">2023</div>
+      <div class="stat-label">World Champion</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-label">About</div>
+        <h2 class="section-title">Fencing Coach<br>Jon Normile</h2>
+        <div class="section-rule"></div>
+        <p>I am an Olympic fencer, a world champion in the veterans category, a multiple-time former national champion, and a member of the US Fencing Hall of Fame. I give individual fencing lessons to dedicated and enthusiastic fencing students.</p>
+        <p>With my lessons, I pass along the art, science, and wisdom of fencing that I learned from my coaches before me, Dr. Aladar Kogler and Bill Reith, and that I've taught myself through a lifetime of fencing.</p>
+        <p>Please contact me if you would like:</p>
+        <ul class="services-list">
+          <li>Private lessons in épée or foil fencing</li>
+          <li>Focused instruction in fencing footwork</li>
+          <li>Tactical analysis of your pre-recorded fencing matches</li>
+        </ul>
+        <p class="experience-note">I have been fencing for 45+ years and coaching for 20+ years.</p>
+      </div>
+      <div>
+        <div class="section-label">Coaching History</div>
+        <h2 class="section-title">Clubs &amp;<br>Programs</h2>
+        <div class="section-rule"></div>
+        <ul class="coaching-list">
+          <li>
+            <a href="https://www.nyac.org/web/pages/fencing" target="_blank">New York Athletic Club</a>
+            <span class="coaching-meta">NYC · Junior Program, 1999–2000</span>
+          </li>
+          <li>
+            <a href="https://www.cobrafencing.com/" target="_blank">Cobra Fencing Club</a>
+            <span class="coaching-meta">Jersey City, NJ · Épée &amp; Foil, 2007–2011</span>
+          </li>
+          <li>
+            <a href="https://www.fencingsports.net/" target="_blank">Fencing Sports Academy</a>
+            <span class="coaching-meta">Fairfax, VA · Épée &amp; Foil, 2011–2017</span>
+          </li>
+          <li>
+            <a href="https://www.facebook.com/celerityfencing/" target="_blank">Celerity Fencing Academy</a>
+            <span class="coaching-meta">Fairfax, VA · Épée, 2017–2019</span>
+          </li>
+          <li>
+            <a href="https://www.excelfencers.com/" target="_blank">Excel Fencing Academy</a>
+            <span class="coaching-meta">Millburn, NJ · Épée, 2019</span>
+          </li>
+          <li>
+            <a href="https://www.medeofencing.com/" target="_blank">Medeo Fencing Club</a>
+            <span class="coaching-meta">Bridgewater, NJ · Épée, 2022–present</span>
+          </li>
+        </ul>
+        <div class="notable-students">
+          <strong>Notable Students</strong>
+          <span>Zeyad Elashry, Damien Lehfeldt, Guillermo Madrigal-Salinas, Doug Tableman, Sean White, Joseph Doan, Jayden Chen, Leo Chen, Solomon Liou, Nicholas Normile</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITION -->
+<section id="competition">
+  <div class="section-inner">
+    <div class="section-label">Record</div>
+    <h2 class="section-title">Personal Competition<br>History</h2>
+    <div class="section-rule"></div>
+    <div class="comp-grid">
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Veteran World Champion</strong> — Men's Épée (Veteran-50), 2023</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Veteran World Championship Teams</strong> — Gold 2017, 2018, 2019, 2023; also 2020, 2021</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Olympic Team</strong> — 1992, Barcelona</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Senior World Championship Teams</strong> — 1989, 1990, 1991, 1994, 1998, 1999</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Pan American Games</strong> — Silver (Individual), Bronze (Team), 1991</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Junior World Championship Team</strong> — 1987</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>Montreal World Cup</strong> — 3rd place, 1999</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>U.S. National Épée Champion</strong> — 1988, 1991, 1997</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>NCAA Champion</strong> — 1988, 1989</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-bullet"></div>
+        <div class="comp-text"><strong>USA Fencing Hall of Fame</strong> — Inducted 2019</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHOLA -->
+<div class="schola-band">
+  <div class="schola-title">Schola Gladii Veritatis</div>
+</div>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Strato Fencing Academy</div>
+  <div>
+    <div class="footer-logo">Strato <span>Fencing</span> Academy</div>
+    <div class="footer-schola">Schola Gladii Veritatis</div>
+  </div>
   <div class="footer-copy">&copy; 2025 Jon Normile &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
+
+<script>
+  // Slideshow
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('slideDots');
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+  }
+
+  function next() { goTo((current + 1) % slides.length); }
+
+  let timer = setInterval(next, 5000);
+
+  // Pause on hover
+  document.querySelector('.hero').addEventListener('mouseenter', () => clearInterval(timer));
+  document.querySelector('.hero').addEventListener('mouseleave', () => { timer = setInterval(next, 5000); });
+</script>
 
 </body>
 </html>
