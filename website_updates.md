@@ -19,5 +19,12 @@ Updates file for the Strato Fencing website
 
 #9  Let's stack competition history above coaching history.  Let's separate each section with a frameless picture as referenced previously
 
-#10
+#10 ✅ Add the 'hero' photo above the 'About Me' section.   '~/Pictures/Stratofencing/homepage.jpg'
+Added homepage.jpg as a full-width parallax photo between the stats bar and the About section.
+
+#11 ✅ Change "Coaching History / Clubs & Programs " to be just "Coaching History"
+Changed section-label to "Background" and h2 to "Coaching History".
+
+#12 ✅ Parallax scrolling for all full-width photos on the home page.
+That effect is called parallax. Implemented with background-attachment:fixed. Converted all section-photo img tags to background-image divs, and applied to the hero as well. Photos stay fixed while content scrolls over them.
 
