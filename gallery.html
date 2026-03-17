@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery | Strato Fencing Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Strato Fencing Academy</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="blogs.html">Blogs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-body">
+  <div class="page-header">
+    <h1 class="page-header-title">Gallery</h1>
+  </div>
+
+  <div class="content-wrap-wide">
+
+    <!-- INSTRUCTIONS:
+         Upload your photos to the images/ folder in your GitHub repo.
+         Then replace each placeholder div with an <img> tag like this:
+         <img src="images/your-photo-name.jpg" alt="Description" onclick="openLightbox(this.src)" />
+
+         Add or remove items as needed to match your photos.
+    -->
+
+    <div class="gallery-grid">
+      <div class="gallery-placeholder">images/photo1.jpg</div>
+      <div class="gallery-placeholder">images/photo2.jpg</div>
+      <div class="gallery-placeholder">images/photo3.jpg</div>
+      <div class="gallery-placeholder">images/photo4.jpg</div>
+      <div class="gallery-placeholder">images/photo5.jpg</div>
+      <div class="gallery-placeholder">images/photo6.jpg</div>
+    </div>
+
+    <p style="margin-top:2rem; font-family:'Lato',sans-serif; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted);">
+      Upload your photos to the images/ folder and update this page as instructed above.
+    </p>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Gallery photo" />
+</div>
+
+<footer>
+  <div class="footer-logo">Strato Fencing Academy</div>
+  <div class="footer-copy">&copy; 2025 Jon Normile &nbsp;·&nbsp; Millburn, NJ</div>
+</footer>
+
+<script>
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+</body>
+</html>
