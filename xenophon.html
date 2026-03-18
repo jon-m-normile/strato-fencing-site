@@ -77,6 +77,23 @@
       background: var(--black);
       padding: 9rem 5rem 4rem;
     }
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      max-width: 1200px;
+    }
+    .hero-text { flex: 1; }
+    .hero-screenshot {
+      flex: 1;
+      max-width: 520px;
+    }
+    .hero-screenshot img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
     .hero-eyebrow {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.8rem;
@@ -218,6 +235,21 @@
 
     /* ── DARK SECTION ── */
     #xenophon-history { background: var(--off); }
+    .namesake-layout {
+      display: flex;
+      gap: 2.5rem;
+      align-items: flex-start;
+    }
+    .namesake-text { flex: 1; }
+    .namesake-portrait {
+      flex: 0 0 220px;
+    }
+    .namesake-portrait img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--light);
+    }
 
     /* ── CTA SECTION ── */
     #launch {
@@ -280,8 +312,12 @@
       nav { padding: 0 1.2rem; }
       .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
       .hero { padding: 7rem 2rem 4rem; }
+      .hero-inner { flex-direction: column; }
+      .hero-screenshot { max-width: 100%; }
       .modes-grid { grid-template-columns: 1fr; }
       section { padding: 2rem 1.5rem; }
+      .namesake-layout { flex-direction: column-reverse; }
+      .namesake-portrait { flex: 0 0 auto; width: 160px; }
       footer { flex-direction: column; gap: 0.5rem; padding: 1.2rem; text-align: center; }
     }
     @media (max-width: 500px) {
@@ -308,10 +344,17 @@
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-eyebrow">Strato Fencing Academy</div>
-  <h1 class="hero-title">Xenophon</h1>
-  <p class="hero-sub">A web application for uploading and annotating fencing match videos — identifying actions, modes, targets, and patterns to find order out of chaos.</p>
-  <a class="btn-primary" href="https://xenophon.stratofencing.com" target="_blank">Launch Xenophon</a>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Strato Fencing Academy</div>
+      <h1 class="hero-title">Xenophon</h1>
+      <p class="hero-sub">A web application for uploading and annotating fencing match videos — identifying actions, modes, targets, and patterns to find order out of chaos.</p>
+      <a class="btn-primary" href="https://xenophon.stratofencing.com" target="_blank">Launch Xenophon</a>
+    </div>
+    <div class="hero-screenshot">
+      <img src="xenophon-app-screenshot.png" alt="Xenophon application screenshot" />
+    </div>
+  </div>
 </div>
 
 <!-- WHAT IS IT -->
@@ -390,8 +433,15 @@
     <div class="section-label">Namesake</div>
     <h2 class="section-title">Who was Xenophon?</h2>
     <div class="section-rule"></div>
-    <p class="body-text">Xenophon was an Athenian soldier, historian, and student of Socrates who lived in the 4th century BC. His most celebrated work, the <em>Anabasis</em>, is a masterpiece of tactical documentation — a precise, firsthand account of leading 10,000 Greek mercenaries through hostile territory that remains a model of careful observation and recorded analysis.</p>
-    <p class="body-text">A man who combined battlefield experience with a scholar's discipline, Xenophon believed that victory belongs to those who study conflict most rigorously. We named our annotation tool after him because his legacy — soldier, observer, recorder, analyst — is an inspiration for what we are building.</p>
+    <div class="namesake-layout">
+      <div class="namesake-text">
+        <p class="body-text">Xenophon was an Athenian soldier, historian, and student of Socrates who lived in the 4th century BC. His most celebrated work, the <em>Anabasis</em>, is a masterpiece of tactical documentation — a precise, firsthand account of leading 10,000 Greek mercenaries through hostile territory that remains a model of careful observation and recorded analysis.</p>
+        <p class="body-text">A man who combined battlefield experience with a scholar's discipline, Xenophon believed that victory belongs to those who study conflict most rigorously. We named our annotation tool after him because his legacy — soldier, observer, recorder, analyst — is an inspiration for what we are building.</p>
+      </div>
+      <div class="namesake-portrait">
+        <img src="xenophon.jpg" alt="Xenophon of Athens" />
+      </div>
+    </div>
   </div>
 </section>
 
