@@ -27,5 +27,8 @@ Changed section-label to "Background" and h2 to "Coaching History".
 
 #12 ↩️ Parallax scrolling — reverted. Photos scroll normally with the page.
 
-#13 ✅ I want to change the home page.  Let's get rid of the first photo.  Let's get rid of the small portratin photo.  Let's have a blank dark background for the title and subtitle "Strato Fencing Academy" & "Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn NJ."  And let's get rid of the 'Millburn, NJ' above the title.  Let's get rid of the 4 blue tiles showing my achievements.  Then let's have my photo.  Let's use a black background for the empty space on either side.  Then, we'll have the About Me section, and then let;s move the strip of tiles ("45+ Years Fencing  20+ Years Coaching 3×U.S. Champion 1992 Olympian  2023 World Champion") from up above to right bleow the About section.  ANd let's get rid of the other two photos too.
+#13 ✅ I want to change the home page.
+Redesigned: dark hero (no photo, no badges), homepage.jpg at 75% centered below hero, stats bar moved to below About, section photos removed.
+
+  Let's get rid of the first photo.  Let's get rid of the small portratin photo.  Let's have a blank dark background for the title and subtitle "Strato Fencing Academy" & "Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn NJ."  And let's get rid of the 'Millburn, NJ' above the title.  Let's get rid of the 4 blue tiles showing my achievements.  Then let's have my photo.  Let's use a black background for the empty space on either side.  Then, we'll have the About Me section, and then let;s move the strip of tiles ("45+ Years Fencing  20+ Years Coaching 3×U.S. Champion 1992 Olympian  2023 World Champion") from up above to right bleow the About section.  ANd let's get rid of the other two photos too.
 
