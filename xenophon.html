@@ -195,6 +195,39 @@
       background: var(--accent);
     }
 
+    /* ── HOW TO USE ── */
+    .how-list {
+      list-style: none;
+      max-width: 760px;
+    }
+    .how-list li {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--light);
+    }
+    .how-list li:last-child { border-bottom: none; }
+    .how-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      flex: 0 0 1.8rem;
+      padding-top: 0.15rem;
+    }
+    .how-list strong {
+      font-weight: 600;
+      color: var(--black);
+    }
+    .how-list div {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: #333;
+    }
+
     /* ── MODES GRID ── */
     #modes { background: var(--black); }
     #modes .section-title { color: var(--white); }
@@ -386,6 +419,59 @@
     <div class="section-rule"></div>
     <p class="body-text">Xenophon is for anyone who wants to better understand fencing. It's for anyone who wants a way to carefully review pre-recorded videos of fencing matches to identify patterns, spot errors, and improve their understanding of what is really going on in a match.</p>
     <p class="body-text">This applies whether you are reviewing your own fencing, your students', or matches of elite international champions.</p>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">How to Use Xenophon</h2>
+    <div class="section-rule"></div>
+    <ol class="how-list">
+      <li>
+        <span class="how-num">1</span>
+        <div>
+          <strong>Create a Bout.</strong> Enter the tournament details — location, date, weapon, event category, and age group — then identify the two fencers and provide a link to your match video.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">2</span>
+        <div>
+          <strong>Set the Starting Point.</strong> Press <em>Start Match</em> when the video reaches the beginning of the bout. This anchors all timing calculations to the video timeline.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">3</span>
+        <div>
+          <strong>Mark the Action.</strong> Press <em>Fence!</em> when fencing begins and <em>Halt!</em> when it stops. After each Halt, indicate the reason: Touch Scored, Period Ended, No Touch Action, or other.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">4</span>
+        <div>
+          <strong>Record the Touch.</strong> When a touch is scored, the touch form opens automatically. Enter the action sequence for each fencer, assign modes, and identify targets. Xenophon tracks the score and match clock for you.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">5</span>
+        <div>
+          <strong>Add Commentary.</strong> The Intervals tab records every Fence!/Halt! exchange. Add written commentary and appraisals to any interval to build a detailed narrative of the match.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">6</span>
+        <div>
+          <strong>End the Bout.</strong> When the match is complete, close the bout to lock in the final score. Closed bouts are preserved in view-only mode and can be reopened at any time.
+        </div>
+      </li>
+      <li>
+        <span class="how-num">7</span>
+        <div>
+          <strong>Analyze.</strong> Review your annotated bout at any time. Click any touch or interval marker on the timeline to jump directly to that moment in the video.
+        </div>
+      </li>
+    </ol>
   </div>
 </section>
 
