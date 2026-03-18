@@ -75,51 +75,11 @@
 
     /* ── HERO ── */
     .hero {
-      position: relative;
-    }
-    .hero-bg-img {
-      width: 100%;
-      height: 50vw;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-    .hero-overlay {
-      position: absolute; inset: 0; z-index: 2;
-      background: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.35) 0%,
-        rgba(0,0,0,0.15) 40%,
-        rgba(0,0,0,0.65) 100%
-      );
-    }
-    .hero-content {
-      position: absolute; inset: 0; z-index: 3;
-      display: flex; flex-direction: column;
-      align-items: flex-start; justify-content: flex-end;
-      padding: 0 5rem 4rem;
-      max-width: 900px;
-    }
-    .hero-portrait {
-      width: 130px; height: 130px;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: center top;
-      border: 3px solid var(--accent);
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: slideUp 0.8s 0.1s forwards;
-    }
-    .hero-eyebrow {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 0.5rem;
-      opacity: 0;
-      animation: slideUp 0.8s 0.3s forwards;
+      background: var(--black);
+      padding: 9rem 5rem 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
     .hero-title {
       font-family: 'Barlow Condensed', sans-serif;
@@ -130,40 +90,17 @@
       text-transform: uppercase;
       color: var(--white);
       margin-bottom: 1.2rem;
-      opacity: 0;
-      animation: slideUp 0.8s 0.5s forwards;
     }
     .hero-sub {
       font-size: 1.1rem;
       font-weight: 300;
       color: rgba(255,255,255,0.85);
       margin-bottom: 2rem;
-      max-width: 500px;
+      max-width: 560px;
       line-height: 1.6;
-      opacity: 0;
-      animation: slideUp 0.8s 0.7s forwards;
-    }
-    .hero-badges {
-      display: flex; flex-wrap: wrap; gap: 0.5rem;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: slideUp 0.8s 0.85s forwards;
-    }
-    .hero-badge {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.9rem;
-      background: rgba(27,61,122,0.85);
-      color: var(--white);
-      backdrop-filter: blur(4px);
     }
     .hero-cta {
       display: flex; gap: 1rem; flex-wrap: wrap;
-      opacity: 0;
-      animation: slideUp 0.8s 1s forwards;
     }
     .btn-primary {
       font-family: 'Barlow Condensed', sans-serif;
@@ -193,6 +130,17 @@
       display: inline-block;
     }
     .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
+
+    /* ── PHOTO BLOCK ── */
+    .photo-block {
+      background: var(--black);
+      text-align: center;
+    }
+    .photo-block img {
+      width: 75%;
+      height: auto;
+      display: inline-block;
+    }
 
     /* ── STATS BAR ── */
     .stats-bar {
@@ -256,12 +204,6 @@
       background: var(--accent);
       margin-bottom: 2.5rem;
     }
-    .section-photo {
-      width: 75%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
 
     /* ── ABOUT ── */
     #about { background: var(--white); }
@@ -286,7 +228,7 @@
     }
 
     /* ── COMPETITION ── */
-    #competition { background: var(--black); padding: 0; }
+    #competition { background: var(--black); }
     #competition .section-title { color: var(--white); }
     #competition .section-label { color: var(--accent); }
     .comp-grid {
@@ -320,7 +262,7 @@
     .comp-text strong { color: var(--white); font-weight: 500; }
 
     /* ── COACHING HISTORY ── */
-    #coaching { background: var(--off); padding: 0; }
+    #coaching { background: var(--off); }
     .coaching-two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -401,17 +343,11 @@
       color: rgba(255,255,255,0.3);
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       nav { padding: 0 1.2rem; }
       .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
-      .hero-content { padding: 0 2rem 3rem; }
+      .hero { padding: 7rem 2rem 4rem; }
       .comp-grid { grid-template-columns: 1fr; }
       .coaching-two-col { grid-template-columns: 1fr; }
       section { padding: 3.5rem 1.5rem; }
@@ -421,8 +357,8 @@
     }
     @media (max-width: 500px) {
       .nav-links a { padding: 0 0.4rem; font-size: 0.65rem; letter-spacing: 0.08em; }
-      .hero-content { padding: 0 1.2rem 2.5rem; }
-      .hero-portrait { width: 90px; height: 90px; }
+      .hero { padding: 6rem 1.2rem 3rem; }
+      .photo-block img { width: 100%; }
     }
   </style>
 </head>
@@ -444,25 +380,36 @@
 
 <!-- HERO -->
 <div class="hero">
-  <img src="WLFY8233.JPEG" alt="Jon Normile fencing" class="hero-bg-img" />
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <img src="homepage.jpg" alt="Jon Normile" class="hero-portrait" />
-    <div class="hero-eyebrow">Millburn, NJ</div>
-    <h1 class="hero-title">Strato Fencing Academy</h1>
-    <p class="hero-sub">Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only.</p>
-    <div class="hero-badges">
-      <span class="hero-badge">1992 Olympian</span>
-      <span class="hero-badge">2023 Veteran World Champion</span>
-      <span class="hero-badge">3× U.S. National Champion</span>
-      <span class="hero-badge">Hall of Fame 2019</span>
-    </div>
-    <div class="hero-cta">
-      <a class="btn-primary" href="https://calendar.app.google/FZzLGqVo8ZLfsFh5A" target="_blank">Book a Lesson</a>
-      <a class="btn-outline" href="products.html">View Services</a>
-    </div>
+  <h1 class="hero-title">Strato Fencing Academy</h1>
+  <p class="hero-sub">Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn, NJ.</p>
+  <div class="hero-cta">
+    <a class="btn-primary" href="https://calendar.app.google/FZzLGqVo8ZLfsFh5A" target="_blank">Book a Lesson</a>
+    <a class="btn-outline" href="products.html">View Services</a>
   </div>
 </div>
+
+<!-- PHOTO -->
+<div class="photo-block">
+  <img src="homepage.jpg" alt="Jon Normile" />
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label">About</div>
+    <h2 class="section-title">Fencing Coach Jon Normile</h2>
+    <div class="section-rule"></div>
+    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:1.2rem;">I am an Olympic fencer, a world champion in the veterans category, a multiple-time former national champion, and a member of the US Fencing Hall of Fame. I give individual fencing lessons to dedicated and enthusiastic fencing students.</p>
+    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:1.2rem;">With my lessons, I pass along the art, science, and wisdom of fencing that I learned from my coaches before me, Dr. Aladar Kogler and Bill Reith, and that I've taught myself through a lifetime of fencing.</p>
+    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:0.8rem;">Please contact me if you would like:</p>
+    <ul class="services-list" style="max-width:600px;">
+      <li>Private lessons in épée or foil fencing</li>
+      <li>Focused instruction in fencing footwork</li>
+      <li>Tactical analysis of your pre-recorded fencing matches</li>
+    </ul>
+    <p style="font-size:0.9rem; font-style:italic; color:var(--muted); margin-top:1rem;">I have been fencing for 45+ years and coaching for 20+ years.</p>
+  </div>
+</section>
 
 <!-- STATS BAR -->
 <div class="stats-bar">
@@ -490,31 +437,9 @@
   </div>
 </div>
 
-<!-- ABOUT PHOTO -->
-<img src="homepage.jpg" class="section-photo" alt="Jon Normile" />
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-inner">
-    <div class="section-label">About</div>
-    <h2 class="section-title">Fencing Coach Jon Normile</h2>
-    <div class="section-rule"></div>
-    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:1.2rem;">I am an Olympic fencer, a world champion in the veterans category, a multiple-time former national champion, and a member of the US Fencing Hall of Fame. I give individual fencing lessons to dedicated and enthusiastic fencing students.</p>
-    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:1.2rem;">With my lessons, I pass along the art, science, and wisdom of fencing that I learned from my coaches before me, Dr. Aladar Kogler and Bill Reith, and that I've taught myself through a lifetime of fencing.</p>
-    <p style="font-size:1.05rem; font-weight:300; line-height:1.8; color:#333; margin-bottom:0.8rem;">Please contact me if you would like:</p>
-    <ul class="services-list" style="max-width:600px;">
-      <li>Private lessons in épée or foil fencing</li>
-      <li>Focused instruction in fencing footwork</li>
-      <li>Tactical analysis of your pre-recorded fencing matches</li>
-    </ul>
-    <p style="font-size:0.9rem; font-style:italic; color:var(--muted); margin-top:1rem;">I have been fencing for 45+ years and coaching for 20+ years.</p>
-  </div>
-</section>
-
 <!-- COMPETITION -->
 <section id="competition">
-  <img src="normile-vs-trevor-2.jpg" class="section-photo" alt="Jon Normile vs Trevor, 1988 National Championships" />
-  <div class="section-inner" style="padding: 5rem 3rem;">
+  <div class="section-inner">
     <div class="section-label">Record</div>
     <h2 class="section-title">Competition History</h2>
     <div class="section-rule"></div>
@@ -535,8 +460,7 @@
 
 <!-- COACHING -->
 <section id="coaching">
-  <img src="lesson-joseph-doan.jpg" class="section-photo" alt="Jon Normile coaching Joseph Doan" style="height: 42.19vw; object-fit: cover; object-position: center;" />
-  <div class="section-inner" style="padding: 5rem 3rem;">
+  <div class="section-inner">
     <div class="section-label">Background</div>
     <h2 class="section-title">Coaching History</h2>
     <div class="section-rule"></div>
