@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect id="v2-background" x="52.315" y="55.461" width="1120" height="161.386" rx="8" fill="#0a0a0a" style=""/>
+  <ellipse id="v2-epee-pommel" cx="86.618" cy="154.627" rx="14" ry="9" fill="#5a8ad4"/>
+  <rect id="v2-epee-grip" x="100.618" y="149.627" width="88" height="10" rx="2" fill="#3a6ab4"/>
+  <rect id="v2-grip-wrap-1" x="107.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-2" x="118.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-3" x="129.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-4" x="140.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-5" x="151.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-6" x="162.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <rect id="v2-grip-wrap-7" x="173.618" y="149.627" width="3" height="10" fill="#1b3d7a"/>
+  <path id="v2-guard-interior" d="M 188.618 154.627 C 181.83 144.107 181.83 131.147 188.618 120.627 C 209.605 120.627 226.618 135.849 226.618 154.627 C 226.618 173.405 209.605 188.627 188.618 188.627 L 188.618 154.627 Z" fill="#0d1e3a"/>
+  <path id="v2-guard-rim" d="M 188.618 120.627 C 209.605 120.627 226.618 135.849 226.618 154.627 C 226.618 173.405 209.605 188.627 188.618 188.627" fill="none" stroke="#4a7ac8" stroke-width="6"/>
+  <ellipse id="v2-guard-backplate" cx="188.618" cy="154.627" rx="6" ry="34" fill="#2a5cad"/>
+  <path id="v2-guard-highlight" d="M 192.618 129.627 C 207.239 130.462 219.076 141.031 220.618 154.627" fill="none" stroke="#7aaaff" stroke-width="2.5"/>
+  <rect id="v2-epee-socket" x="222.618" y="151.627" width="16" height="6" fill="#4a7ac8"/>
+  <line id="v2-epee-blade" x1="236.618" y1="154.627" x2="1114.62" y2="154.627" stroke="#c0d8ff" stroke-width="3"/>
+  <line id="v2-epee-blade-taper-1" x1="964.618" y1="154.627" x2="1114.62" y2="154.627" stroke="#c0d8ff" stroke-width="2"/>
+  <line id="v2-epee-blade-taper-2" x1="1044.62" y1="154.627" x2="1114.62" y2="154.627" stroke="#c0d8ff" stroke-width="1"/>
+  <polygon id="v2-epee-tip" points="1114.62 150.627 1132.62 154.627 1114.62 158.627" fill="#e0eeff"/>
+  <g>
+    <g>
+      <g/>
+    </g>
+  </g>
+  <text id="v2-wordmark-strato" x="383" y="710" font-family="'Barlow Condensed', Arial Narrow, Arial, sans-serif" font-weight="700" font-size="90" letter-spacing="6" fill="#ffffff" transform="matrix(0.771394, 0, -0.321424, 0.72193, 318.460602, -370.049133)" style="white-space: pre;">STRATO</text>
+  <g transform="matrix(1, 0, 0, 1, 17, 0)">
+    <text id="v2-wordmark-fencing" x="740" y="710" font-family="'Barlow Condensed', Arial Narrow, Arial, sans-serif" font-weight="700" font-size="90" letter-spacing="6" fill="#7aaaff" transform="matrix(0.771394, 0, -0.321424, 0.72193, 307.690674, -370.684509)" style="white-space: pre;">FENCING</text>
+    <polygon id="v2-motion-right-1" points="936.901 144.301 1054.9 144.301 1053.9 141.301 935.901 141.301" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 995.401px 142.801px 0px;"/>
+    <polygon id="v2-motion-right-2" points="944.901 133.301 1062.9 133.301 1061.9 130.301 943.901 130.301" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 1003.4px 131.801px 0px;"/>
+    <polygon id="v2-motion-right-3" points="954.901 119.301 1072.9 119.301 1071.9 122.301 953.901 122.301" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px;"/>
+    <polygon id="v2-motion-right-4" points="960.901 111.301 1078.9 111.301 1077.9 108.301 959.901 108.301" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 1019.4px 109.801px 0px;"/>
+    <polygon id="v2-motion-right-5" points="968.901 100.301 1086.9 100.301 1085.9 97.301 967.901 97.301" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 1027.4px 98.801px 0px;"/>
+  </g>
+  <polygon id="polygon-1" points="251.838 141.836 369.838 141.836 368.838 138.836 250.838 138.836" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 310.338px 140.336px 0px;"/>
+  <polygon id="polygon-2" points="259.838 130.836 377.838 130.836 376.838 127.836 258.838 127.836" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 318.338px 129.336px 0px;"/>
+  <polygon id="polygon-3" points="269.838 116.836 387.838 116.836 386.838 119.836 268.838 119.836" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px;"/>
+  <polygon id="polygon-4" points="275.838 108.836 393.838 108.836 392.838 105.836 274.838 105.836" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 334.338px 107.336px 0px;"/>
+  <polygon id="polygon-5" points="283.838 97.836 401.838 97.836 400.838 94.836 282.838 94.836" fill="#64a0ff" opacity="0.86" style="stroke-width: 1px; transform-origin: 342.338px 96.336px 0px;"/>
+</svg>

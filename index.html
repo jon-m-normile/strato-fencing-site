@@ -44,16 +44,8 @@
       backdrop-filter: blur(6px);
       border-bottom: 3px solid var(--accent);
     }
-    .nav-logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--white);
-      text-decoration: none;
-    }
-    .nav-logo span { color: #7aaaff; }
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
+    .nav-logo-img { height: 36px; width: auto; display: block; }
     .nav-links { display: flex; list-style: none; }
     .nav-links a {
       font-family: 'Barlow Condensed', sans-serif;
@@ -366,9 +358,8 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="index.html">Strato <span>Fencing</span> Academy</a>
+  <a class="nav-logo" href="index.html"><img src="strato-logo.svg" alt="Strato Fencing Academy" class="nav-logo-img"></a>
   <ul class="nav-links">
-    <li><a href="index.html" class="active">Home</a></li>
     <li><a href="products.html">Services</a></li>
     <li><a href="videos.html">Videos</a></li>
     <li><a href="gallery.html">Gallery</a></li>
