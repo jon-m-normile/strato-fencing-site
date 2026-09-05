@@ -32,3 +32,11 @@ Redesigned: dark hero (no photo, no badges), homepage.jpg at 75% centered below 
 
   Let's get rid of the first photo.  Let's get rid of the small portratin photo.  Let's have a blank dark background for the title and subtitle "Strato Fencing Academy" & "Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn NJ."  And let's get rid of the 'Millburn, NJ' above the title.  Let's get rid of the 4 blue tiles showing my achievements.  Then let's have my photo.  Let's use a black background for the empty space on either side.  Then, we'll have the About Me section, and then let;s move the strip of tiles ("45+ Years Fencing  20+ Years Coaching 3×U.S. Champion 1992 Olympian  2023 World Champion") from up above to right bleow the About section.  ANd let's get rid of the other two photos too.
 
+#14 ✅ Add an Annotation FAQ page, linked from the "How to Use Xenophon" list
+New xenophon-faq.html — content and diagrams sourced from Jon's Google Doc
+FAQ, covering Action Sequence, 2nd/3rd Intention, Strip Location (with the
+3 strip-zone example diagrams), Initiative, The Four Modes, Appraisal,
+Cards, and Comments. Reuses xenophon.html's nav/footer/section styling.
+Added item #8 to the "How to Use Xenophon" list on xenophon.html linking
+to it ("See here for detailed annotation instructions").
+

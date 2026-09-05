@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annotation FAQ | Xenophon | Strato Fencing Academy</title>
+  <meta name="description" content="Detailed annotation instructions for Xenophon — Action Sequence, Intention, Strip Location, Initiative, Modes, Appraisal, Cards, and Comments." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0a0a0a;
+      --dark:    #141414;
+      --white:   #ffffff;
+      --off:     #f4f4f4;
+      --accent:  #1b3d7a;
+      --accent2: #2a5cad;
+      --text:    #1a1a1a;
+      --muted:   #666666;
+      --light:   #e8e8e8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      font-size: 17px;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 3px solid var(--accent);
+    }
+    .nav-logo { text-decoration: none; display: flex; align-items: center; }
+    .nav-logo-img { height: 52px; width: auto; display: block; }
+    .nav-links { display: flex; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      padding: 0 1.1rem;
+      height: 64px;
+      display: flex; align-items: center;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--white); border-bottom-color: var(--accent); }
+
+    /* ── HERO ── */
+    .faq-hero {
+      background: var(--black);
+      padding: 8.5rem 3rem 3rem;
+    }
+    .faq-hero-inner { max-width: 1000px; margin: 0 auto; }
+    .back-link {
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      text-decoration: none;
+      margin-bottom: 1.2rem;
+    }
+    .back-link:hover { color: #7aaaff; }
+    .hero-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.8rem;
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      max-width: 640px;
+      line-height: 1.7;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--off);
+      padding: 1.6rem 3rem;
+    }
+    .toc-inner { max-width: 1000px; margin: 0 auto; }
+    .toc-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.7rem;
+    }
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.4rem;
+    }
+    .toc-list a {
+      font-size: 0.92rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .toc-list a:hover { border-bottom-color: var(--accent); }
+
+    /* ── SECTIONS ── */
+    section.faq-section { padding: 2.8rem 3rem; border-bottom: 1px solid var(--light); }
+    section.faq-section:nth-child(even) { background: var(--off); }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .section-rule {
+      width: 50px; height: 3px;
+      background: var(--accent);
+      margin-bottom: 1.3rem;
+    }
+    .body-text {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: #333;
+      margin-bottom: 0.9rem;
+    }
+    .faq-list {
+      margin: 0.8rem 0 1.2rem 0;
+      padding-left: 1.3rem;
+    }
+    .faq-list li {
+      font-size: 0.98rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 0.6rem;
+    }
+    .faq-list ul { margin-top: 0.5rem; }
+    .faq-example {
+      background: var(--white);
+      border-left: 3px solid var(--accent);
+      padding: 0.9rem 1.2rem;
+      margin: 0.8rem 0;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+    section.faq-section:nth-child(even) .faq-example { background: var(--white); }
+    .notation {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    table.faq-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.4rem;
+      font-size: 0.95rem;
+    }
+    table.faq-table th, table.faq-table td {
+      border: 1px solid var(--light);
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.faq-table th {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+    table.faq-table td:nth-child(1),
+    table.faq-table td:nth-child(2) { white-space: nowrap; font-weight: 600; }
+
+    .strip-examples {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+      margin: 1.4rem 0;
+    }
+    .strip-example img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--light);
+      background: #fff;
+    }
+    .strip-example-caption {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      border-top: 3px solid var(--accent);
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .footer-logo span { color: #7aaaff; }
+    .footer-schola {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.2rem;
+    }
+    .footer-copy {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
+      .faq-hero { padding: 6.5rem 1.5rem 2.5rem; }
+      section.faq-section { padding: 2rem 1.5rem; }
+      .toc { padding: 1.2rem 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; padding: 1.2rem; text-align: center; }
+    }
+    @media (min-width: 720px) {
+      .strip-examples { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html"><img src="strato-logo.svg" alt="Strato Fencing Academy" class="nav-logo-img"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Services</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="blogs.html">Blogs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="xenophon.html" class="active">Xenophon</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="faq-hero">
+  <div class="faq-hero-inner">
+    <a class="back-link" href="xenophon.html#how">&larr; Back to Xenophon</a>
+    <div class="hero-eyebrow">Getting Started</div>
+    <h1 class="hero-title">Annotation FAQ</h1>
+    <p class="hero-sub">Detailed instructions for how to annotate a touch in Xenophon — Action Sequence, Intention, Strip Location, Initiative, Mode, Appraisal, Cards, and Comments.</p>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-inner">
+    <div class="toc-label">On This Page</div>
+    <ul class="toc-list">
+      <li><a href="#action-sequence">Action Sequence</a></li>
+      <li><a href="#intention">2nd &amp; 3rd Intention</a></li>
+      <li><a href="#strip-location">Strip Location</a></li>
+      <li><a href="#initiative">Initiative</a></li>
+      <li><a href="#modes">The Four Modes</a></li>
+      <li><a href="#appraisal">Appraisal</a></li>
+      <li><a href="#cards">Cards</a></li>
+      <li><a href="#comments">Comments</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ACTION SEQUENCE -->
+<section class="faq-section" id="action-sequence">
+  <div class="section-inner">
+    <div class="section-label">The 'Phrase'</div>
+    <h2 class="section-title">Action Sequence</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">The Action Sequence (the &lsquo;Phrase&rsquo;) describes how a touch was scored. An Action Sequence is simply the sequence of actions leading up to a touch.</p>
+    <table class="faq-table">
+      <tr><th>Action</th><th>Symbol</th><th>Definition</th></tr>
+      <tr><td>Attack</td><td>A</td><td>The initial offensive action to score a point.</td></tr>
+      <tr><td>Counter-Attack</td><td>CA</td><td>A counter-offensive action versus an attack. A counter-attack goes to the target, not the blade.</td></tr>
+      <tr><td>Parry-Riposte</td><td>PR</td><td>A defensive-offensive action versus an attack. A parry-riposte moves towards the blade (the defensive parry) and only then towards the target (the offensive riposte).</td></tr>
+      <tr><td>Stop-Hit</td><td>SH</td><td>A special counter-attack made while doing a retreat.</td></tr>
+      <tr><td>Remise</td><td>Rm</td><td>A secondary offensive action that immediately follows a prior action which can be an attack, counter-attack, parry-riposte, stop hit, or even another remise.</td></tr>
+    </table>
+    <ul class="faq-list">
+      <li>Only the <em>final</em> Action Sequence is recorded and not the preceding preparations.</li>
+      <li>Action Sequences usually consist of the &lsquo;initiator&rsquo; executing an attack and the &lsquo;responder&rsquo; executing a response.</li>
+      <li>Subsequent actions that lead to a score by one or both fencers can be entered into the Action Sequence by adding another &lsquo;layer&rsquo;.</li>
+      <li>Occasionally, a fencer will initiate an action that scores without any response at all from the opponent. In those cases, the null symbol, &lsquo;&empty;&rsquo;, would be used for the responder.</li>
+      <li>Each action is assigned a target. The default is &lsquo;body&rsquo;, but this can be adjusted to the hand, arm, leg, foot, or head.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- INTENTION -->
+<section class="faq-section" id="intention">
+  <div class="section-inner">
+    <div class="section-label">Setups &amp; Counters</div>
+    <h2 class="section-title">2nd and 3rd Intention</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">For each Action Sequence, one or both fencers may be determined to have used 2nd or 3rd intention.</p>
+    <ul class="faq-list">
+      <li>2nd Intention is when a fencer performs an action expecting a specific response from their opponent, for which they already have planned a winning counter-move.
+        <div class="faq-example"><strong>Example 1:</strong> FotL steps forward to provoke an attack, then parry-ripostes it. This would be entered into Xenophon as the FotR having the initiative and making the Attack and the FotL making a Parry-Riposte with 2nd Intention. The modes for the fencers, left and right, would be Provoker &amp; Counteror. The symbols in the Touch Table would appear as: <span class="notation">A - PR<sup>2</sup></span></div>
+        <div class="faq-example"><strong>Example 2:</strong> Fencer attacks the short target expecting a counter-attack, which they meet with a parry-riposte. This would be entered as the FotL with Initiative making an Attack to the arm, the FotR making a Counter-Attack, and the FotL making a Parry-Riposte with 2nd Intention. The modes for the fencers, left and right, would be Conqueror and Blocker. The symbols in the Touch Table would appear as: <span class="notation">A<sup>a</sup> - CA - PR<sup>2</sup></span></div>
+      </li>
+      <li>3rd intention, much rarer, is when a fencer anticipates their opponent's 2nd-intention setup and plays along until countering that response with a winning counter-move.</li>
+    </ul>
+    <ul class="faq-list">
+      <li>Assigning 2nd and/or 3rd intention is very subjective. The best signal is the speed and conviction of the response — near-instant, decisive execution suggests the fencer was already primed for it.</li>
+      <li>Being assigned a 2nd or 3rd intention action doesn't guarantee a score — the setup can be mishandled and the opponent can win the touch anyway.</li>
+      <li>2nd Intention actions are rare at youth/cadet level; more common at the junior/open level and very common at international fencing. 3rd intention actions are significantly rarer still.</li>
+      <li>See <a href="https://www.youtube.com/watch?v=36llOX6fhy8&list=PLfjNfwY6Hj62aC0UBbKHGrB0zAqeJGiGH&index=9" target="_blank" rel="noopener">this clip</a> for an excellent example of a 2nd intention parry-riposte. Note how quickly the counter-parry-riposte is made — it clearly shows the intentionality of the FotL. The Action Sequence of this action would be <span class="notation">A - PR - PR<sup>2</sup></span>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- STRIP LOCATION -->
+<section class="faq-section" id="strip-location">
+  <div class="section-inner">
+    <div class="section-label">Where on the Strip</div>
+    <h2 class="section-title">Strip Location</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">Location is assigned based on where the fencers are standing <strong>when the action begins</strong>.</p>
+    <table class="faq-table">
+      <tr><th>Zone</th><th>Definition</th></tr>
+      <tr><td>C &ndash; Center</td><td>Neither fencer has fully crossed the center line.</td></tr>
+      <tr><td>LS &ndash; Left Side<br>RS &ndash; Right Side</td><td>For the Right Side, the FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line. Vice versa for the Left Side.</td></tr>
+      <tr><td>L2M &ndash; Left 2-Meter<br>R2M &ndash; Right 2-Meter</td><td>For the Right 2-Meter zone, the Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line. Vice versa for the Left 2-Meter zone.</td></tr>
+    </table>
+    <div class="strip-examples">
+      <div class="strip-example">
+        <img src="faq-strip-center.jpg" alt="Example of an action taking place in the Center Zone" loading="lazy">
+        <div class="strip-example-caption">Example: Center Zone</div>
+      </div>
+      <div class="strip-example">
+        <img src="faq-strip-leftside.jpg" alt="Example of an action taking place in the Left Side Zone" loading="lazy">
+        <div class="strip-example-caption">Example: Left Side Zone</div>
+      </div>
+      <div class="strip-example">
+        <img src="faq-strip-r2m.jpg" alt="Example of an action taking place in the Right 2-Meter Zone" loading="lazy">
+        <div class="strip-example-caption">Example: Right 2-Meter Zone</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INITIATIVE -->
+<section class="faq-section" id="initiative">
+  <div class="section-inner">
+    <div class="section-label">Who Attacked</div>
+    <h2 class="section-title">Initiative</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">Initiative goes to whichever fencer makes the attack — regardless of who ends up scoring the touch.</p>
+    <ul class="faq-list">
+      <li>The fencer with initiative will always be making the attack.</li>
+      <li>Initiative can be determined by closely observing which fencer began their action, the attack, first.</li>
+      <li>The speed control in the video playback can be run in slow motion to review the Action Sequence if you're not sure.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- MODES -->
+<section class="faq-section" id="modes">
+  <div class="section-inner">
+    <div class="section-label">Framework</div>
+    <h2 class="section-title">The Four Modes</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">Each fencer's behavior in a touch can be described with a 2&times;2 matrix to determine their &lsquo;Mode&rsquo;. Mode is defined from two independent questions: who closed the distance, and who attacked?</p>
+    <table class="faq-table">
+      <tr><th>Mode</th><th>Fencer Attacks</th><th>Opponent Attacks</th></tr>
+      <tr><td>Fencer closes distance</td><td>Conqueror</td><td>Provoker</td></tr>
+      <tr><td>Opponent closes distance</td><td>Counteror</td><td>Blocker</td></tr>
+    </table>
+    <ul class="faq-list">
+      <li>A Conqueror and a Counteror will always be the fencer who attacks and who has initiative.</li>
+      <li>A Provoker and a Blocker will never have initiative. Their first action will be a parry-riposte, counter-attack, or stop-hit — never an attack.</li>
+      <li>For each touch, both fencers' Modes are determined separately.</li>
+      <li>Usually, one fencer will be a Conqueror and the other a Blocker, or one will be a Provoker and the other a Counteror.</li>
+      <li>In the case of a simultaneous action (both fencers executing their action at the exact same instant) it's possible to have a Conqueror versus a Conqueror, or a Counteror versus a Counteror.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- APPRAISAL -->
+<section class="faq-section" id="appraisal">
+  <div class="section-inner">
+    <div class="section-label">Judging the Touch</div>
+    <h2 class="section-title">Appraisal</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">Each touch may be marked with an appraisal to judge the merits of how well each fencer performed.</p>
+    <ul class="faq-list">
+      <li>The Appraisal Notation in Xenophon is taken from chess:
+        <ul>
+          <li><strong>!</strong> &ndash; Good move</li>
+          <li><strong>!!</strong> &ndash; Brilliant move</li>
+          <li><strong>!?</strong> &ndash; Interesting move</li>
+          <li><strong>?!</strong> &ndash; Dubious move</li>
+          <li><strong>?</strong> &ndash; Bad move</li>
+          <li><strong>??</strong> &ndash; Blunder</li>
+        </ul>
+      </li>
+      <li>Appraisals can be made for one, both, or neither fencer.</li>
+      <li>An appraisal can be made for technical execution or for tactical decision-making.</li>
+      <li>Entering appraisals is optional.</li>
+      <li>In the Appraisal section, check the box to slide down the input tool.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="faq-section" id="cards">
+  <div class="section-inner">
+    <div class="section-label">Penalties</div>
+    <h2 class="section-title">Cards</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">If the director awards a penalty card during a touch, that can be noted in the Cards section.</p>
+    <ul class="faq-list">
+      <li>Like the Appraisal section, check the box to slide down the input tool.</li>
+      <li>Yellow, Red, and Black cards can be assigned to one or both fencers as determined by the referee in the match.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- COMMENTS -->
+<section class="faq-section" id="comments">
+  <div class="section-inner">
+    <div class="section-label">Notes</div>
+    <h2 class="section-title">Comments</h2>
+    <div class="section-rule"></div>
+    <p class="body-text">A Comment input box is available to make any other comments that may be appropriate. Comments for a particular touch are added to the Comment Stream in the correct sequence according to the order of touches.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Strato <span>Fencing</span> Academy</div>
+    <div class="footer-schola">Schola Gladii Veritatis</div>
+  </div>
+  <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;&middot;&nbsp; Millburn, NJ</div>
+</footer>
+
+</body>
+</html>
