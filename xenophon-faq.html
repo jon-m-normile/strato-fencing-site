@@ -236,6 +236,19 @@
       border: 1px solid var(--light);
       background: #fff;
     }
+    .video-embed {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      margin: 1rem 0 1.4rem;
+      background: #000;
+    }
+    .video-embed iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
     .strip-example-caption {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.85rem;
@@ -244,6 +257,62 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-top: 0.4rem;
+    }
+
+    /* ── STRIP ZONE TOOL ── */
+    .strip-zone-tool {
+      margin: 1.4rem 0;
+    }
+    .strip-zone-stage {
+      position: relative;
+      width: 100%;
+      padding-bottom: 9.58%;
+      overflow: hidden;
+      border: 1px solid var(--light);
+      background: #fff;
+      cursor: grab;
+      touch-action: none;
+    }
+    .strip-zone-stage:active {
+      cursor: grabbing;
+    }
+    .strip-zone-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      user-select: none;
+    }
+    .strip-zone-fencers {
+      position: absolute;
+      top: -47.83%;
+      height: 143.48%;
+      width: auto;
+      pointer-events: none;
+      user-select: none;
+    }
+    .strip-zone-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--accent);
+      margin-top: 1rem;
+    }
+    .strip-zone-label.off-end {
+      color: #b0281e;
+    }
+    .strip-zone-hint {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 0.3rem;
     }
 
     /* ── FOOTER ── */
@@ -379,8 +448,11 @@
       <li>Assigning 2nd and/or 3rd intention is very subjective. The best signal is the speed and conviction of the response — near-instant, decisive execution suggests the fencer was already primed for it.</li>
       <li>Being assigned a 2nd or 3rd intention action doesn't guarantee a score — the setup can be mishandled and the opponent can win the touch anyway.</li>
       <li>2nd Intention actions are rare at youth/cadet level; more common at the junior/open level and very common at international fencing. 3rd intention actions are significantly rarer still.</li>
-      <li>See <a href="https://www.youtube.com/watch?v=36llOX6fhy8&list=PLfjNfwY6Hj62aC0UBbKHGrB0zAqeJGiGH&index=9" target="_blank" rel="noopener">this clip</a> for an excellent example of a 2nd intention parry-riposte. Note how quickly the counter-parry-riposte is made — it clearly shows the intentionality of the FotL. The Action Sequence of this action would be <span class="notation">A - PR - PR<sup>2</sup></span>.</li>
+      <li>See below for an excellent example of a 2nd intention parry-riposte. Note how quickly the counter-parry-riposte is made — it clearly shows the intentionality of the FotL. The Action Sequence of this action would be <span class="notation">A - PR - PR<sup>2</sup></span>.</li>
     </ul>
+    <div class="video-embed">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/36llOX6fhy8?si=jy99I2doQ8nHzIuc" title="2nd Intention Parry-Riposte Example" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
   </div>
 </section>
 
@@ -397,19 +469,13 @@
       <tr><td>LS &ndash; Left Side<br>RS &ndash; Right Side</td><td>For the Right Side, the FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line. Vice versa for the Left Side.</td></tr>
       <tr><td>L2M &ndash; Left 2-Meter<br>R2M &ndash; Right 2-Meter</td><td>For the Right 2-Meter zone, the Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line. Vice versa for the Left 2-Meter zone.</td></tr>
     </table>
-    <div class="strip-examples">
-      <div class="strip-example">
-        <img src="faq-strip-center.jpg" alt="Example of an action taking place in the Center Zone" loading="lazy">
-        <div class="strip-example-caption">Example: Center Zone</div>
+    <div class="strip-zone-tool">
+      <div class="strip-zone-stage" id="strip-zone-stage">
+        <img src="faq-strip-diagram.jpg" class="strip-zone-bg" alt="Fencing strip diagram" draggable="false">
+        <img src="faq-strip-fencers.png" class="strip-zone-fencers" id="strip-zone-fencers" alt="Drag to see which zone the fencers are in" draggable="false">
       </div>
-      <div class="strip-example">
-        <img src="faq-strip-leftside.jpg" alt="Example of an action taking place in the Left Side Zone" loading="lazy">
-        <div class="strip-example-caption">Example: Left Side Zone</div>
-      </div>
-      <div class="strip-example">
-        <img src="faq-strip-r2m.jpg" alt="Example of an action taking place in the Right 2-Meter Zone" loading="lazy">
-        <div class="strip-example-caption">Example: Right 2-Meter Zone</div>
-      </div>
+      <div class="strip-zone-label" id="strip-zone-label">C</div>
+      <div class="strip-zone-hint">Drag the fencers left or right</div>
     </div>
   </div>
 </section>
@@ -509,6 +575,78 @@
   </div>
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;&middot;&nbsp; Millburn, NJ</div>
 </footer>
+
+<script>
+(function () {
+  var STRIP_W = 1200;
+  var LEFT_END = 30, LEFT_2M = 192.5, CENTER = 599.5, RIGHT_2M = 1005.5, RIGHT_END = 1168;
+  var FOTL_BACK = 25, FOTL_FRONT = 97, FOTR_FRONT = 232, FOTR_BACK = 312;
+  var DRAG_MIN = LEFT_END + 1 - FOTL_FRONT;
+  var DRAG_MAX = RIGHT_END - 1 - FOTR_FRONT;
+
+  var stage = document.getElementById('strip-zone-stage');
+  var fencers = document.getElementById('strip-zone-fencers');
+  var label = document.getElementById('strip-zone-label');
+  if (!stage || !fencers || !label) return;
+
+  var dragX = (DRAG_MIN + DRAG_MAX) / 2;
+  var dragging = false;
+  var grabOffset = 0;
+
+  function zoneFor(x) {
+    if (x <= DRAG_MIN) return { text: 'Off the End, Touch for FotR!', offEnd: true };
+    if (x >= DRAG_MAX) return { text: 'Off the End, Touch for FotL!', offEnd: true };
+
+    var fotLBack = x + FOTL_BACK;
+    var fotLFront = x + FOTL_FRONT;
+    var fotRFront = x + FOTR_FRONT;
+    var fotRBack = x + FOTR_BACK;
+
+    if (fotLFront < LEFT_2M) return { text: 'L2M', offEnd: false };
+    if (fotRFront > RIGHT_2M) return { text: 'R2M', offEnd: false };
+    if (fotLBack > CENTER && fotRFront < RIGHT_2M) return { text: 'RS', offEnd: false };
+    if (fotRBack < CENTER && fotLFront > LEFT_2M) return { text: 'LS', offEnd: false };
+    return { text: 'C', offEnd: false };
+  }
+
+  function render() {
+    fencers.style.left = (dragX / STRIP_W * 100) + '%';
+    var zone = zoneFor(dragX);
+    label.textContent = zone.text;
+    label.classList.toggle('off-end', zone.offEnd);
+  }
+
+  function naturalX(clientX) {
+    var rect = stage.getBoundingClientRect();
+    var scale = rect.width / STRIP_W;
+    return (clientX - rect.left) / scale;
+  }
+
+  function clamp(x) {
+    return Math.max(DRAG_MIN, Math.min(DRAG_MAX, x));
+  }
+
+  stage.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    grabOffset = naturalX(e.clientX) - dragX;
+    stage.setPointerCapture(e.pointerId);
+  });
+
+  stage.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    dragX = clamp(naturalX(e.clientX) - grabOffset);
+    render();
+  });
+
+  function endDrag(e) {
+    dragging = false;
+  }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  render();
+})();
+</script>
 
 </body>
 </html>
