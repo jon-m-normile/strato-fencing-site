@@ -261,12 +261,21 @@
 
     /* ── STRIP ZONE TOOL ── */
     .strip-zone-tool {
-      margin: 1.4rem 0;
+      margin: 2.2rem 0 1.8rem;
+    }
+    .strip-zone-hint {
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 0.9rem;
+    }
+    .strip-zone-wrap {
+      position: relative;
     }
     .strip-zone-stage {
       position: relative;
       width: 100%;
-      padding-bottom: 9.58%;
+      padding-bottom: 14.643%;
       overflow: hidden;
       border: 1px solid var(--light);
       background: #fff;
@@ -278,41 +287,46 @@
     }
     .strip-zone-bg {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      left: 7.143%; top: 46.341%;
+      width: 85.714%; height: 56.098%;
       pointer-events: none;
       user-select: none;
     }
+    .strip-zone-highlight {
+      position: absolute;
+      top: 54.146%; height: 40.976%;
+      background: rgba(64, 140, 255, 0.28);
+      pointer-events: none;
+      transition: left 0.05s linear, width 0.05s linear, opacity 0.15s linear;
+    }
+    .strip-zone-highlight.hidden {
+      opacity: 0;
+    }
     .strip-zone-fencers {
       position: absolute;
-      top: -47.83%;
-      height: 143.48%;
+      top: -0.976%;
+      height: 80.488%;
       width: auto;
       pointer-events: none;
       user-select: none;
     }
     .strip-zone-label {
+      position: absolute;
+      top: calc(100% + 0.6rem);
+      left: 50%;
+      transform: translateX(-50%);
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-size: clamp(1.1rem, 2.6vw, 1.6rem);
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       text-align: center;
       color: var(--accent);
-      margin-top: 1rem;
+      white-space: nowrap;
+      transition: left 0.05s linear;
     }
     .strip-zone-label.off-end {
       color: #b0281e;
-    }
-    .strip-zone-hint {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      text-align: center;
-      color: var(--muted);
-      margin-top: 0.3rem;
     }
 
     /* ── FOOTER ── */
@@ -465,17 +479,23 @@
     <p class="body-text">Location is assigned based on where the fencers are standing <strong>when the action begins</strong>.</p>
     <table class="faq-table">
       <tr><th>Zone</th><th>Definition</th></tr>
+      <tr><td>L2M &ndash; Left 2-Meter</td><td>The Fencer-on-the-Left's (FotL) front foot is fully behind the left 2m warning line.</td></tr>
+      <tr><td>LS &ndash; Left Side</td><td>The FotR's back foot is past the center line, and the FotL's front foot is not behind the left 2m line.</td></tr>
       <tr><td>C &ndash; Center</td><td>Neither fencer has fully crossed the center line.</td></tr>
-      <tr><td>LS &ndash; Left Side<br>RS &ndash; Right Side</td><td>For the Right Side, the FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line. Vice versa for the Left Side.</td></tr>
-      <tr><td>L2M &ndash; Left 2-Meter<br>R2M &ndash; Right 2-Meter</td><td>For the Right 2-Meter zone, the Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line. Vice versa for the Left 2-Meter zone.</td></tr>
+      <tr><td>RS &ndash; Right Side</td><td>The FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line.</td></tr>
+      <tr><td>R2M &ndash; Right 2-Meter</td><td>The Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line.</td></tr>
     </table>
+
     <div class="strip-zone-tool">
-      <div class="strip-zone-stage" id="strip-zone-stage">
-        <img src="faq-strip-diagram.jpg" class="strip-zone-bg" alt="Fencing strip diagram" draggable="false">
-        <img src="faq-strip-fencers.png" class="strip-zone-fencers" id="strip-zone-fencers" alt="Drag to see which zone the fencers are in" draggable="false">
+      <div class="strip-zone-hint">Move the fencers left or right to see which zone they are in.</div>
+      <div class="strip-zone-wrap">
+        <div class="strip-zone-stage" id="strip-zone-stage">
+          <img src="faq-strip-diagram.jpg" class="strip-zone-bg" alt="Fencing strip diagram" draggable="false">
+          <div class="strip-zone-highlight" id="strip-zone-highlight"></div>
+          <img src="faq-strip-fencers.png" class="strip-zone-fencers" id="strip-zone-fencers" alt="Drag to see which zone the fencers are in" draggable="false">
+        </div>
+        <div class="strip-zone-label" id="strip-zone-label">Center</div>
       </div>
-      <div class="strip-zone-label" id="strip-zone-label">C</div>
-      <div class="strip-zone-hint">Drag the fencers left or right</div>
     </div>
   </div>
 </section>
@@ -578,48 +598,65 @@
 
 <script>
 (function () {
-  var STRIP_W = 1200;
+  var FRAME_LEFT = -100, FRAME_W = 1400;
+  var FRAME_TOP = -95, FRAME_H = 205;
   var LEFT_END = 30, LEFT_2M = 192.5, CENTER = 599.5, RIGHT_2M = 1005.5, RIGHT_END = 1168;
-  var FOTL_BACK = 25, FOTL_FRONT = 97, FOTR_FRONT = 232, FOTR_BACK = 312;
-  var DRAG_MIN = LEFT_END + 1 - FOTL_FRONT;
-  var DRAG_MAX = RIGHT_END - 1 - FOTR_FRONT;
+  var FOTL_BACK = 10, FOTL_FRONT = 112, FOTR_FRONT = 221, FOTR_BACK = 323;
+  var FENCERS_W = 333;
+  var END_GAP = 3;
+  var DRAG_MIN = LEFT_END - END_GAP - FOTL_FRONT;
+  var DRAG_MAX = RIGHT_END + END_GAP - FOTR_FRONT;
 
   var stage = document.getElementById('strip-zone-stage');
   var fencers = document.getElementById('strip-zone-fencers');
   var label = document.getElementById('strip-zone-label');
-  if (!stage || !fencers || !label) return;
+  var highlight = document.getElementById('strip-zone-highlight');
+  if (!stage || !fencers || !label || !highlight) return;
 
   var dragX = (DRAG_MIN + DRAG_MAX) / 2;
   var dragging = false;
   var grabOffset = 0;
 
-  function zoneFor(x) {
-    if (x <= DRAG_MIN) return { text: 'Off the End, Touch for FotR!', offEnd: true };
-    if (x >= DRAG_MAX) return { text: 'Off the End, Touch for FotL!', offEnd: true };
+  function toLeftPct(nativeX) {
+    return (nativeX - FRAME_LEFT) / FRAME_W * 100;
+  }
+
+  function zoneInfo(x) {
+    if (x <= DRAG_MIN) return { text: 'Off the End, Touch for FotR!', offEnd: true, span: [x, x + FENCERS_W] };
+    if (x >= DRAG_MAX) return { text: 'Off the End, Touch for FotL!', offEnd: true, span: [x, x + FENCERS_W] };
 
     var fotLBack = x + FOTL_BACK;
     var fotLFront = x + FOTL_FRONT;
     var fotRFront = x + FOTR_FRONT;
     var fotRBack = x + FOTR_BACK;
 
-    if (fotLFront < LEFT_2M) return { text: 'L2M', offEnd: false };
-    if (fotRFront > RIGHT_2M) return { text: 'R2M', offEnd: false };
-    if (fotLBack > CENTER && fotRFront < RIGHT_2M) return { text: 'RS', offEnd: false };
-    if (fotRBack < CENTER && fotLFront > LEFT_2M) return { text: 'LS', offEnd: false };
-    return { text: 'C', offEnd: false };
+    if (fotLFront < LEFT_2M) return { text: 'Left 2-Meter', offEnd: false, span: [LEFT_END, LEFT_2M] };
+    if (fotRFront > RIGHT_2M) return { text: 'Right 2-Meter', offEnd: false, span: [RIGHT_2M, RIGHT_END] };
+    if (fotLBack > CENTER && fotRFront < RIGHT_2M) return { text: 'Right Side', offEnd: false, span: [CENTER, RIGHT_2M] };
+    if (fotRBack < CENTER && fotLFront > LEFT_2M) return { text: 'Left Side', offEnd: false, span: [LEFT_2M, CENTER] };
+    return { text: 'Center', offEnd: false, span: [fotLBack, fotRBack] };
   }
 
   function render() {
-    fencers.style.left = (dragX / STRIP_W * 100) + '%';
-    var zone = zoneFor(dragX);
+    fencers.style.left = toLeftPct(dragX) + '%';
+    var zone = zoneInfo(dragX);
     label.textContent = zone.text;
     label.classList.toggle('off-end', zone.offEnd);
+    label.style.left = toLeftPct((zone.span[0] + zone.span[1]) / 2) + '%';
+
+    if (zone.offEnd) {
+      highlight.classList.add('hidden');
+    } else {
+      highlight.classList.remove('hidden');
+      highlight.style.left = toLeftPct(zone.span[0]) + '%';
+      highlight.style.width = ((zone.span[1] - zone.span[0]) / FRAME_W * 100) + '%';
+    }
   }
 
   function naturalX(clientX) {
     var rect = stage.getBoundingClientRect();
-    var scale = rect.width / STRIP_W;
-    return (clientX - rect.left) / scale;
+    var scale = rect.width / FRAME_W;
+    return (clientX - rect.left) / scale + FRAME_LEFT;
   }
 
   function clamp(x) {
