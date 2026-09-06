@@ -294,10 +294,11 @@
     }
     .strip-zone-highlight {
       position: absolute;
-      top: 54.146%; height: 40.976%;
+      left: 7.143%; top: 46.341%;
+      width: 85.714%; height: 56.098%;
       background: rgba(64, 140, 255, 0.28);
       pointer-events: none;
-      transition: left 0.05s linear, width 0.05s linear, opacity 0.15s linear;
+      transition: clip-path 0.05s linear, opacity 0.15s linear;
     }
     .strip-zone-highlight.hidden {
       opacity: 0;
@@ -478,12 +479,12 @@
     <div class="section-rule"></div>
     <p class="body-text">Location is assigned based on where the fencers are standing <strong>when the action begins</strong>.</p>
     <table class="faq-table">
-      <tr><th>Zone</th><th>Definition</th></tr>
-      <tr><td>L2M &ndash; Left 2-Meter</td><td>The Fencer-on-the-Left's (FotL) front foot is fully behind the left 2m warning line.</td></tr>
-      <tr><td>LS &ndash; Left Side</td><td>The FotR's back foot is past the center line, and the FotL's front foot is not behind the left 2m line.</td></tr>
-      <tr><td>C &ndash; Center</td><td>Neither fencer has fully crossed the center line.</td></tr>
-      <tr><td>RS &ndash; Right Side</td><td>The FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line.</td></tr>
-      <tr><td>R2M &ndash; Right 2-Meter</td><td>The Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line.</td></tr>
+      <tr><th>Zone</th><th>Symbol</th><th>Definition</th></tr>
+      <tr><td>Left 2-Meter</td><td>L2M</td><td>The Fencer-on-the-Left's (FotL) front foot is fully behind the left 2m warning line.</td></tr>
+      <tr><td>Left Side</td><td>LS</td><td>The FotR's back foot is past the center line, and the FotL's front foot is not behind the left 2m line.</td></tr>
+      <tr><td>Center</td><td>C</td><td>Neither fencer has fully crossed the center line.</td></tr>
+      <tr><td>Right Side</td><td>RS</td><td>The FotL's back foot is past the center line, and the FotR's front foot is not behind the right 2m line.</td></tr>
+      <tr><td>Right 2-Meter</td><td>R2M</td><td>The Fencer-on-the-Right's (FotR) front foot is fully behind the right 2m warning line.</td></tr>
     </table>
 
     <div class="strip-zone-tool">
@@ -600,12 +601,29 @@
 (function () {
   var FRAME_LEFT = -100, FRAME_W = 1400;
   var FRAME_TOP = -95, FRAME_H = 205;
-  var LEFT_END = 30, LEFT_2M = 192.5, CENTER = 599.5, RIGHT_2M = 1005.5, RIGHT_END = 1168;
+  var LEFT_END = 30, LEFT_2M = 192.5, ENGARDE_L = 436.5, CENTER = 599.5, ENGARDE_R = 761.5, RIGHT_2M = 1005.5, RIGHT_END = 1168;
   var FOTL_BACK = 10, FOTL_FRONT = 112, FOTR_FRONT = 221, FOTR_BACK = 323;
   var FENCERS_W = 333;
   var END_GAP = 3;
   var DRAG_MIN = LEFT_END - END_GAP - FOTL_FRONT;
   var DRAG_MAX = RIGHT_END + END_GAP - FOTR_FRONT;
+
+  // Diagram is drawn in perspective (narrower at the top/far edge, wider at the
+  // bottom/floor edge) — measured top/bottom native-x for each divider line, so
+  // the zone shading can be drawn as a matching trapezoid, not a plain rectangle.
+  var DIAGRAM_NATIVE_W = 1200, DIAGRAM_TOP_Y = 16, DIAGRAM_BOT_Y = 100, DIAGRAM_NATIVE_H = 115;
+  var PERSPECTIVE = {
+    30: [40.6, 20.0],
+    192.5: [199.6, 185.6],
+    436.5: [439.0, 433.9],
+    599.5: [599.5, 599.5],
+    761.5: [758.4, 765.0],
+    1005.5: [997.9, 1013.3],
+    1168: [1156.9, 1179.0]
+  };
+  function perspTopBot(x) {
+    return PERSPECTIVE[x] || [x, x];
+  }
 
   var stage = document.getElementById('strip-zone-stage');
   var fencers = document.getElementById('strip-zone-fencers');
@@ -634,7 +652,7 @@
     if (fotRFront > RIGHT_2M) return { text: 'Right 2-Meter', offEnd: false, span: [RIGHT_2M, RIGHT_END] };
     if (fotLBack > CENTER && fotRFront < RIGHT_2M) return { text: 'Right Side', offEnd: false, span: [CENTER, RIGHT_2M] };
     if (fotRBack < CENTER && fotLFront > LEFT_2M) return { text: 'Left Side', offEnd: false, span: [LEFT_2M, CENTER] };
-    return { text: 'Center', offEnd: false, span: [fotLBack, fotRBack] };
+    return { text: 'Center', offEnd: false, span: [ENGARDE_L, ENGARDE_R] };
   }
 
   function render() {
@@ -648,8 +666,16 @@
       highlight.classList.add('hidden');
     } else {
       highlight.classList.remove('hidden');
-      highlight.style.left = toLeftPct(zone.span[0]) + '%';
-      highlight.style.width = ((zone.span[1] - zone.span[0]) / FRAME_W * 100) + '%';
+      var left = perspTopBot(zone.span[0]);
+      var right = perspTopBot(zone.span[1]);
+      var yTopPct = DIAGRAM_TOP_Y / DIAGRAM_NATIVE_H * 100;
+      var yBotPct = DIAGRAM_BOT_Y / DIAGRAM_NATIVE_H * 100;
+      var xPct = function (nativeX) { return nativeX / DIAGRAM_NATIVE_W * 100; };
+      highlight.style.clipPath = 'polygon(' +
+        xPct(left[0]) + '% ' + yTopPct + '%, ' +
+        xPct(right[0]) + '% ' + yTopPct + '%, ' +
+        xPct(right[1]) + '% ' + yBotPct + '%, ' +
+        xPct(left[1]) + '% ' + yBotPct + '%)';
     }
   }
 
