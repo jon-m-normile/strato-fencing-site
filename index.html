@@ -71,7 +71,7 @@
       padding: 9rem 5rem 6rem;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
     }
     .hero-title {
       font-family: 'Barlow Condensed', sans-serif;
@@ -83,16 +83,19 @@
       color: var(--white);
       margin-bottom: 1.2rem;
     }
+    .hero-sub-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
     .hero-sub {
       font-size: 1.1rem;
       font-weight: 300;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 2rem;
-      max-width: 560px;
       line-height: 1.6;
-    }
-    .hero-cta {
-      display: flex; gap: 1rem; flex-wrap: wrap;
+      flex: 1 1 320px;
     }
     .btn-primary {
       font-family: 'Barlow Condensed', sans-serif;
@@ -106,22 +109,9 @@
       text-decoration: none;
       transition: background 0.2s, transform 0.15s;
       display: inline-block;
+      flex-shrink: 0;
     }
     .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
-    .btn-outline {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      padding: 0.9rem 2.2rem;
-      border: 2px solid rgba(255,255,255,0.6);
-      color: var(--white);
-      text-decoration: none;
-      transition: border-color 0.2s, background 0.2s;
-      display: inline-block;
-    }
-    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,0.1); }
 
     /* ── PHOTO BLOCK ── */
     .photo-block {
@@ -373,10 +363,9 @@
 <!-- HERO -->
 <div class="hero">
   <h1 class="hero-title">Strato Fencing Academy</h1>
-  <p class="hero-sub">Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn, NJ.</p>
-  <div class="hero-cta">
+  <div class="hero-sub-row">
+    <p class="hero-sub">Épée and foil fencing instruction from an Olympian, World Champion, and member of the US Fencing Hall of Fame. By appointment only in Millburn, NJ.</p>
     <a class="btn-primary" href="https://calendar.app.google/FZzLGqVo8ZLfsFh5A" target="_blank">Book a Lesson</a>
-    <a class="btn-outline" href="products.html">View Services</a>
   </div>
 </div>
 

@@ -40,3 +40,12 @@ Cards, and Comments. Reuses xenophon.html's nav/footer/section styling.
 Added item #8 to the "How to Use Xenophon" list on xenophon.html linking
 to it ("See here for detailed annotation instructions").
 
+#15 ✅ Move "Book a Lesson" up beside the hero subtitle, remove "View Services"
+Hero subtitle and "Book a Lesson" button now sit side by side on one row
+(subtitle left, button right), instead of the subtitle above a separate
+button row. Removed the "View Services" button entirely (and its now-unused
+.btn-outline/.hero-cta styles). Hero title and subtitle row now stretch to
+the same width (align-items: stretch on .hero) instead of the subtitle
+being capped at 560px. Removing the old button-only row naturally pulls the
+photo/About section up — no extra spacing changes needed.
+
