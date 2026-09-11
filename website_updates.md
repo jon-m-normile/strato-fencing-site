@@ -49,3 +49,12 @@ the same width (align-items: stretch on .hero) instead of the subtitle
 being capped at 560px. Removing the old button-only row naturally pulls the
 photo/About section up — no extra spacing changes needed.
 
+#16 ✅ Add a line break before "By appointment only", move Book a Lesson beside the title
+Added <br> before "By appointment only in Millburn, NJ." in the hero
+subtitle. Moved the "Book a Lesson" button up out of the subtitle row and
+into a new row beside the title (.hero-top), centered both vertically and
+horizontally in the black space to the title's right. Subtitle now sits on
+its own line below, still spanning the same width as the title. Button font
+size doubled to half the title's size (clamp(1.25rem, 3vw, 2.5rem), was
+0.85rem) with larger padding to match.
+
