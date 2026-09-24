@@ -249,7 +249,7 @@
       margin-bottom: 1.5rem;
     }
     .q-helper p + p { margin-top: 0.5rem; }
-    textarea, input.q-input {
+    textarea, input.q-input, select.q-input {
       width: 100%;
       font-family: 'Barlow', sans-serif; font-size: 1.05rem; font-weight: 400;
       color: var(--text);
@@ -258,11 +258,16 @@
       background: var(--white);
     }
     textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
-    textarea:focus, input.q-input:focus { outline: 2px solid var(--accent2); outline-offset: -1px; border-color: var(--accent2); }
+    textarea:focus, input.q-input:focus, select.q-input:focus { outline: 2px solid var(--accent2); outline-offset: -1px; border-color: var(--accent2); }
     input.q-input.num { width: 9rem; }
+    .selects { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+    .selects label { display: block; font-weight: 500; margin-bottom: 0.3rem; }
+    .selects select { width: 12rem; }
+    .checks label { display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; padding: 0.35rem 0; cursor: pointer; }
+    .checks input { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); }
     .unit { margin-left: 0.6rem; color: var(--muted); }
 
-    .matrix { display: grid; grid-template-columns: 6.5rem repeat(5, 1fr); gap: 0.4rem; }
+    .matrix { display: grid; grid-template-columns: 8.5rem repeat(3, 1fr); gap: 0.4rem; }
     .matrix .mh {
       font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
@@ -442,7 +447,7 @@
       <div class="section-rule"></div>
       <ul class="framework-list">
         <li>One question per screen: <span id="screen-count"></span> screens in total</li>
-        <li>Every question is optional; skip anything you don't want to answer</li>
+        <li>Every question is optional; leave blank anything you don't want to answer</li>
         <li>Your answers save automatically as you go, so you can close the page and pick up where you left off in the same browser</li>
         <li>You can review and change any answer before you submit</li>
         <li>We don't ask for your name or email address</li>
@@ -512,11 +517,21 @@
   // Order is deliberate (see PRD Appendix A) — do not reorder or reword.
   var SCREENS = [
     { id: 'A1', type: 'numeric', text: 'How many years have you been fencing?', unit: 'years' },
-    { id: 'A2', type: 'short', text: "What is your primary fencing event (e.g., women's foil or men's épée)?" },
+    { id: 'A2', type: 'selects', text: 'What is your primary fencing event?', fields: [
+      ['gender', 'Gender', ['Men', 'Women']],
+      ['weapon', 'Weapon', ['Foil', 'Épée', 'Sabre']]
+    ] },
+    { id: 'A3', type: 'checks', text: 'At which level do you compete? (Check all that apply.)',
+      options: ['Local', 'Regional', 'National', 'International'] },
+    { id: 'A4', type: 'short', text: 'What is your current FencingTracker strength rating?',
+      helper: ["Leave this blank if you don't have one or don't know it."] },
     { id: 'B1', type: 'long', text: 'What are you thinking about on the en garde line immediately before the bout begins?' },
-    { id: 'B2', type: 'long', text: 'What are you thinking about during the moments when you are "out of distance" from your opponent?' },
-    { id: 'B3', type: 'long', text: 'What are you thinking about when you are "in distance" from your opponent?' },
-    { id: 'B4', type: 'long', text: 'What are you thinking about when you are making a preparation?' },
+    { id: 'B2', type: 'long', text: 'What are you thinking about during the moments when you are "out of distance" from your opponent?',
+      helper: ['"Out of distance" is the distance at which your opponent would need at least two tempos to reach the target and score a touch.'] },
+    { id: 'B3', type: 'long', text: 'What are you thinking about when you are "in distance" from your opponent?',
+      helper: ['"In distance" is the distance at which either you or your opponent can reach the target in one tempo.'] },
+    { id: 'B4', type: 'long', text: 'What are you thinking about when you are making a preparation?',
+      helper: ['A "preparation" is any movement that seeks to put your opponent in a position to be hit with a subsequent action.'] },
     { id: 'B5', type: 'long', text: 'What are you thinking about when you see your opponent make a preparation?' },
     { id: 'B6', type: 'long', text: 'What are you thinking about when you are making an action to score against your opponent?' },
     { id: 'B7', type: 'long', text: 'What are you thinking about when your opponent makes an action to score against you?' },
@@ -537,7 +552,11 @@
     ] },
     { id: 'C11', type: 'matrix',
       text: 'Now consider each of the five score situations above — tied, ahead a little, ahead a lot, behind a little, behind a lot — separately for the beginning, middle, and end of a bout as defined above. For each cell, note anything different from what you said above — or leave it blank if nothing changes.',
-      helper: ["Leave any box blank if your answer doesn't change from what you wrote above."] },
+      helper: [
+        'In a 15-touch bout: beginning = 0–3, middle = 4–12, end = 13–15.',
+        'In a 5-touch bout: beginning = 0–1, middle = 2–4, end = 5.',
+        "Leave any box blank if your answer doesn't change from what you wrote above."
+      ] },
     { id: 'D1', type: 'long', text: 'How do you decide when you need to make a change to what you are doing in a fencing match?' },
     { id: 'D2', type: 'long', text: "How do you implement any change to your tactics within a bout that you've decided to make?" },
     { id: 'E1', type: 'long', text: 'Are you aware of your emotions during a match, and do you seek to manage those emotions in any way?' },
@@ -546,9 +565,10 @@
   ];
   var TOTAL = SCREENS.length;
 
-  var MATRIX_ROWS = [['beginning', 'Beginning'], ['middle', 'Middle'], ['end', 'End']];
-  var MATRIX_COLS = [['tied', 'Tied'], ['ahead_little', 'Ahead a little'], ['ahead_lot', 'Ahead a lot'],
+  // Rows are score situations, columns are bout phases; stored keys are phase_score.
+  var MATRIX_ROWS = [['tied', 'Tied'], ['ahead_little', 'Ahead a little'], ['ahead_lot', 'Ahead a lot'],
                      ['behind_little', 'Behind a little'], ['behind_lot', 'Behind a lot']];
+  var MATRIX_COLS = [['beginning', 'Beginning'], ['middle', 'Middle'], ['end', 'End']];
   var ALLOC_KEYS = [['physical', 'Physical'], ['mental', 'Mental'], ['technical', 'Technical'], ['tactical', 'Tactical']];
 
   // ── Local state (survives reloads in this browser) ──
@@ -702,7 +722,8 @@
   // ── Rendering ──
   function answered(s, v) {
     if (v === undefined || v === null) return false;
-    if (s.type === 'matrix' || s.type === 'alloc') {
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === 'object') {
       return Object.keys(v).some(function (k) { return v[k] !== null && v[k] !== ''; });
     }
     return String(v).trim() !== '';
@@ -729,6 +750,21 @@
       return '<input class="q-input num" id="q-field" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Your answer" value="' + esc(v || '') + '" />' +
         '<span class="unit">' + esc(s.unit) + '</span>';
     }
+    if (s.type === 'selects') {
+      v = v && typeof v === 'object' ? v : {};
+      return '<div class="selects">' + s.fields.map(function (f) {
+        return '<div><label for="s-' + f[0] + '">' + esc(f[1]) + '</label>' +
+          '<select class="q-input" id="s-' + f[0] + '" data-key="' + f[0] + '"><option value="">—</option>' +
+          f[2].map(function (o) { return '<option' + (v[f[0]] === o ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') +
+          '</select></div>';
+      }).join('') + '</div>';
+    }
+    if (s.type === 'checks') {
+      v = Array.isArray(v) ? v : [];
+      return '<div class="checks">' + s.options.map(function (o) {
+        return '<label><input type="checkbox" value="' + esc(o) + '"' + (v.indexOf(o) >= 0 ? ' checked' : '') + ' /> ' + esc(o) + '</label>';
+      }).join('') + '</div>';
+    }
     if (s.type === 'matrix') {
       v = v || {};
       var h = '<div class="matrix"><div class="mh col"></div>';
@@ -736,7 +772,7 @@
       MATRIX_ROWS.forEach(function (r) {
         h += '<div class="mr">' + esc(r[1]) + '</div>';
         MATRIX_COLS.forEach(function (c) {
-          var key = r[0] + '_' + c[0];
+          var key = c[0] + '_' + r[0];
           h += '<div><label class="cell-label" for="m-' + key + '">' + esc(c[1]) + '</label>' +
             '<textarea id="m-' + key + '" data-key="' + key + '" maxlength="5000" aria-label="' + esc(r[1] + ', ' + c[1]) + '">' + esc(v[key] || '') + '</textarea></div>';
         });
@@ -772,7 +808,6 @@
       '<button class="btn" id="nav-back"' + (idx === 0 ? ' disabled' : '') + '>Back</button>' +
       '<span class="spacer"></span>' +
       (fromReview ? '<button class="btn" id="nav-review">Back to Review</button>' : '') +
-      (s.type === 'info' ? '' : '<button class="btn ghost" id="nav-skip">Skip</button>') +
       '<button class="btn primary" id="nav-next">' + (isLast ? 'Review Answers' : 'Next') + '</button>' +
       '</div>';
     document.getElementById('survey-inner').innerHTML = h;
@@ -782,7 +817,6 @@
     var next = isLast ? '#/review' : '#/q/' + (idx + 2);
     document.getElementById('nav-back').onclick = go('#/q/' + idx);
     document.getElementById('nav-next').onclick = go(next);
-    if (!(s.type === 'info')) document.getElementById('nav-skip').onclick = go(next);
     if (fromReview) document.getElementById('nav-review').onclick = function () { location.hash = '#/review/back'; };
 
     bindInputs(s);
@@ -800,6 +834,24 @@
           if (e.key === 'Enter') { e.preventDefault(); document.getElementById('nav-next').click(); }
         });
       }
+    } else if (s.type === 'selects') {
+      document.querySelectorAll('.selects select').forEach(function (sel) {
+        sel.addEventListener('change', function () {
+          var cur = state.answers[s.id];
+          cur = Object.assign({}, cur && typeof cur === 'object' ? cur : {});
+          cur[sel.dataset.key] = sel.value || null;
+          setAnswer(s.id, cur);
+        });
+      });
+    } else if (s.type === 'checks') {
+      var boxes = document.querySelectorAll('.checks input');
+      boxes.forEach(function (b) {
+        b.addEventListener('change', function () {
+          var picked = [];
+          boxes.forEach(function (x) { if (x.checked) picked.push(x.value); });
+          setAnswer(s.id, picked);
+        });
+      });
     } else if (s.type === 'matrix') {
       document.querySelectorAll('.matrix textarea').forEach(function (t) {
         t.addEventListener('input', function () {
@@ -859,11 +911,15 @@
   function answerText(s, v) {
     if (!answered(s, v)) return null;
     if (s.type === 'numeric') return v + ' ' + s.unit;
+    if (s.type === 'checks') return v.join(', ');
+    if (s.type === 'selects' && typeof v === 'object') {
+      return s.fields.map(function (f) { return v[f[0]]; }).filter(Boolean).join(' ');
+    }
     if (s.type === 'matrix') {
       var lines = [];
       MATRIX_ROWS.forEach(function (r) {
         MATRIX_COLS.forEach(function (c) {
-          var t = v[r[0] + '_' + c[0]];
+          var t = v[c[0] + '_' + r[0]];
           if (t && t.trim()) lines.push(r[1] + ' · ' + c[1] + ': ' + t);
         });
       });

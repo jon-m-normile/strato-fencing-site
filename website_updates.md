@@ -70,3 +70,10 @@ answer can be clicked to edit, submit, and a thank-you screen. Answers autosave
 full snapshot is written on reaching/leaving review and on submit. E2 uses four
 % fields each clamped to 0..min(100, 100 - others), with a warning once any is
 filled and the total isn't 100%.
+
+#18 ✅ Aristotle questionnaire feedback round 1 (Xenophon Trello #28)
+A2 is now two dropdowns (Gender, Weapon); added A3 competition level
+(checkboxes) and A4 FencingTracker strength rating; removed Skip buttons;
+definitions added under the out-of-distance, in-distance and preparation
+questions; C11 matrix flipped to 5 score rows x 3 phase columns, with the
+beginning/middle/end definitions repeated on that screen. 28 screens.
