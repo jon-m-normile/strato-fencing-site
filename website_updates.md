@@ -58,3 +58,15 @@ its own line below, still spanning the same width as the title. Button font
 size doubled to half the title's size (clamp(1.25rem, 3vw, 2.5rem), was
 0.85rem) with larger padding to match.
 
+#17 ✅ Add hidden /aristotle questionnaire page (Xenophon Trello #28)
+New aristotle.html (not linked from nav, noindex): landing page styled like
+xenophon.html (hero, overview, what to expect, "Who was Aristotle?" with
+aristotle.jpg in the same namesake layout, Start CTA), then a one-question-per-
+screen questionnaire (26 screens incl. the C10 definitional screen and the C11
+3x5 matrix) with progress bar and Back / Skip / Next, a review screen where any
+answer can be clicked to edit, submit, and a thank-you screen. Answers autosave
+(debounced + on blur/navigation + keepalive on tab close) to the Xenophon API
+(/api/aristotle/*), are cached in localStorage for resume/offline retry, and a
+full snapshot is written on reaching/leaving review and on submit. E2 uses four
+% fields each clamped to 0..min(100, 100 - others), with a warning once any is
+filled and the total isn't 100%.
