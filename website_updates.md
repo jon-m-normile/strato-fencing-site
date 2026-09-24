@@ -86,3 +86,21 @@ supplied text (minor typo fixes); removed the "20 to 30 minutes" line.
 #20 ✅ Aristotle link in top nav (Xenophon Trello #28 feedback)
 Added "Aristotle" after "Xenophon" in the nav on every page (active on
 aristotle.html); removed the noindex meta so the page is public.
+
+#21 ✅ Aristotle community page and accounts (Xenophon Trello #29)
+New aristotle-community.html (noindex): log in / create account (Xenophon
+accounts, public usernames), curated results per question with one comment
+thread each (edit/delete own; admin deletes any), account page (change
+username), and super-user admin (include/edit/delete answers, delete
+responses, accounts table). Thank-you screen invites users to create an
+account and auto-claims their submitted responses. Question definitions and
+styles moved to shared aristotle-questions.js / aristotle.css.
+
+#22 ✅ Aristotle landing and questionnaire tweaks (Xenophon Trello #28 feedback)
+"What follows is a questionnaire…" paragraph moved to the top of What to
+Expect, with a Start button at the bottom of that section; A2 gender options
+now Men's / Women's; FencingTracker in A4 links to fencingtracker.com;
+definition/help text shown as a "Note" margin aside to the right of the
+question (stacked under the question on phones); C11 matrix rows reordered to
+Ahead a lot, Ahead a little, Tied, Behind a little, Behind a lot (prompt text
+matched).

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aristotle Community | Strato Fencing Academy</title>
+  <meta name="description" content="See how other fencers answered the Aristotle questionnaire and discuss each question." />
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="aristotle.css?v=3" />
+  <style>
+    .c-bar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
+      border-bottom: 1px solid var(--light); padding-bottom: 0.8rem; margin-bottom: 2rem;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .c-bar a { color: var(--muted); text-decoration: none; padding: 0.3rem 0; border-bottom: 3px solid transparent; }
+    .c-bar a.active, .c-bar a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .c-bar .who { margin-left: auto; color: var(--muted); font-weight: 400; letter-spacing: 0.05em; text-transform: none; font-family: 'Barlow', sans-serif; }
+
+    .form { max-width: 420px; }
+    .form label { display: block; font-weight: 500; margin: 1rem 0 0.3rem; }
+    .form label .opt { font-weight: 300; color: var(--muted); }
+    .form .hint { font-size: 0.9rem; color: var(--muted); margin-top: 0.3rem; }
+    .msg { margin-top: 1rem; padding: 0.7rem 1rem; border-left: 3px solid var(--accent); background: var(--off); }
+    .msg.error { border-color: var(--error); color: var(--error); background: #fbeeee; }
+    .tabs { display: flex; gap: 0; margin-bottom: 1rem; }
+    .tabs button {
+      flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase; padding: 0.7rem;
+      background: var(--off); color: var(--muted); border: 1px solid var(--light); cursor: pointer;
+    }
+    .tabs button.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
+    .text-btn { background: none; border: none; padding: 0; font: inherit; font-size: 0.9rem; color: var(--accent); text-decoration: underline; cursor: pointer; }
+    .text-btn.danger { color: var(--error); }
+
+    .rq-block { padding: 1.2rem 0; border-bottom: 1px solid var(--light); }
+    .rq-block .rq { font-weight: 500; font-size: 1.1rem; line-height: 1.5; margin-bottom: 0.6rem; }
+    .rq-block .rq .rid { color: var(--accent); margin-right: 0.4rem; }
+    .answers { margin: 0 0 0.8rem 1.2rem; }
+    .answers li { font-weight: 300; line-height: 1.6; margin: 0.35rem 0; white-space: pre-wrap; }
+    .answers ul { margin-left: 1.2rem; list-style: circle; }
+    .no-answers { color: #999; font-style: italic; margin-bottom: 0.8rem; }
+    details.thread summary {
+      cursor: pointer; color: var(--accent); font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.85rem;
+    }
+    .comment { border-left: 3px solid var(--light); padding: 0.4rem 0 0.4rem 0.9rem; margin: 0.8rem 0; }
+    .comment.mine { border-left-color: var(--accent2); }
+    .comment .meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.2rem; }
+    .comment .meta strong { color: var(--text); font-weight: 500; }
+    .comment .body { white-space: pre-wrap; line-height: 1.6; font-weight: 300; }
+    .comment .actions { margin-top: 0.3rem; display: flex; gap: 1rem; }
+    .thread textarea { min-height: 90px; margin-top: 0.6rem; }
+    .thread .btn { margin-top: 0.5rem; }
+
+    .admin-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
+    .admin-tools select { width: auto; }
+    .adm-answer { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.8rem; padding: 0.8rem 0; border-top: 1px dashed var(--light); }
+    .adm-answer input[type=checkbox] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); margin-top: 0.25rem; }
+    .adm-answer .txt { white-space: pre-wrap; font-weight: 300; line-height: 1.6; }
+    .adm-answer .meta { grid-column: 2; font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
+    .adm-answer .editor { grid-column: 2; }
+    .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
+    .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
+    .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
+    .tag { font-size: 0.75rem; padding: 0.05rem 0.4rem; background: var(--off); border: 1px solid var(--light); }
+    .tag.included { background: #e7eefb; border-color: var(--accent2); color: var(--accent); }
+    .table-wrap { overflow-x: auto; }
+    table.accounts { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+    table.accounts th, table.accounts td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--light); white-space: nowrap; }
+    table.accounts th { font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.8rem; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html"><img src="strato-logo.svg" alt="Strato Fencing Academy" class="nav-logo-img"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Services</a></li>
+    <li><a href="videos.html">Videos</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="blogs.html">Blogs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="xenophon.html">Xenophon</a></li>
+    <li><a href="aristotle.html" class="active">Aristotle</a></li>
+  </ul>
+</nav>
+
+<section id="survey">
+  <div class="survey-inner">
+    <div class="section-label">Aristotle Community</div>
+    <div id="c-bar"></div>
+    <div id="view"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Strato <span>Fencing</span> Academy</div>
+    <div class="footer-schola">Schola Gladii Veritatis</div>
+  </div>
+  <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
+</footer>
+
+<script src="aristotle-questions.js?v=3"></script>
+<script>
+(function () {
+  'use strict';
+
+  var A = window.Aristotle;
+  var esc = A.esc;
+  var QUESTIONS = A.SCREENS.filter(function (s) { return s.type !== 'info'; });
+  var BY_ID = {};
+  QUESTIONS.forEach(function (s) { BY_ID[s.id] = s; });
+
+  var me = null;          // { username, has_access, is_admin }
+  var results = null;     // { answers: {qid: [values]}, comments: {qid: [...]}, is_admin }
+  var admin = null;       // { sessions: [...] }
+  var adminFilter = 'submitted';
+  var openThreads = {};
+
+  function getToken() { try { return localStorage.getItem(A.TOKEN_KEY); } catch (e) { return null; } }
+  function setToken(t) {
+    try { if (t) localStorage.setItem(A.TOKEN_KEY, t); else localStorage.removeItem(A.TOKEN_KEY); } catch (e) { /* storage unavailable */ }
+  }
+
+  function request(base, method, path, body) {
+    var headers = body ? { 'Content-Type': 'application/json' } : {};
+    var token = getToken();
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return fetch(base + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (data) {
+          if (r.ok) return data;
+          if (r.status === 401 && token) { signOut('Your session has expired. Please sign in again.'); }
+          var err = new Error((data && typeof data.detail === 'string') ? data.detail : 'Something went wrong (HTTP ' + r.status + ')');
+          err.status = r.status;
+          throw err;
+        });
+      }, function () {
+        throw new Error("We couldn't reach the server. Please try again in a moment.");
+      });
+  }
+  function api(method, path, body) { return request(A.API, method, path, body); }
+  function auth(method, path, body) { return request(A.AUTH_API, method, path, body); }
+
+  function view(html) { document.getElementById('view').innerHTML = html; }
+  function msgHtml(id) { return '<div class="msg" id="' + id + '" hidden></div>'; }
+  function showMsg(id, text, isError) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.hidden = !text;
+    el.textContent = text || '';
+    el.classList.toggle('error', !!isError);
+  }
+  function fmtTime(iso) {
+    return new Date(iso).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+  function questionnaireHref() { return 'aristotle.html' + esc(location.search); }
+
+  function renderBar(active) {
+    var bar = document.getElementById('c-bar');
+    if (!me) { bar.innerHTML = ''; return; }
+    var links = [['results', 'Answers & Discussion'], ['account', 'Account']];
+    if (me.is_admin) links.push(['admin', 'Admin']);
+    bar.innerHTML = '<div class="c-bar">' + links.map(function (l) {
+      return '<a href="#/' + l[0] + '"' + (active === l[0] ? ' class="active"' : '') + '>' + l[1] + '</a>';
+    }).join('') + '<span class="who">Signed in as <strong>' + esc(me.username) + '</strong></span></div>';
+  }
+
+  // ── Sign in / create account ──
+  function renderLogin(mode, notice) {
+    renderBar(null);
+    var reg = mode === 'register';
+    view(
+      '<h2 class="section-title">' + (reg ? 'Create an Account' : 'Sign In') + '</h2><div class="section-rule"></div>' +
+      '<p class="body-text">Once you have taken the questionnaire, an account lets you read a curated selection of other fencers\' answers and discuss each question. ' +
+      'Other participants only ever see your username. Already have a Xenophon account? Sign in with it.</p>' +
+      '<div class="form">' +
+      '<div class="tabs"><button id="tab-login" class="' + (reg ? '' : 'active') + '">Sign In</button><button id="tab-register" class="' + (reg ? 'active' : '') + '">Create Account</button></div>' +
+      '<form id="auth-form" novalidate>' +
+      (reg ? '<label for="f-username">Username</label><input class="q-input" id="f-username" autocomplete="username" maxlength="30" required />' +
+             '<div class="hint">3–30 letters, numbers, dots, dashes or underscores. This is the only name other fencers see.</div>' : '') +
+      '<label for="f-email">Email</label><input class="q-input" id="f-email" type="email" autocomplete="email" required />' +
+      '<label for="f-password">Password</label><input class="q-input" id="f-password" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" required />' +
+      (reg ? '<label for="f-first">First name <span class="opt">(optional, never shown publicly)</span></label><input class="q-input" id="f-first" autocomplete="given-name" />' +
+             '<label for="f-last">Last name <span class="opt">(optional, never shown publicly)</span></label><input class="q-input" id="f-last" autocomplete="family-name" />' : '') +
+      '<div class="q-nav"><button class="btn primary" type="submit" id="auth-submit">' + (reg ? 'Create Account' : 'Sign In') + '</button>' +
+      (reg ? '' : '<button class="text-btn" type="button" id="forgot">Forgot password?</button>') + '</div>' +
+      '</form>' + msgHtml('auth-msg') + '</div>'
+    );
+    if (notice) showMsg('auth-msg', notice, false);
+    document.getElementById('tab-login').onclick = function () { renderLogin('login'); };
+    document.getElementById('tab-register').onclick = function () { renderLogin('register'); };
+    var forgot = document.getElementById('forgot');
+    if (forgot) forgot.onclick = function () {
+      var email = document.getElementById('f-email').value.trim();
+      if (!email) { showMsg('auth-msg', 'Enter your email address above, then click "Forgot password?" again.', true); return; }
+      forgot.disabled = true;
+      auth('POST', '/forgot-password', { email: email }).then(function () {
+        showMsg('auth-msg', 'If that email has an account, a password reset link is on its way. The link opens the Xenophon app, which shares this account.', false);
+      }).catch(function (err) { showMsg('auth-msg', err.message, true); })
+        .then(function () { forgot.disabled = false; });
+    };
+    document.getElementById('auth-form').onsubmit = function (e) {
+      e.preventDefault();
+      var btn = document.getElementById('auth-submit');
+      var body = { email: document.getElementById('f-email').value.trim(), password: document.getElementById('f-password').value };
+      if (!body.email || !body.password) { showMsg('auth-msg', 'Please enter your email and password.', true); return; }
+      if (reg) {
+        body.username = document.getElementById('f-username').value.trim();
+        body.first_name = document.getElementById('f-first').value.trim();
+        body.last_name = document.getElementById('f-last').value.trim();
+        if (!/^[A-Za-z0-9_.-]{3,30}$/.test(body.username)) { showMsg('auth-msg', 'Username must be 3–30 letters, numbers, dots, dashes or underscores.', true); return; }
+        if (body.password.length < 8) { showMsg('auth-msg', 'Please choose a password of at least 8 characters.', true); return; }
+      }
+      btn.disabled = true;
+      showMsg('auth-msg', '');
+      auth('POST', reg ? '/register' : '/login', body).then(function (res) {
+        setToken(res.access_token);
+        return afterSignIn(true);
+      }).catch(function (err) {
+        btn.disabled = false;
+        showMsg('auth-msg', err.message, true);
+      });
+    };
+  }
+
+  // Link any questionnaires submitted in this browser, then load the account.
+  function afterSignIn(fromLogin) {
+    var ids = A.submittedIds();
+    var claim = ids.length ? api('POST', '/claim', { session_ids: ids }).catch(function () {}) : Promise.resolve();
+    return claim.then(function () { return api('GET', '/me'); }).then(function (m) {
+      me = m;
+      results = null;
+      if (!fromLogin || location.hash === '#/results') route(); else location.hash = '#/results';
+    });
+  }
+
+  function signOut(notice) {
+    setToken(null);
+    me = null; results = null; admin = null;
+    location.hash = '#/login';
+    renderLogin('login', notice);
+  }
+
+  // ── Curated answers + discussion ──
+  function answerItems(s, v) {
+    if (s.type === 'matrix') {
+      var lines = A.answerText(s, v).split('\n');
+      return '<li>' + (lines.length > 1 ? '<ul>' + lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>' : esc(lines[0])) + '</li>';
+    }
+    return '<li>' + esc(A.answerText(s, v)) + '</li>';
+  }
+
+  function threadHtml(qid) {
+    var list = (results.comments[qid] || []);
+    var h = '<details class="thread" data-qid="' + qid + '"' + (openThreads[qid] ? ' open' : '') + '><summary>Discussion (' + list.length + ')</summary>';
+    list.forEach(function (c) {
+      h += '<div class="comment' + (c.mine ? ' mine' : '') + '" data-cid="' + c.comment_id + '">' +
+        '<div class="meta"><strong>' + esc(c.username || 'unknown') + '</strong> · ' + esc(fmtTime(c.created_at)) + (c.updated_at ? ' · edited' : '') + '</div>' +
+        '<div class="body">' + esc(c.text) + '</div>';
+      if (c.mine || me.is_admin) {
+        h += '<div class="actions">' + (c.mine ? '<button class="text-btn" data-act="edit">Edit</button>' : '') +
+          '<button class="text-btn danger" data-act="delete">Delete</button></div>';
+      }
+      h += '</div>';
+    });
+    h += '<textarea maxlength="5000" placeholder="Add to the discussion…" aria-label="Add a comment"></textarea>' +
+      '<button class="btn primary" data-act="post">Post Comment</button>' + msgHtml('msg-' + qid) + '</details>';
+    return h;
+  }
+
+  function renderResults() {
+    renderBar('results');
+    if (!me.has_access) {
+      view('<h2 class="section-title">Take the Questionnaire First</h2><div class="section-rule"></div>' +
+        '<p class="body-text">To keep everyone\'s answers independent, other fencers\' answers are only shown once you have submitted the questionnaire yourself.</p>' +
+        '<p class="body-text">If you have already taken it in another browser or on another device, sign in there once and it will be linked to this account automatically.</p>' +
+        '<div class="q-nav"><a class="btn primary" style="text-decoration:none" href="' + questionnaireHref() + '">Take the Questionnaire</a></div>');
+      return;
+    }
+    if (!results) {
+      view('<p class="body-text">Loading…</p>');
+      api('GET', '/results').then(function (r) { results = r; renderResults(); })
+        .catch(function (err) { view('<div class="msg error">' + esc(err.message) + '</div>'); });
+      return;
+    }
+    var h = '<h2 class="section-title">How Other Fencers Answered</h2><div class="section-rule"></div>' +
+      '<p class="body-text">A curated selection of answers from participating fencers, with a discussion thread for each question. Answers are shown anonymously.</p>';
+    var cur = null;
+    QUESTIONS.forEach(function (s) {
+      var sec = s.id.charAt(0);
+      if (sec !== cur) {
+        if (cur) h += '</div>';
+        h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + '</h3>';
+        cur = sec;
+      }
+      var vals = (results.answers[s.id] || []).filter(function (v) { return A.answered(s, v); });
+      h += '<div class="rq-block" id="q-' + s.id + '"><div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>' +
+        (vals.length ? '<ul class="answers">' + vals.map(function (v) { return answerItems(s, v); }).join('') + '</ul>'
+                     : '<div class="no-answers">No answers selected yet.</div>') +
+        '<div class="thread-slot">' + threadHtml(s.id) + '</div></div>';
+    });
+    view(h + '</div>');
+    QUESTIONS.forEach(function (s) { bindThread(s.id); });
+  }
+
+  function refreshThread(qid) {
+    var slot = document.querySelector('#q-' + qid + ' .thread-slot');
+    slot.innerHTML = threadHtml(qid);
+    bindThread(qid);
+  }
+
+  function reloadThread(qid) {
+    return api('GET', '/results').then(function (r) { results = r; refreshThread(qid); });
+  }
+
+  function bindThread(qid) {
+    var d = document.querySelector('#q-' + qid + ' details.thread');
+    d.addEventListener('toggle', function () { openThreads[qid] = d.open; });
+    d.querySelector('[data-act=post]').onclick = function () {
+      var ta = d.querySelector(':scope > textarea');
+      var text = ta.value.trim();
+      if (!text) return;
+      this.disabled = true;
+      api('POST', '/comments', { question_id: qid, text: text }).then(function () { return reloadThread(qid); })
+        .catch(function (err) { this.disabled = false; showMsg('msg-' + qid, err.message, true); }.bind(this));
+    };
+    d.querySelectorAll('.comment').forEach(function (el) {
+      var cid = el.dataset.cid;
+      var edit = el.querySelector('[data-act=edit]');
+      var del = el.querySelector('[data-act=delete]');
+      if (edit) edit.onclick = function () {
+        var c = results.comments[qid].filter(function (x) { return String(x.comment_id) === cid; })[0];
+        el.querySelector('.body').innerHTML = '<textarea maxlength="5000">' + esc(c.text) + '</textarea>';
+        el.querySelector('.actions').innerHTML = '<button class="btn primary" data-act="save">Save</button><button class="btn ghost" data-act="cancel">Cancel</button>';
+        el.querySelector('[data-act=cancel]').onclick = function () { refreshThread(qid); };
+        el.querySelector('[data-act=save]').onclick = function () {
+          var text = el.querySelector('textarea').value.trim();
+          if (!text) return;
+          api('PUT', '/comments/' + cid, { text: text }).then(function () { return reloadThread(qid); })
+            .catch(function (err) { showMsg('msg-' + qid, err.message, true); });
+        };
+      };
+      if (del) confirmClick(del, 'Confirm delete?', function () {
+        api('DELETE', '/comments/' + cid).then(function () { return reloadThread(qid); })
+          .catch(function (err) { showMsg('msg-' + qid, err.message, true); });
+      });
+    });
+  }
+
+  // Two-step button instead of a browser confirm dialog.
+  function confirmClick(btn, prompt, action) {
+    var label = btn.textContent, timer = null;
+    btn.onclick = function () {
+      if (btn.dataset.armed) { clearTimeout(timer); btn.disabled = true; action(); return; }
+      btn.dataset.armed = '1';
+      btn.textContent = prompt;
+      timer = setTimeout(function () { delete btn.dataset.armed; btn.textContent = label; }, 4000);
+    };
+  }
+
+  // ── Account ──
+  function renderAccount() {
+    renderBar('account');
+    view('<h2 class="section-title">Your Account</h2><div class="section-rule"></div>' +
+      '<div class="form"><form id="acct-form">' +
+      '<label for="f-username">Username</label><input class="q-input" id="f-username" maxlength="30" value="' + esc(me.username || '') + '" />' +
+      '<div class="hint">Shown on your comments. 3–30 letters, numbers, dots, dashes or underscores. Changing it also changes it in the Xenophon app.</div>' +
+      '<div class="q-nav"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="sign-out">Sign Out</button></div>' +
+      '</form>' + msgHtml('acct-msg') + '</div>');
+    document.getElementById('sign-out').onclick = function () { signOut(); };
+    document.getElementById('acct-form').onsubmit = function (e) {
+      e.preventDefault();
+      var username = document.getElementById('f-username').value.trim();
+      api('PUT', '/me', { username: username }).then(function (r) {
+        me.username = r.username;
+        results = null;  // comment author names changed
+        renderBar('account');
+        showMsg('acct-msg', 'Username saved.', false);
+      }).catch(function (err) { showMsg('acct-msg', err.message, true); });
+    };
+  }
+
+  // ── Admin (super user) ──
+  function renderAdmin(tab) {
+    renderBar('admin');
+    if (!me.is_admin) { location.hash = '#/results'; return; }
+    tab = tab === 'accounts' ? 'accounts' : 'answers';
+    var h = '<h2 class="section-title">Admin</h2><div class="section-rule"></div>' +
+      '<div class="tabs" style="max-width:420px"><button id="tab-answers" class="' + (tab === 'answers' ? 'active' : '') + '">Answers</button>' +
+      '<button id="tab-accounts" class="' + (tab === 'accounts' ? 'active' : '') + '">Accounts</button></div><div id="admin-body"><p class="body-text">Loading…</p></div>';
+    view(h);
+    document.getElementById('tab-answers').onclick = function () { location.hash = '#/admin/answers'; };
+    document.getElementById('tab-accounts').onclick = function () { location.hash = '#/admin/accounts'; };
+    if (tab === 'accounts') {
+      api('GET', '/admin/accounts').then(renderAccounts).catch(adminError);
+    } else {
+      api('GET', '/admin/answers').then(function (r) { admin = r; renderAdminAnswers(); }).catch(adminError);
+    }
+  }
+  function adminError(err) { document.getElementById('admin-body').innerHTML = '<div class="msg error">' + esc(err.message) + '</div>'; }
+
+  function renderAccounts(r) {
+    var rows = r.accounts.map(function (a) {
+      return '<tr><td>' + esc(a.username || '') + '</td><td>' + esc([a.first_name, a.last_name].filter(Boolean).join(' ')) + '</td><td>' + esc(a.email) + '</td>' +
+        '<td>' + esc(fmtTime(a.joined_at)) + '</td><td>' + esc(fmtTime(a.last_seen_at)) + '</td>' +
+        '<td>' + (a.has_access ? 'Yes' : 'No') + '</td><td>' + a.submitted_count + '</td><td>' + a.comment_count + '</td></tr>';
+    }).join('');
+    document.getElementById('admin-body').innerHTML =
+      '<p class="body-text">' + r.accounts.length + ' account' + (r.accounts.length === 1 ? '' : 's') + ' have signed in to Aristotle.</p>' +
+      '<div class="table-wrap"><table class="accounts"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Joined</th><th>Last seen</th><th>Access</th><th>Submitted</th><th>Comments</th></tr></thead><tbody>' +
+      rows + '</tbody></table></div>';
+  }
+
+  function renderAdminAnswers() {
+    var sessions = admin.sessions.filter(function (s) {
+      return adminFilter === 'all' || (adminFilter === 'submitted') === s.submitted;
+    });
+    var byQ = {};
+    var sessionOf = {};
+    sessions.forEach(function (s) {
+      s.answers.forEach(function (a) {
+        sessionOf[a.answer_id] = s;
+        (byQ[a.question_id] = byQ[a.question_id] || []).push(a);
+      });
+    });
+    var nIncluded = 0;
+    Object.keys(byQ).forEach(function (q) { byQ[q].forEach(function (a) { if (a.included) nIncluded++; }); });
+    var h = '<div class="admin-tools"><label>Show <select class="q-input" id="adm-filter">' +
+      [['submitted', 'Submitted responses'], ['abandoned', 'Unsubmitted responses'], ['all', 'All responses']].map(function (o) {
+        return '<option value="' + o[0] + '"' + (adminFilter === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+      }).join('') + '</select></label><span>' + sessions.length + ' responses · ' + nIncluded + ' answers included</span></div>' +
+      msgHtml('adm-msg');
+    var cur = null;
+    QUESTIONS.forEach(function (s) {
+      var sec = s.id.charAt(0);
+      if (sec !== cur) {
+        if (cur) h += '</div>';
+        h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + '</h3>';
+        cur = sec;
+      }
+      var list = (byQ[s.id] || []).filter(function (a) { return A.answered(s, a.answer_value); });
+      h += '<div class="rq-block"><div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>';
+      if (!list.length) h += '<div class="no-answers">No answers.</div>';
+      list.forEach(function (a) {
+        var sess = sessionOf[a.answer_id];
+        h += '<div class="adm-answer" data-aid="' + a.answer_id + '" data-qid="' + s.id + '">' +
+          '<input type="checkbox" title="Include in curated results"' + (a.included ? ' checked' : '') + ' aria-label="Include this answer" />' +
+          '<div class="txt">' + esc(A.answerText(s, a.answer_value)) + '</div>' +
+          '<div class="meta"><span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + ' · ' +
+            esc(fmtTime(sess.submitted_at || sess.updated_at)) + '</span>' +
+            (a.edited_at ? '<span class="tag">edited</span>' : '') +
+            '<button class="text-btn" data-act="edit">Edit</button>' +
+            '<button class="text-btn danger" data-act="delete">Delete answer</button>' +
+            '<button class="text-btn danger" data-act="delete-session">Delete whole response</button></div></div>';
+      });
+      h += '</div>';
+    });
+    document.getElementById('admin-body').innerHTML = h + '</div>';
+
+    document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
+    document.querySelectorAll('.adm-answer').forEach(function (el) {
+      var aid = el.dataset.aid;
+      var s = BY_ID[el.dataset.qid];
+      var sess = sessionOf[aid];
+      var ans = sess.answers.filter(function (x) { return x.answer_id === aid; })[0];
+      el.querySelector('input[type=checkbox]').onchange = function () {
+        var cb = this;
+        api('PUT', '/admin/answers/' + aid, { included: cb.checked }).then(function () { ans.included = cb.checked; })
+          .catch(function (err) { cb.checked = !cb.checked; showMsg('adm-msg', err.message, true); });
+      };
+      el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, s, ans); };
+      confirmClick(el.querySelector('[data-act=delete]'), 'Confirm delete?', function () {
+        api('DELETE', '/admin/answers/' + aid).then(function () {
+          sess.answers = sess.answers.filter(function (x) { return x.answer_id !== aid; });
+          renderAdminAnswers();
+        }).catch(function (err) { showMsg('adm-msg', err.message, true); });
+      });
+      confirmClick(el.querySelector('[data-act=delete-session]'), 'Delete all ' + sess.answers.length + ' answers?', function () {
+        api('DELETE', '/admin/sessions/' + sess.id).then(function () {
+          admin.sessions = admin.sessions.filter(function (x) { return x.id !== sess.id; });
+          renderAdminAnswers();
+        }).catch(function (err) { showMsg('adm-msg', err.message, true); });
+      });
+    });
+  }
+
+  // Inline editor using the same input types as the questionnaire.
+  function openEditor(el, s, ans) {
+    var v = ans.answer_value;
+    var h = '<div class="editor">';
+    if (s.type === 'long' || s.type === 'short' || s.type === 'numeric') {
+      h += '<textarea data-k="">' + esc(v === null || v === undefined ? '' : v) + '</textarea>';
+    } else if (s.type === 'selects') {
+      v = v && typeof v === 'object' ? v : {};
+      h += '<div class="grid">' + s.fields.map(function (f) {
+        return '<div><label>' + esc(f[1]) + '</label><select class="q-input" data-k="' + f[0] + '"><option value="">—</option>' +
+          f[2].map(function (o) { return '<option' + (v[f[0]] === o ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select></div>';
+      }).join('') + '</div>';
+    } else if (s.type === 'checks') {
+      v = Array.isArray(v) ? v : [];
+      h += '<div class="checks">' + s.options.map(function (o) {
+        return '<label><input type="checkbox" value="' + esc(o) + '"' + (v.indexOf(o) >= 0 ? ' checked' : '') + ' /> ' + esc(o) + '</label>';
+      }).join('') + '</div>';
+    } else if (s.type === 'matrix') {
+      v = v || {};
+      h += '<div class="grid">';
+      A.MATRIX_ROWS.forEach(function (r) {
+        A.MATRIX_COLS.forEach(function (c) {
+          var key = c[0] + '_' + r[0];
+          h += '<div><label>' + esc(r[1] + ' · ' + c[1]) + '</label><textarea data-k="' + key + '">' + esc(v[key] || '') + '</textarea></div>';
+        });
+      });
+      h += '</div>';
+    } else if (s.type === 'alloc') {
+      v = v || {};
+      h += '<div class="grid">' + A.ALLOC_KEYS.map(function (k) {
+        var x = v[k[0]];
+        return '<div><label>' + esc(k[1]) + ' %</label><input class="q-input" type="number" min="0" max="100" data-k="' + k[0] + '" value="' + (typeof x === 'number' ? x : '') + '" /></div>';
+      }).join('') + '</div>';
+    }
+    h += '<div class="q-nav" style="margin-top:0.8rem;padding-top:0.8rem"><button class="btn primary" data-act="save">Save</button><button class="btn ghost" data-act="cancel">Cancel</button></div></div>';
+    var old = el.querySelector('.editor');
+    if (old) old.remove();
+    el.insertAdjacentHTML('beforeend', h);
+    var ed = el.querySelector('.editor');
+    ed.querySelector('[data-act=cancel]').onclick = function () { ed.remove(); };
+    ed.querySelector('[data-act=save]').onclick = function () {
+      var value = readEditor(ed, s);
+      api('PUT', '/admin/answers/' + ans.answer_id, { answer_value: value, set_value: true }).then(function () {
+        ans.answer_value = value;
+        ans.edited_at = new Date().toISOString();
+        renderAdminAnswers();
+      }).catch(function (err) { showMsg('adm-msg', err.message, true); });
+    };
+  }
+
+  function readEditor(ed, s) {
+    if (s.type === 'long' || s.type === 'short' || s.type === 'numeric') {
+      var t = ed.querySelector('textarea').value;
+      return t.trim() ? t : null;
+    }
+    if (s.type === 'checks') {
+      return [].slice.call(ed.querySelectorAll('input[type=checkbox]:checked')).map(function (c) { return c.value; });
+    }
+    var out = {};
+    ed.querySelectorAll('[data-k]').forEach(function (inp) {
+      var val = inp.value;
+      if (s.type === 'alloc') out[inp.dataset.k] = val === '' ? null : Number(val);
+      else if (s.type === 'selects') out[inp.dataset.k] = val || null;
+      else if (val.trim()) out[inp.dataset.k] = val;
+    });
+    return out;
+  }
+
+  // ── Routing: #/login, #/register, #/results, #/account, #/admin[/answers|/accounts] ──
+  function route() {
+    var parts = location.hash.replace(/^#\/?/, '').split('/');
+    var page = parts[0];
+    if (!getToken()) {
+      if (page !== 'register') page = 'login';
+      renderLogin(page);
+      return;
+    }
+    if (!me) {
+      view('<p class="body-text">Loading…</p>');
+      afterSignIn().catch(function (err) {
+        if (err.status !== 401) view('<div class="msg error">' + esc(err.message) + '</div>');
+      });
+      return;
+    }
+    if (page === 'account') renderAccount();
+    else if (page === 'admin') renderAdmin(parts[1]);
+    else { results = null; renderResults(); }  // always fresh: admin curation may have changed
+    window.scrollTo(0, 0);
+  }
+
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+
+</body>
+</html>
