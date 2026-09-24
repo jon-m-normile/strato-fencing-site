@@ -82,3 +82,7 @@ beginning/middle/end definitions repeated on that screen. 28 screens.
 Hero title now "The Aristotle Fencing Psychology Project" (font size reduced to
 fit); Overview, What to Expect and Who was Aristotle? rewritten with the
 supplied text (minor typo fixes); removed the "20 to 30 minutes" line.
+
+#20 ✅ Aristotle link in top nav (Xenophon Trello #28 feedback)
+Added "Aristotle" after "Xenophon" in the nav on every page (active on
+aristotle.html); removed the noindex meta so the page is public.
