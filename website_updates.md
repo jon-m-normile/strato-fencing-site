@@ -104,3 +104,7 @@ definition/help text shown as a "Note" margin aside to the right of the
 question (stacked under the question on phones); C11 matrix rows reordered to
 Ahead a lot, Ahead a little, Tied, Behind a little, Behind a lot (prompt text
 matched).
+
+#23 ✅ Aristotle What to Expect intro reworded (Xenophon Trello #28 feedback)
+"What follows is a questionnaire…" paragraph updated to the supplied text
+("…for a variety of different fencing situations…"), typo "ffor" fixed.
