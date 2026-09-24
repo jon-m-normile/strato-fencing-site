@@ -138,3 +138,6 @@ inputs on phones.
 Phys / Ment / Tech / Tact labels sit just outside each wedge at its
 mid-angle and glide to the new position as values change (hidden while a
 value is 0). More space (4rem) between the inputs and the pie.
+
+#31 ✅ Aristotle E2 reworded (Xenophon Trello #28 feedback)
+"…allocate importance between the physical…" → "…allocate the importance of the physical…".
