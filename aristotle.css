@@ -296,10 +296,16 @@ input.q-input.num { width: 9rem; }
 .matrix textarea { min-height: 110px; font-size: 0.95rem; padding: 0.5rem; }
 .matrix .cell-label { display: none; }
 
-.alloc { display: grid; grid-template-columns: repeat(2, minmax(0, 14rem)); gap: 1rem 2rem; }
+.alloc { display: grid; grid-template-columns: repeat(2, minmax(0, 12rem)); gap: 1rem 2rem; }
 .alloc label { display: block; font-weight: 500; margin-bottom: 0.3rem; }
-.alloc-wrap { display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap; }
-.alloc-pie { width: 190px; height: 190px; flex: 0 0 auto; transform: rotate(-90deg); }
+.alloc-wrap { display: flex; align-items: center; gap: 4rem; flex-wrap: wrap; }
+.alloc-pie { width: 250px; height: auto; flex: 0 0 auto; overflow: visible; }
+.pie-label {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.04em; fill: var(--text);
+  opacity: 0; transition: transform 0.35s ease, opacity 0.2s ease;
+}
+.pie-label.shown { opacity: 1; }
 .pie-empty { fill: var(--off); stroke: var(--light); stroke-width: 1; }
 .pie-slice {
   fill: none; stroke-width: 50;

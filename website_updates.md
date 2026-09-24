@@ -133,3 +133,8 @@ The allocation question shows a pie that starts empty and fills with a
 colored slice per quality as percentages are entered (unallocated share
 stays empty); input labels carry matching color swatches. Stacks under the
 inputs on phones.
+
+#30 ✅ Aristotle E2 pie labels (Xenophon Trello #28 feedback)
+Phys / Ment / Tech / Tact labels sit just outside each wedge at its
+mid-angle and glide to the new position as values change (hidden while a
+value is 0). More space (4rem) between the inputs and the pie.
