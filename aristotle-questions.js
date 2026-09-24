@@ -37,7 +37,7 @@
     { id: 'B6', type: 'long', text: 'What are you thinking about when you are making an action to score against your opponent?' },
     { id: 'B7', type: 'long', text: 'What are you thinking about when your opponent makes an action to score against you?' },
     { id: 'B8', type: 'long', text: 'What are you thinking about in the break between periods?' },
-    { id: 'C1', type: 'long', text: 'How much does the previous touch scored affect your thinking on the current touch?' },
+    { id: 'C1', type: 'long', text: 'How much does the previous touch affect your thinking on the current touch?' },
     { id: 'C2', type: 'long', text: 'How much does the first touch of the bout affect your thinking on later touches?' },
     { id: 'C3', type: 'numeric', text: 'In your own fencing, what point deficit feels like "losing by a lot"?', unit: 'touches' },
     { id: 'C4', type: 'long', text: "How does your thinking change when you're losing by that much?" },

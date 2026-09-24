@@ -117,3 +117,6 @@ Bust image in "Who was Aristotle?" links to en.wikipedia.org/wiki/Aristotle (new
 
 #26 ✅ Aristotle B2 "out of distance" note reworded (Xenophon Trello #28 feedback)
 "…at which your opponent would need…" → "…at which you or your opponent would need…".
+
+#27 ✅ Aristotle C1 reworded (Xenophon Trello #28 feedback)
+"How much does the previous touch scored affect…" → "How much does the previous touch affect…".
