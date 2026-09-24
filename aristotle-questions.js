@@ -28,7 +28,7 @@
       helper: ["Leave this blank if you don't have one or don't know it."] },
     { id: 'B1', type: 'long', text: 'What are you thinking about on the en garde line immediately before the bout begins?' },
     { id: 'B2', type: 'long', text: 'What are you thinking about during the moments when you are "out of distance" from your opponent?',
-      helper: ['"Out of distance" is the distance at which your opponent would need at least two tempos to reach the target and score a touch.'] },
+      helper: ['"Out of distance" is the distance at which you or your opponent would need at least two tempos to reach the target and score a touch.'] },
     { id: 'B3', type: 'long', text: 'What are you thinking about when you are "in distance" from your opponent?',
       helper: ['"In distance" is the distance at which either you or your opponent can reach the target in one tempo.'] },
     { id: 'B4', type: 'long', text: 'What are you thinking about when you are making a preparation?',

@@ -114,3 +114,6 @@ matched).
 
 #25 ✅ Aristotle portrait links to Wikipedia (Xenophon Trello #28 feedback)
 Bust image in "Who was Aristotle?" links to en.wikipedia.org/wiki/Aristotle (new tab).
+
+#26 ✅ Aristotle B2 "out of distance" note reworded (Xenophon Trello #28 feedback)
+"…at which your opponent would need…" → "…at which you or your opponent would need…".
