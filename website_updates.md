@@ -77,3 +77,8 @@ A2 is now two dropdowns (Gender, Weapon); added A3 competition level
 definitions added under the out-of-distance, in-distance and preparation
 questions; C11 matrix flipped to 5 score rows x 3 phase columns, with the
 beginning/middle/end definitions repeated on that screen. 28 screens.
+
+#19 ✅ Aristotle landing copy (Xenophon Trello #28 feedback)
+Hero title now "The Aristotle Fencing Psychology Project" (font size reduced to
+fit); Overview, What to Expect and Who was Aristotle? rewritten with the
+supplied text (minor typo fixes); removed the "20 to 30 minutes" line.
