@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=3" />
+  <link rel="stylesheet" href="aristotle.css?v=5" />
 </head>
 <body>
 
@@ -123,7 +123,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=5"></script>
+<script src="aristotle-questions.js?v=6"></script>
 <script>
 (function () {
   'use strict';
@@ -147,7 +147,13 @@
   var prevRoute = null;
 
   function loadState() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; }
+    var st;
+    try { st = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; }
+    if (st && st.answers && st.answers.C11) {  // site #28: matrix renumbered C11 → C10
+      st.answers.C10 = st.answers.C11;
+      delete st.answers.C11;
+    }
+    return st;
   }
   function persistLocal() {
     try {
@@ -284,9 +290,6 @@
       '<div class="progress-bar"><div class="progress-fill" style="width:' + ((idx + 1) / TOTAL * 100) + '%"></div></div>';
   }
 
-  function helperHtml(lines) {
-    return lines ? '<div class="q-helper">' + lines.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</div>' : '';
-  }
 
   function inputHtml(s, v) {
     if (s.type === 'long') {
@@ -330,14 +333,18 @@
     }
     if (s.type === 'alloc') {
       v = v || {};
-      var a = '<div class="alloc">';
-      ALLOC_KEYS.forEach(function (k) {
+      var a = '<div class="alloc-wrap"><div class="alloc">', pie = '';
+      ALLOC_KEYS.forEach(function (k, i) {
         var val = v[k[0]];
-        a += '<div><label for="a-' + k[0] + '">' + esc(k[1]) + '</label>' +
+        pie += '<circle class="pie-slice slice-' + i + '" id="pie-' + k[0] + '" r="25" cx="50" cy="50" pathLength="100" stroke-dasharray="0 100" />';
+        a += '<div><label for="a-' + k[0] + '"><span class="swatch slice-' + i + '"></span>' + esc(k[1]) + '</label>' +
           '<input class="q-input num" id="a-' + k[0] + '" data-key="' + k[0] + '" type="number" min="0" max="100" step="1" inputmode="numeric" value="' + (val === null || val === undefined ? '' : val) + '" />' +
           '<span class="unit">%</span></div>';
       });
-      return a + '</div><div class="alloc-total" id="alloc-total"></div><div class="alloc-warning" id="alloc-warning" hidden></div>';
+      // Slices are stroked circles measured in percent (pathLength=100); the empty base shows what's unallocated.
+      return a + '</div><svg class="alloc-pie" viewBox="0 0 100 100" aria-hidden="true">' +
+        '<circle class="pie-empty" r="49" cx="50" cy="50" />' + pie + '</svg></div>' +
+        '<div class="alloc-total" id="alloc-total"></div><div class="alloc-warning" id="alloc-warning" hidden></div>';
     }
     return '';
   }
@@ -348,15 +355,11 @@
     var isLast = idx === TOTAL - 1;
     var h = progressHtml(idx) +
       '<div class="section-label">Section ' + s.id.charAt(0) + ' — ' + esc(SECTIONS[s.id.charAt(0)]) + '</div>';
-    if (s.type === 'info') {
-      h += helperHtml(s.helper);
-    } else {
-      h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + '">' +
+    h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + '">' +
         '<div class="q-text">' + (s.textHtml || esc(s.text)) + '</div>' +
         (s.helper ? '<aside class="q-aside"><div class="q-aside-label">Note</div>' +
           s.helper.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</aside>' : '') +
         '<div class="q-answer">' + inputHtml(s, v) + '</div></div>';
-    }
     h += '<div class="q-nav">' +
       '<button class="btn" id="nav-back"' + (idx === 0 ? ' disabled' : '') + '>Back</button>' +
       '<span class="spacer"></span>' +
@@ -365,7 +368,7 @@
       '</div>';
     var inner = document.getElementById('survey-inner');
     inner.innerHTML = h;
-    inner.classList.toggle('wide', !!s.helper && s.type !== 'info');
+    inner.classList.toggle('wide', !!s.helper);
     setStatus(Object.keys(pending).length ? 'Saving…' : '');
 
     var go = function (target) { return function () { location.hash = target; }; };
@@ -410,9 +413,9 @@
     } else if (s.type === 'matrix') {
       document.querySelectorAll('.matrix textarea').forEach(function (t) {
         t.addEventListener('input', function () {
-          var cur = Object.assign({}, state.answers.C11 || {});
+          var cur = Object.assign({}, state.answers.C10 || {});
           cur[t.dataset.key] = t.value;
-          setAnswer('C11', cur);
+          setAnswer('C10', cur);
         });
         t.addEventListener('blur', function () { save(false); });
       });
@@ -452,6 +455,14 @@
     var v = state.answers.E2;
     var total = allocTotal(v);
     document.getElementById('alloc-total').textContent = 'Total: ' + total + '%';
+    var start = 0;
+    ALLOC_KEYS.forEach(function (k) {
+      var pct = v && typeof v[k[0]] === 'number' ? v[k[0]] : 0;
+      var c = document.getElementById('pie-' + k[0]);
+      c.setAttribute('stroke-dasharray', pct + ' 100');
+      c.setAttribute('stroke-dashoffset', -start);
+      start += pct;
+    });
     var warn = document.getElementById('alloc-warning');
     // The warning appears once any field has been filled in and the total isn't 100%.
     var touched = answered({ type: 'alloc' }, v);
@@ -471,10 +482,6 @@
         if (curSection) h += '</div>';
         h += '<div class="review-section"><h3>' + esc(SECTIONS[sec]) + '</h3>';
         curSection = sec;
-      }
-      if (s.type === 'info') {
-        h += '<div class="review-note">' + s.helper.map(esc).join(' ') + '</div>';
-        return;
       }
       var a = answerText(s, state.answers[s.id]);
       h += '<button class="review-item" data-idx="' + idx + '">' +

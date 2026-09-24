@@ -46,14 +46,10 @@
     { id: 'C7', type: 'long', text: 'What are you thinking about when the score is tied?' },
     { id: 'C8', type: 'long', text: 'What are you thinking about if you\'re ahead, but not by "a lot" as you defined it above?' },
     { id: 'C9', type: 'long', text: 'What are you thinking about if you\'re behind, but not by "a lot" as you defined it above?' },
-    { id: 'C10', type: 'info', helper: [
-      'For this next question, define the beginning, middle, and end of a bout as follows:',
-      'In a 15-touch bout: beginning = 0–3, middle = 4–12, end = 13–15.',
-      'In a 5-touch bout: beginning = 0–1, middle = 2–4, end = 5.'
-    ] },
-    { id: 'C11', type: 'matrix',
-      text: 'Now consider each of the five score situations above — ahead a lot, ahead a little, tied, behind a little, behind a lot — separately for the beginning, middle, and end of a bout as defined above. For each cell, note anything different from what you said above — or leave it blank if nothing changes.',
+    { id: 'C10', type: 'matrix',
+      text: 'Now consider each of the five score situations above — ahead a lot, ahead a little, tied, behind a little, behind a lot — separately for the beginning, middle, and end of a bout as defined in the note. For each cell, note anything different from what you said above — or leave it blank if nothing changes.',
       helper: [
+        'Define the beginning, middle, and end of a bout as follows:',
         'In a 15-touch bout: beginning = 0–3, middle = 4–12, end = 13–15.',
         'In a 5-touch bout: beginning = 0–1, middle = 2–4, end = 5.',
         "Leave any box blank if your answer doesn't change from what you wrote above."

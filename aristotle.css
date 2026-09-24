@@ -298,6 +298,18 @@ input.q-input.num { width: 9rem; }
 
 .alloc { display: grid; grid-template-columns: repeat(2, minmax(0, 14rem)); gap: 1rem 2rem; }
 .alloc label { display: block; font-weight: 500; margin-bottom: 0.3rem; }
+.alloc-wrap { display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap; }
+.alloc-pie { width: 190px; height: 190px; flex: 0 0 auto; transform: rotate(-90deg); }
+.pie-empty { fill: var(--off); stroke: var(--light); stroke-width: 1; }
+.pie-slice {
+  fill: none; stroke-width: 50;
+  transition: stroke-dasharray 0.35s ease, stroke-dashoffset 0.35s ease;
+}
+.swatch { display: inline-block; width: 0.75em; height: 0.75em; margin-right: 0.45em; border-radius: 2px; vertical-align: baseline; }
+.slice-0 { stroke: #1b3d7a; background: #1b3d7a; }
+.slice-1 { stroke: #2f8f8a; background: #2f8f8a; }
+.slice-2 { stroke: #6f9be0; background: #6f9be0; }
+.slice-3 { stroke: #c98a1b; background: #c98a1b; }
 .alloc-total { margin-top: 1.2rem; color: var(--muted); }
 .alloc-warning {
   margin-top: 0.8rem; padding: 0.7rem 1rem;
@@ -345,7 +357,6 @@ input.q-input.num { width: 9rem; }
 .review-item .ra { font-weight: 300; color: #333; white-space: pre-wrap; line-height: 1.6; }
 .review-item .ra.empty { color: #999; font-style: italic; }
 .review-item .edit { float: right; font-size: 0.85rem; color: var(--accent); margin-left: 1rem; }
-.review-note { padding: 1rem 0.6rem; color: var(--muted); font-size: 0.95rem; border-bottom: 1px solid var(--light); }
 .submit-row { margin-top: 2rem; text-align: center; }
 .submit-error { margin-top: 1rem; color: var(--error); }
 
@@ -408,6 +419,8 @@ footer {
   .hero { padding: 6rem 1.2rem 3rem; }
   #survey { padding: 5.5rem 1rem 3rem; }
   .alloc { grid-template-columns: 1fr; }
+  .alloc-wrap { flex-direction: column; align-items: flex-start; }
+  .alloc-pie { align-self: center; }
   .link-btn { display: block; margin: 1rem 0 0; }
   .q-nav .btn { padding: 0.8rem 1.1rem; }
 }

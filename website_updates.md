@@ -120,3 +120,16 @@ Bust image in "Who was Aristotle?" links to en.wikipedia.org/wiki/Aristotle (new
 
 #27 ✅ Aristotle C1 reworded (Xenophon Trello #28 feedback)
 "How much does the previous touch scored affect…" → "How much does the previous touch affect…".
+
+#28 ✅ Aristotle: info screen folded into the matrix question; questions renumbered (Xenophon Trello #28 feedback)
+The standalone "define beginning/middle/end" screen (old question 22, C10) is
+gone; its definitions are in the matrix question's side note, and the
+question now says "as defined in the note". Matrix question renumbered
+C11 → C10 (section C is C1–C10), 27 questions total; in-progress answers
+saved in the browser under C11 are carried over. Backend: Xenophon #363.
+
+#29 ✅ Aristotle E2 live pie chart (Xenophon Trello #28 feedback)
+The allocation question shows a pie that starts empty and fills with a
+colored slice per quality as percentages are entered (unallocated share
+stays empty); input labels carry matching color swatches. Stacks under the
+inputs on phones.
