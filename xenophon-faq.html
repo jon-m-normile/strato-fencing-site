@@ -390,6 +390,7 @@
     <li><a href="blogs.html">Blogs</a></li>
     <li><a href="contact.html">Contact</a></li>
     <li><a href="xenophon.html" class="active">Xenophon</a></li>
+    <li><a href="aristotle.html">Aristotle</a></li>
   </ul>
 </nav>
 
@@ -660,7 +661,20 @@
     var zone = zoneInfo(dragX);
     label.textContent = zone.text;
     label.classList.toggle('off-end', zone.offEnd);
-    label.style.left = toLeftPct((zone.span[0] + zone.span[1]) / 2) + '%';
+    var midPct = toLeftPct((zone.span[0] + zone.span[1]) / 2);
+    label.style.left = midPct + '%';
+
+    var wrap = stage.parentElement;
+    var wrapRect = wrap.getBoundingClientRect();
+    var labelRect = label.getBoundingClientRect();
+    var pad = 4;
+    if (labelRect.left < wrapRect.left + pad) {
+      midPct += (wrapRect.left + pad - labelRect.left) / wrapRect.width * 100;
+      label.style.left = midPct + '%';
+    } else if (labelRect.right > wrapRect.right - pad) {
+      midPct -= (labelRect.right - (wrapRect.right - pad)) / wrapRect.width * 100;
+      label.style.left = midPct + '%';
+    }
 
     if (zone.offEnd) {
       highlight.classList.add('hidden');
