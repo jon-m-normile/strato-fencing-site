@@ -111,3 +111,6 @@ matched).
 
 #24 ✅ Aristotle "no wrong answers" line reworded (Xenophon Trello #28 feedback)
 "…how you think than you do." → "…how you think than you."
+
+#25 ✅ Aristotle portrait links to Wikipedia (Xenophon Trello #28 feedback)
+Bust image in "Who was Aristotle?" links to en.wikipedia.org/wiki/Aristotle (new tab).
