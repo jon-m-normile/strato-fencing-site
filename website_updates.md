@@ -108,3 +108,6 @@ matched).
 #23 ✅ Aristotle What to Expect intro reworded (Xenophon Trello #28 feedback)
 "What follows is a questionnaire…" paragraph updated to the supplied text
 ("…for a variety of different fencing situations…"), typo "ffor" fixed.
+
+#24 ✅ Aristotle "no wrong answers" line reworded (Xenophon Trello #28 feedback)
+"…how you think than you do." → "…how you think than you."
