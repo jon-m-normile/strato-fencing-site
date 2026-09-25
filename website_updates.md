@@ -175,3 +175,6 @@ goals." unchanged.)
 
 #38 ✅ Aristotle "no wrong answers" line reworded (Xenophon Trello #28 feedback)
 "…No one knows better how you think than you." → "…No one knows better than you how you think."
+
+#39 ✅ Services page: "basic technique" → "basic techniques" of the Hungarian system
+products.html, in both the épée and foil lesson descriptions.
