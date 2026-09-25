@@ -141,3 +141,15 @@ value is 0). More space (4rem) between the inputs and the pie.
 
 #31 ✅ Aristotle E2 reworded (Xenophon Trello #28 feedback)
 "…allocate importance between the physical…" → "…allocate the importance of the physical…".
+
+#32 ✅ Aristotle anonymous respondent ID (Xenophon Trello #28 feedback; backend Xenophon #364)
+Each browser gets a random id (localStorage `aristotle_respondent`, kept across
+submits) sent with every new session. Admin Answers tab has a Respondent filter
+(short id · username if claimed · response count); each answer's "Respondent xxxxxxxx"
+link filters to that person. Older sessions without an id show as "Respondent unknown".
+
+#33 ✅ Aristotle: existing Xenophon account on Create Account (Xenophon Trello #28 feedback)
+If the email is already registered, the page tells the user and tries their password on
+that account: on success they are signed in and this browser's submitted questionnaires
+are linked to it (existing username kept); otherwise they land on Sign In with the email
+pre-filled. Answers are never linked without signing in to the account.

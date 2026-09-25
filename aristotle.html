@@ -123,7 +123,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=7"></script>
+<script src="aristotle-questions.js?v=8"></script>
 <script>
 (function () {
   'use strict';
@@ -185,7 +185,7 @@
   function ensureSession() {
     if (state.id) return Promise.resolve(state.id);
     if (!sessionPromise) {
-      sessionPromise = api('POST', '/sessions', { website: hp() }).then(function (res) {
+      sessionPromise = api('POST', '/sessions', { website: hp(), respondent_id: A.respondentId() }).then(function (res) {
         state.id = res.id;
         persistLocal();
         return res.id;

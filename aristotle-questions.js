@@ -114,6 +114,18 @@
     return v;
   }
 
+  // Random, anonymous id kept in this browser for good; groups one person's responses.
+  var RESPONDENT_KEY = 'aristotle_respondent';
+  function respondentId() {
+    var id;
+    try { id = localStorage.getItem(RESPONDENT_KEY); } catch (e) { /* storage unavailable */ }
+    if (!id) {
+      id = window.crypto && crypto.randomUUID ? crypto.randomUUID() : null;
+      try { if (id) localStorage.setItem(RESPONDENT_KEY, id); } catch (e) { /* storage unavailable */ }
+    }
+    return id;
+  }
+
   function submittedIds() {
     try { return JSON.parse(localStorage.getItem(SUBMITTED_KEY)) || []; } catch (e) { return []; }
   }
@@ -138,6 +150,7 @@
     allocTotal: allocTotal,
     answerText: answerText,
     submittedIds: submittedIds,
-    rememberSubmitted: rememberSubmitted
+    rememberSubmitted: rememberSubmitted,
+    respondentId: respondentId
   };
 })();

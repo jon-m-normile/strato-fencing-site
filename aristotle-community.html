@@ -109,7 +109,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=7"></script>
+<script src="aristotle-questions.js?v=8"></script>
 <script>
 (function () {
   'use strict';
@@ -124,6 +124,7 @@
   var results = null;     // { answers: {qid: [values]}, comments: {qid: [...]}, is_admin }
   var admin = null;       // { sessions: [...] }
   var adminFilter = 'submitted';
+  var adminRespondent = '';
   var openThreads = {};
 
   function getToken() { try { return localStorage.getItem(A.TOKEN_KEY); } catch (e) { return null; } }
@@ -176,7 +177,7 @@
   }
 
   // ── Sign in / create account ──
-  function renderLogin(mode, notice) {
+  function renderLogin(mode, notice, email) {
     renderBar(null);
     var reg = mode === 'register';
     view(
@@ -197,6 +198,7 @@
       '</form>' + msgHtml('auth-msg') + '</div>'
     );
     if (notice) showMsg('auth-msg', notice, false);
+    if (email) document.getElementById('f-email').value = email;
     document.getElementById('tab-login').onclick = function () { renderLogin('login'); };
     document.getElementById('tab-register').onclick = function () { renderLogin('register'); };
     var forgot = document.getElementById('forgot');
@@ -228,9 +230,25 @@
         return afterSignIn(true);
       }).catch(function (err) {
         btn.disabled = false;
+        if (reg && err.status === 409 && /email/i.test(err.message)) return existingAccount(body);
         showMsg('auth-msg', err.message, true);
       });
     };
+  }
+
+  // The email already has a Xenophon account: sign in with it (the questionnaire is then
+  // linked by afterSignIn), or ask for that account's password. Never link without sign-in.
+  function existingAccount(body) {
+    var known = 'This email is already registered with Xenophon, Strato Fencing\'s bout analysis app, which shares its accounts with Aristotle.';
+    return auth('POST', '/login', { email: body.email, password: body.password }).then(function (res) {
+      setToken(res.access_token);
+      flash = known + ' You are now signed in to that account, and questionnaires submitted in this browser are linked to it. ' +
+        'Your username is {username}; you can change it on the Account page.';
+      return afterSignIn(true);
+    }, function () {
+      renderLogin('login', known + ' Sign in with your Xenophon password to link your questionnaire answers to that account, ' +
+        'or use "Forgot password?" if you don\'t remember it.', body.email);
+    });
   }
 
   // Link any questionnaires submitted in this browser, then load the account.
@@ -425,6 +443,15 @@
     var sessions = admin.sessions.filter(function (s) {
       return adminFilter === 'all' || (adminFilter === 'submitted') === s.submitted;
     });
+    // Responses without a respondent id (taken before #364) each count as their own respondent.
+    var respondents = {};
+    sessions.forEach(function (s) {
+      var key = respondentKey(s);
+      (respondents[key] = respondents[key] || { n: 0, name: s.claimed_by }).n++;
+      if (s.claimed_by) respondents[key].name = s.claimed_by;
+    });
+    if (adminRespondent && !respondents[adminRespondent]) adminRespondent = '';
+    if (adminRespondent) sessions = sessions.filter(function (s) { return respondentKey(s) === adminRespondent; });
     var byQ = {};
     var sessionOf = {};
     sessions.forEach(function (s) {
@@ -438,7 +465,14 @@
     var h = '<div class="admin-tools"><label>Show <select class="q-input" id="adm-filter">' +
       [['submitted', 'Submitted responses'], ['abandoned', 'Unsubmitted responses'], ['all', 'All responses']].map(function (o) {
         return '<option value="' + o[0] + '"' + (adminFilter === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
-      }).join('') + '</select></label><span>' + sessions.length + ' responses · ' + nIncluded + ' answers included</span></div>' +
+      }).join('') + '</select></label>' +
+      '<label>Respondent <select class="q-input" id="adm-respondent"><option value="">All respondents (' + Object.keys(respondents).length + ')</option>' +
+      Object.keys(respondents).map(function (k) {
+        var r = respondents[k];
+        return '<option value="' + esc(k) + '"' + (adminRespondent === k ? ' selected' : '') + '>' +
+          esc(respondentLabel(k) + (r.name ? ' · ' + r.name : '') + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
+      }).join('') + '</select></label>' +
+      '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') + nIncluded + ' answers included</span></div>' +
       msgHtml('adm-msg');
     var cur = null;
     QUESTIONS.forEach(function (s) {
@@ -456,7 +490,8 @@
         h += '<div class="adm-answer" data-aid="' + a.answer_id + '" data-qid="' + s.id + '">' +
           '<input type="checkbox" title="Include in curated results"' + (a.included ? ' checked' : '') + ' aria-label="Include this answer" />' +
           '<div class="txt">' + esc(A.answerText(s, a.answer_value)) + '</div>' +
-          '<div class="meta"><span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + ' · ' +
+          '<div class="meta"><button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' +
+            '<span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + ' · ' +
             esc(fmtTime(sess.submitted_at || sess.updated_at)) + '</span>' +
             (a.edited_at ? '<span class="tag">edited</span>' : '') +
             '<button class="text-btn" data-act="edit">Edit</button>' +
@@ -468,6 +503,7 @@
     document.getElementById('admin-body').innerHTML = h + '</div>';
 
     document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
+    document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
     document.querySelectorAll('.adm-answer').forEach(function (el) {
       var aid = el.dataset.aid;
       var s = BY_ID[el.dataset.qid];
@@ -479,6 +515,11 @@
           .catch(function (err) { cb.checked = !cb.checked; showMsg('adm-msg', err.message, true); });
       };
       el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, s, ans); };
+      el.querySelector('[data-act=respondent]').onclick = function () {
+        adminRespondent = respondentKey(sess);
+        renderAdminAnswers();
+        window.scrollTo(0, 0);
+      };
       confirmClick(el.querySelector('[data-act=delete]'), 'Confirm delete?', function () {
         api('DELETE', '/admin/answers/' + aid).then(function () {
           sess.answers = sess.answers.filter(function (x) { return x.answer_id !== aid; });
@@ -492,6 +533,11 @@
         }).catch(function (err) { showMsg('adm-msg', err.message, true); });
       });
     });
+  }
+
+  function respondentKey(s) { return s.respondent_id || 'response:' + s.id; }
+  function respondentLabel(key) {
+    return key.indexOf('response:') === 0 ? 'Respondent unknown (' + key.slice(9, 17) + ')' : 'Respondent ' + key.slice(0, 8);
   }
 
   // Inline editor using the same input types as the questionnaire.
@@ -563,7 +609,19 @@
   }
 
   // ── Routing: #/login, #/register, #/results, #/account, #/admin[/answers|/accounts] ──
+  // One-time notice shown above the next page rendered.
+  var flash = null;
+  function showFlash() {
+    var old = document.getElementById('flash');
+    if (old) old.remove();
+    if (!flash || !me) return;
+    document.getElementById('view').insertAdjacentHTML('beforebegin',
+      '<div class="msg" id="flash">' + esc(flash.replace('{username}', me.username)) + '</div>');
+    flash = null;
+  }
+
   function route() {
+    showFlash();
     var parts = location.hash.replace(/^#\/?/, '').split('/');
     var page = parts[0];
     if (!getToken()) {
