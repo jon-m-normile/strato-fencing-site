@@ -172,3 +172,6 @@ think or what to be thinking about during a bout." Second paragraph now "…seek
 understand what different fencers think about during their bouts, and then to learn how
 different ways of thinking result in victories or defeats." ("This project has several
 goals." unchanged.)
+
+#38 ✅ Aristotle "no wrong answers" line reworded (Xenophon Trello #28 feedback)
+"…No one knows better how you think than you." → "…No one knows better than you how you think."
