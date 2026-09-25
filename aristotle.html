@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=6" />
+  <link rel="stylesheet" href="aristotle.css?v=7" />
 </head>
 <body>
 
@@ -35,6 +35,7 @@
 <div id="landing">
   <!-- HERO -->
   <div class="hero">
+    <a class="hero-signin" id="hero-signin" href="aristotle-community.html">Sign In</a>
     <div class="hero-inner">
       <div class="hero-eyebrow">Strato Fencing Academy</div>
       <h1 class="hero-title">The Aristotle Fencing Psychology Project</h1>
@@ -559,6 +560,12 @@
     window.scrollTo(0, 0);
     claimIfSignedIn();
   }
+
+  (function () {
+    var signin = document.getElementById('hero-signin');
+    signin.href += location.search;
+    try { if (localStorage.getItem(A.TOKEN_KEY)) signin.textContent = 'My Account'; } catch (e) { /* storage unavailable */ }
+  })();
 
   // Already signed in on this browser: attach the new submission to the account right away.
   function claimIfSignedIn() {

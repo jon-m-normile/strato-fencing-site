@@ -153,3 +153,7 @@ If the email is already registered, the page tells the user and tries their pass
 that account: on success they are signed in and this browser's submitted questionnaires
 are linked to it (existing username kept); otherwise they land on Sign In with the email
 pre-filled. Answers are never linked without signing in to the account.
+
+#34 ✅ Aristotle: Sign In link at the top of the landing page (Xenophon Trello #28 feedback)
+Outlined "Sign In" button top-right of the hero, linking to aristotle-community.html
+(reads "My Account" when already signed in on this browser).

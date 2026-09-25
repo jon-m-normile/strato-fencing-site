@@ -59,9 +59,19 @@ nav {
 
 /* ── HERO ── */
 .hero {
+  position: relative;
   background: var(--black);
   padding: 9rem 5rem 4rem;
 }
+.hero-signin {
+  position: absolute; top: calc(64px + 1.2rem); right: 5rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.8); text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.35); padding: 0.45rem 1rem;
+  transition: color 0.2s, border-color 0.2s;
+}
+.hero-signin:hover { color: var(--white); border-color: var(--accent); }
 .hero-inner { max-width: 1200px; }
 .hero-eyebrow {
   font-family: 'Barlow Condensed', sans-serif;
@@ -409,6 +419,7 @@ footer {
   nav { padding: 0 1.2rem; }
   .nav-links a { padding: 0 0.6rem; font-size: 0.72rem; }
   .hero { padding: 7rem 2rem 4rem; }
+  .hero-signin { right: 2rem; top: calc(64px + 0.8rem); }
   section { padding: 2rem 1.5rem; }
   #survey { padding: 6rem 1.5rem 3rem; }
   .namesake-layout { flex-direction: column-reverse; }
@@ -422,7 +433,8 @@ footer {
 }
 @media (max-width: 500px) {
   .nav-links a { padding: 0 0.4rem; font-size: 0.65rem; letter-spacing: 0.08em; }
-  .hero { padding: 6rem 1.2rem 3rem; }
+  .hero { padding: 7rem 1.2rem 3rem; }
+  .hero-signin { right: 1.2rem; }
   #survey { padding: 5.5rem 1rem 3rem; }
   .alloc { grid-template-columns: 1fr; }
   .alloc-wrap { flex-direction: column; align-items: flex-start; }
