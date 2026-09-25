@@ -157,3 +157,11 @@ pre-filled. Answers are never linked without signing in to the account.
 #34 ✅ Aristotle: Sign In link at the top of the landing page (Xenophon Trello #28 feedback)
 Outlined "Sign In" button top-right of the hero, linking to aristotle-community.html
 (reads "My Account" when already signed in on this browser).
+
+#35 ✅ Aristotle emoji reactions on answers (Xenophon Trello #28 feedback; backend Xenophon #365)
+Answers & Discussion: each curated answer has a reaction bar. The 🙂+ button opens a
+picker of six emoji (👍 ❤️ 💡 🤔 😂 🎯); chips show counts, the viewer's own reactions are
+highlighted, and clicking a chip toggles it.
+
+#36 ✅ Aristotle landing title split (Xenophon Trello #28 feedback)
+Hero title now "Aristotle" with "A fencing psychology project" on a second, smaller line.

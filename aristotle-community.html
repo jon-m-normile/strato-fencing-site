@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=7" />
+  <link rel="stylesheet" href="aristotle.css?v=8" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -43,6 +43,18 @@
     .answers { margin: 0 0 0.8rem 1.2rem; }
     .answers li { font-weight: 300; line-height: 1.6; margin: 0.35rem 0; white-space: pre-wrap; }
     .answers ul { margin-left: 1.2rem; list-style: circle; }
+    .reacts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin: 0.25rem 0 0.6rem; white-space: normal; }
+    .reacts button { font: inherit; font-size: 0.9rem; line-height: 1; cursor: pointer; border: 1px solid var(--light); background: var(--white); border-radius: 999px; padding: 0.25rem 0.55rem; }
+    .reacts button:hover { border-color: var(--accent2); }
+    .react-chip span { font-size: 0.8rem; color: var(--muted); margin-left: 0.15rem; }
+    .react-chip.mine { background: #e7eefb; border-color: var(--accent2); }
+    .react-chip.mine span { color: var(--accent); font-weight: 500; }
+    .react-add { opacity: 0.55; }
+    .react-add:hover, .react-add[aria-expanded=true] { opacity: 1; }
+    .react-add span { font-size: 0.75rem; margin-left: 0.1rem; color: var(--muted); }
+    .react-picker { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; }
+    .react-picker[hidden] { display: none; }
+    .react-picker button { border-radius: 6px; padding: 0.3rem 0.4rem; font-size: 1.05rem; }
     .no-answers { color: #999; font-style: italic; margin-bottom: 0.8rem; }
     details.thread summary {
       cursor: pointer; color: var(--accent); font-family: 'Barlow Condensed', sans-serif;
@@ -270,12 +282,62 @@
   }
 
   // ── Curated answers + discussion ──
-  function answerItems(s, v) {
+  function answerItems(s, v, meta) {
+    var body;
     if (s.type === 'matrix') {
       var lines = A.answerText(s, v).split('\n');
-      return '<li>' + (lines.length > 1 ? '<ul>' + lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>' : esc(lines[0])) + '</li>';
+      body = lines.length > 1 ? '<ul>' + lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>' : esc(lines[0]);
+    } else {
+      body = esc(A.answerText(s, v));
     }
-    return '<li>' + esc(A.answerText(s, v)) + '</li>';
+    return '<li>' + body + (meta ? '<div class="reacts" data-aid="' + esc(meta.answer_id) + '">' + reactsHtml(meta) + '</div>' : '') + '</li>';
+  }
+
+  // Emoji reactions on an answer: a chip per emoji in use (highlighted if mine), plus a picker.
+  function reactsHtml(meta) {
+    var emoji = results.reaction_emoji || [];
+    return Object.keys(meta.reactions).map(function (e) {
+      var mine = meta.mine.indexOf(e) >= 0;
+      return '<button class="react-chip' + (mine ? ' mine' : '') + '" data-emoji="' + esc(e) + '" aria-pressed="' + mine + '" title="' +
+        (mine ? 'Remove your reaction' : 'React with ' + esc(e)) + '">' + esc(e) + ' <span>' + meta.reactions[e] + '</span></button>';
+    }).join('') +
+      '<button class="react-add" title="Add a reaction" aria-label="Add a reaction" aria-expanded="false">🙂<span>+</span></button>' +
+      '<span class="react-picker" hidden>' + emoji.map(function (e) {
+        return '<button data-emoji="' + esc(e) + '" aria-label="React with ' + esc(e) + '">' + esc(e) + '</button>';
+      }).join('') + '</span>';
+  }
+
+  function findMeta(aid) {
+    var found = null;
+    Object.keys(results.answer_meta || {}).forEach(function (q) {
+      results.answer_meta[q].forEach(function (m) { if (m.answer_id === aid) found = m; });
+    });
+    return found;
+  }
+
+  function bindReactions(root) {
+    root.addEventListener('click', function (e) {
+      var box = e.target.closest('.reacts');
+      if (!box) return;
+      var add = e.target.closest('.react-add');
+      if (add) {
+        var picker = box.querySelector('.react-picker');
+        picker.hidden = !picker.hidden;
+        add.setAttribute('aria-expanded', String(!picker.hidden));
+        return;
+      }
+      var btn = e.target.closest('[data-emoji]');
+      if (!btn || box.dataset.busy) return;
+      box.dataset.busy = '1';
+      var aid = box.dataset.aid;
+      api('POST', '/answers/' + aid + '/reactions', { emoji: btn.dataset.emoji }).then(function (r) {
+        var meta = findMeta(aid);
+        meta.reactions = r.reactions;
+        meta.mine = r.mine;
+        box.innerHTML = reactsHtml(meta);
+      }).catch(function () { /* leave as is; the next load shows the true state */ })
+        .then(function () { delete box.dataset.busy; });
+    });
   }
 
   function threadHtml(qid) {
@@ -321,9 +383,11 @@
         h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + '</h3>';
         cur = sec;
       }
-      var vals = (results.answers[s.id] || []).filter(function (v) { return A.answered(s, v); });
+      var metas = (results.answer_meta || {})[s.id] || [];
+      var vals = (results.answers[s.id] || []).map(function (v, i) { return { v: v, meta: metas[i] }; })
+        .filter(function (x) { return A.answered(s, x.v); });
       h += '<div class="rq-block" id="q-' + s.id + '"><div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>' +
-        (vals.length ? '<ul class="answers">' + vals.map(function (v) { return answerItems(s, v); }).join('') + '</ul>'
+        (vals.length ? '<ul class="answers">' + vals.map(function (x) { return answerItems(s, x.v, x.meta); }).join('') + '</ul>'
                      : '<div class="no-answers">No answers selected yet.</div>') +
         '<div class="thread-slot">' + threadHtml(s.id) + '</div></div>';
     });
@@ -643,6 +707,7 @@
   }
 
   window.addEventListener('hashchange', route);
+  bindReactions(document.getElementById('view'));
   route();
 })();
 </script>
