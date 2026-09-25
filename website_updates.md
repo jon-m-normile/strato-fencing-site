@@ -184,3 +184,6 @@ Added after Video Review in products.html; "Xenophon platform" links to xenophon
 The credit-against-Video-Analysis line is shown as an italic product note. Typos fixed:
 "Analyis" → "Analysis", "is schedule" → "is scheduled". css/style.css: accent color for
 links inside .product-desc.
+
+#41 ✅ Services page: Xenophon service credit note names "Video Review and Tactical Analysis"
+Replaces "Video Analysis"; the rest of the user's wording is kept as written.
