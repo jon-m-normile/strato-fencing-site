@@ -178,3 +178,9 @@ goals." unchanged.)
 
 #39 ✅ Services page: "basic technique" → "basic techniques" of the Hungarian system
 products.html, in both the épée and foil lesson descriptions.
+
+#40 ✅ Services page: new "Xenophon Annotation and Commentary — $30" service
+Added after Video Review in products.html; "Xenophon platform" links to xenophon.html.
+The credit-against-Video-Analysis line is shown as an italic product note. Typos fixed:
+"Analyis" → "Analysis", "is schedule" → "is scheduled". css/style.css: accent color for
+links inside .product-desc.
