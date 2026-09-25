@@ -165,3 +165,10 @@ highlighted, and clicking a chip toggles it.
 
 #36 ✅ Aristotle landing title split (Xenophon Trello #28 feedback)
 Hero title now "Aristotle" with "A fencing psychology project" on a second, smaller line.
+
+#37 ✅ Aristotle overview paragraphs reworded (Xenophon Trello #28 feedback)
+"physical chess" paragraph: "opponents" → "opponent"; ends "…not a clear idea of how to
+think or what to be thinking about during a bout." Second paragraph now "…seeks to better
+understand what different fencers think about during their bouts, and then to learn how
+different ways of thinking result in victories or defeats." ("This project has several
+goals." unchanged.)
