@@ -195,3 +195,13 @@ server is starting, with a progress bar and elapsed seconds, and says "Server re
 Community page: any request that fails with a network error or 502/503/504 waits for the
 server and retries once (so sign-in just completes); the page also starts waking the server
 on load. Questionnaire: Submit does the same. CSS in aristotle.css (.wake-banner).
+
+#43 ✅ Aristotle: community answers separate from questionnaire records + answer history (Xenophon Trello #30 / Xenophon #367)
+Questionnaire (aristotle.html): autosaves still update the working copy; changed answers are
+recorded as new versions when leaving a screen, reaching or leaving Review, and on tab close
+(`commit: true`). Admin Answers tab (aristotle-community.html): each question shows
+"On the community page" (admin copies: Edit changes only the copy, Remove; tags for edited,
+source respondent/version date, "newer version available", "N posts from this respondent")
+and "Responses" (each response's latest version; "Show earlier versions" lists older ones),
+with Add to community page, Delete version, and Delete whole response. Include checkbox removed.
+Asset versions bumped to ?v=10.

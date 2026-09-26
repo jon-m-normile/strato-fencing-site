@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=9" />
+  <link rel="stylesheet" href="aristotle.css?v=10" />
 </head>
 <body>
 
@@ -124,7 +124,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=9"></script>
+<script src="aristotle-questions.js?v=10"></script>
 <script>
 (function () {
   'use strict';
@@ -140,6 +140,7 @@
   // { id: server session id or null, answers: {qid: value}, pos: last screen index }
   var state = loadState();
   var pending = {};         // qids changed locally but not yet confirmed saved
+  var uncommitted = false;  // changed since the server last recorded answer versions (#43)
   var saveTimer = null;
   var retryTimer = null;
   var saveChain = Promise.resolve();
@@ -198,6 +199,7 @@
   function setAnswer(qid, value) {
     state.answers[qid] = value;
     pending[qid] = true;
+    uncommitted = true;
     persistLocal();
     setStatus('Saving…');
     clearTimeout(saveTimer);
@@ -205,24 +207,28 @@
   }
 
   // full=true sends every answer (review / submit snapshots); otherwise only changed ones.
-  function save(full) {
+  // commit=true (leaving a screen) asks the server to record changed answers as new versions.
+  function save(full, commit) {
     clearTimeout(saveTimer);
-    saveChain = saveChain.then(function () { return doSave(full); });
+    saveChain = saveChain.then(function () { return doSave(full, commit); });
     return saveChain;
   }
 
-  function doSave(full) {
+  function doSave(full, commit) {
     if (!state) return Promise.resolve();
     var qids = full ? Object.keys(state.answers) : Object.keys(pending);
-    if (!qids.length && !full) return Promise.resolve();
+    var committing = !!commit && uncommitted;
+    if (!qids.length && !full && !committing) return Promise.resolve();
     var batch = {};
     qids.forEach(function (q) { batch[q] = state.answers[q]; delete pending[q]; });
+    if (committing) uncommitted = false;
     return ensureSession().then(function (id) {
-      return api('PUT', '/sessions/' + id + '/answers', { answers: batch, website: hp() });
+      return api('PUT', '/sessions/' + id + '/answers', { answers: batch, website: hp(), commit: committing });
     }).then(function () {
       if (!Object.keys(pending).length) setStatus('All changes saved');
     }).catch(function (err) {
       qids.forEach(function (q) { pending[q] = true; });
+      if (committing) uncommitted = true;
       if (err.status === 404 && state.id) {
         // Server no longer knows this session — start a fresh one and resend everything.
         state.id = null;
@@ -237,21 +243,22 @@
       }
       setStatus("Can't reach the server — your answers are kept in this browser and will be saved when it reconnects", true);
       clearTimeout(retryTimer);
-      retryTimer = setTimeout(function () { save(false); }, 5000);
+      retryTimer = setTimeout(function () { save(false, committing); }, 5000);
     });
   }
 
   // Last-chance save if the tab is closed or hidden before the debounce fires.
   function flushOnExit() {
-    if (!state || !state.id || !Object.keys(pending).length) return;
+    if (!state || !state.id || (!Object.keys(pending).length && !uncommitted)) return;
     var batch = {};
     Object.keys(pending).forEach(function (q) { batch[q] = state.answers[q]; });
     try {
       fetch(API + '/sessions/' + state.id + '/answers', {
         method: 'PUT', keepalive: true,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: batch, website: hp() })
+        body: JSON.stringify({ answers: batch, website: hp(), commit: true })
       });
+      uncommitted = false;
     } catch (e) { /* best effort */ }
   }
   window.addEventListener('pagehide', flushOnExit);
@@ -595,10 +602,11 @@
     var landing = document.getElementById('landing');
     var survey = document.getElementById('survey');
 
-    // Snapshot the full answer set whenever the review screen is reached or left.
-    if (prevRoute === 'review' && view !== 'review') save(true);
-    if (view === 'review' && prevRoute !== 'review') save(true);
-    else if (view === 'q') save(false);
+    // Snapshot the full answer set whenever the review screen is reached or left; every screen
+    // change also records changed answers as new versions.
+    if (prevRoute === 'review' && view !== 'review') save(true, true);
+    if (view === 'review' && prevRoute !== 'review') save(true, true);
+    else if (view === 'q' || prevRoute === 'q') save(false, true);
 
     if ((view === 'q' || view === 'review') && !state) {
       location.replace('#');

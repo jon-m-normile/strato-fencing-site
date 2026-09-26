@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=9" />
+  <link rel="stylesheet" href="aristotle.css?v=10" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -71,11 +71,15 @@
 
     .admin-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
     .admin-tools select { width: auto; }
-    .adm-answer { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.8rem; padding: 0.8rem 0; border-top: 1px dashed var(--light); }
-    .adm-answer input[type=checkbox] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); margin-top: 0.25rem; }
+    .admin-tools .checks-inline { display: flex; align-items: center; gap: 0.4rem; }
+    .adm-sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem; color: var(--muted); margin: 1rem 0 0.2rem; }
+    .adm-answer { padding: 0.8rem 0; border-top: 1px dashed var(--light); }
+    .adm-answer.posted { border-left: 3px solid var(--accent2); padding-left: 0.8rem; }
+    .adm-answer.old { margin-left: 1.2rem; }
+    .adm-answer.old .txt { color: var(--muted); }
     .adm-answer .txt { white-space: pre-wrap; font-weight: 300; line-height: 1.6; }
-    .adm-answer .meta { grid-column: 2; font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
-    .adm-answer .editor { grid-column: 2; }
+    .adm-answer .meta { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin-top: 0.2rem; }
+    .tag.warn { background: #fdf3e1; border-color: #e7c27d; color: #7a5410; }
     .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
     .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
@@ -121,7 +125,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=9"></script>
+<script src="aristotle-questions.js?v=10"></script>
 <script>
 (function () {
   'use strict';
@@ -134,9 +138,10 @@
 
   var me = null;          // { username, has_access, is_admin }
   var results = null;     // { answers: {qid: [values]}, comments: {qid: [...]}, is_admin }
-  var admin = null;       // { sessions: [...] }
+  var admin = null;       // { sessions: [...with versions], community: [...] }
   var adminFilter = 'submitted';
   var adminRespondent = '';
+  var adminHistory = false;  // also list earlier versions of each answer
   var openThreads = {};
 
   function getToken() { try { return localStorage.getItem(A.TOKEN_KEY); } catch (e) { return null; } }
@@ -508,6 +513,7 @@
       rows + '</tbody></table></div>';
   }
 
+  // #43: questionnaire answers keep every version; the community page shows admin-made copies.
   function renderAdminAnswers() {
     var sessions = admin.sessions.filter(function (s) {
       return adminFilter === 'all' || (adminFilter === 'submitted') === s.submitted;
@@ -521,16 +527,17 @@
     });
     if (adminRespondent && !respondents[adminRespondent]) adminRespondent = '';
     if (adminRespondent) sessions = sessions.filter(function (s) { return respondentKey(s) === adminRespondent; });
-    var byQ = {};
-    var sessionOf = {};
-    sessions.forEach(function (s) {
-      s.answers.forEach(function (a) {
-        sessionOf[a.answer_id] = s;
-        (byQ[a.question_id] = byQ[a.question_id] || []).push(a);
-      });
+
+    // Every version (from all responses, so community sources resolve even when filtered out).
+    var versionInfo = {};
+    admin.sessions.forEach(function (sess) {
+      var lastOf = {};
+      sess.versions.forEach(function (v) { lastOf[v.question_id] = v.version_id; });
+      sess.versions.forEach(function (v) { versionInfo[v.version_id] = { v: v, sess: sess, latest: lastOf[v.question_id] === v.version_id }; });
     });
-    var nIncluded = 0;
-    Object.keys(byQ).forEach(function (q) { byQ[q].forEach(function (a) { if (a.included) nIncluded++; }); });
+    var postedFrom = {};
+    admin.community.forEach(function (c) { if (c.source_version_id) postedFrom[c.source_version_id] = c; });
+
     var h = '<div class="admin-tools"><label>Show <select class="q-input" id="adm-filter">' +
       [['submitted', 'Submitted responses'], ['abandoned', 'Unsubmitted responses'], ['all', 'All responses']].map(function (o) {
         return '<option value="' + o[0] + '"' + (adminFilter === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
@@ -541,8 +548,10 @@
         return '<option value="' + esc(k) + '"' + (adminRespondent === k ? ' selected' : '') + '>' +
           esc(respondentLabel(k) + (r.name ? ' · ' + r.name : '') + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
       }).join('') + '</select></label>' +
-      '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') + nIncluded + ' answers included</span></div>' +
-      msgHtml('adm-msg');
+      '<label class="checks-inline"><input type="checkbox" id="adm-history"' + (adminHistory ? ' checked' : '') + ' /> Show earlier versions</label>' +
+      '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') +
+      admin.community.length + ' on the community page</span></div>' + msgHtml('adm-msg');
+
     var cur = null;
     QUESTIONS.forEach(function (s) {
       var sec = s.id.charAt(0);
@@ -551,55 +560,103 @@
         h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + '</h3>';
         cur = sec;
       }
-      var list = (byQ[s.id] || []).filter(function (a) { return A.answered(s, a.answer_value); });
       h += '<div class="rq-block"><div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>';
-      if (!list.length) h += '<div class="no-answers">No answers.</div>';
-      list.forEach(function (a) {
-        var sess = sessionOf[a.answer_id];
-        h += '<div class="adm-answer" data-aid="' + a.answer_id + '" data-qid="' + s.id + '">' +
-          '<input type="checkbox" title="Include in curated results"' + (a.included ? ' checked' : '') + ' aria-label="Include this answer" />' +
-          '<div class="txt">' + esc(A.answerText(s, a.answer_value)) + '</div>' +
-          '<div class="meta"><button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' +
-            '<span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + ' · ' +
-            esc(fmtTime(sess.submitted_at || sess.updated_at)) + '</span>' +
-            (a.edited_at ? '<span class="tag">edited</span>' : '') +
-            '<button class="text-btn" data-act="edit">Edit</button>' +
-            '<button class="text-btn danger" data-act="delete">Delete answer</button>' +
-            '<button class="text-btn danger" data-act="delete-session">Delete whole response</button></div></div>';
+
+      var posted = admin.community.filter(function (c) { return c.question_id === s.id; });
+      var perRespondent = {};
+      posted.forEach(function (c) {
+        var src = versionInfo[c.source_version_id];
+        if (src) { var k = respondentKey(src.sess); perRespondent[k] = (perRespondent[k] || 0) + 1; }
       });
+      h += '<div class="adm-sub">On the community page (' + posted.length + ')</div>';
+      if (!posted.length) h += '<div class="no-answers">None yet.</div>';
+      posted.forEach(function (c) {
+        var src = versionInfo[c.source_version_id];
+        var n = src ? perRespondent[respondentKey(src.sess)] : 0;
+        h += '<div class="adm-answer posted" data-cid="' + esc(c.id) + '" data-qid="' + s.id + '">' +
+          '<div class="txt">' + esc(A.answerText(s, c.answer_value) || '(blank)') + '</div><div class="meta">' +
+          (src ? '<span>From ' + esc(respondentLabel(respondentKey(src.sess))) + (src.sess.claimed_by ? ' · ' + esc(src.sess.claimed_by) : '') +
+                 ' · version of ' + esc(fmtTime(src.v.created_at)) + '</span>' : '<span>Source unknown</span>') +
+          (c.edited_at ? '<span class="tag">edited</span>' : '') +
+          (src && !src.latest ? '<span class="tag warn">newer version available</span>' : '') +
+          (n > 1 ? '<span class="tag warn">' + n + ' posts from this respondent</span>' : '') +
+          '<button class="text-btn" data-act="edit">Edit</button>' +
+          '<button class="text-btn danger" data-act="remove">Remove from community page</button></div></div>';
+      });
+
+      h += '<div class="adm-sub">Responses</div>';
+      var rows = 0;
+      sessions.forEach(function (sess) {
+        var vs = sess.versions.filter(function (v) { return v.question_id === s.id; });
+        if (!vs.length) return;
+        var shown = adminHistory ? vs.slice().reverse() : vs.slice(-1);
+        shown.forEach(function (v, i) {
+          rows++;
+          var on = postedFrom[v.version_id];
+          h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
+            '<div class="txt">' + esc(A.answerText(s, v.answer_value) || '(blank)') + '</div><div class="meta">' +
+            (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' +
+                       '<span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + '</span>' : '') +
+            '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
+            (on ? '<span class="tag included">On community page ✓</span>' : '<button class="text-btn" data-act="post">Add to community page</button>') +
+            '<button class="text-btn danger" data-act="delete-version">Delete version</button>' +
+            (i === 0 ? '<button class="text-btn danger" data-act="delete-session">Delete whole response</button>' : '') + '</div></div>';
+        });
+      });
+      if (!rows) h += '<div class="no-answers">No answers.</div>';
       h += '</div>';
     });
     document.getElementById('admin-body').innerHTML = h + '</div>';
 
     document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
     document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
-    document.querySelectorAll('.adm-answer').forEach(function (el) {
-      var aid = el.dataset.aid;
-      var s = BY_ID[el.dataset.qid];
-      var sess = sessionOf[aid];
-      var ans = sess.answers.filter(function (x) { return x.answer_id === aid; })[0];
-      el.querySelector('input[type=checkbox]').onchange = function () {
-        var cb = this;
-        api('PUT', '/admin/answers/' + aid, { included: cb.checked }).then(function () { ans.included = cb.checked; })
-          .catch(function (err) { cb.checked = !cb.checked; showMsg('adm-msg', err.message, true); });
+    document.getElementById('adm-history').onchange = function () { adminHistory = this.checked; renderAdminAnswers(); };
+    var fail = function (err) { showMsg('adm-msg', err.message, true); };
+
+    document.querySelectorAll('.adm-answer[data-cid]').forEach(function (el) {
+      var entry = admin.community.filter(function (c) { return c.id === el.dataset.cid; })[0];
+      el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, BY_ID[el.dataset.qid], entry); };
+      confirmClick(el.querySelector('[data-act=remove]'), 'Confirm remove?', function () {
+        api('DELETE', '/admin/community/' + entry.id).then(function () {
+          admin.community = admin.community.filter(function (c) { return c !== entry; });
+          renderAdminAnswers();
+        }).catch(fail);
+      });
+    });
+
+    document.querySelectorAll('.adm-answer[data-vid]').forEach(function (el) {
+      var info = versionInfo[el.dataset.vid];
+      var sess = info.sess;
+      var post = el.querySelector('[data-act=post]');
+      if (post) post.onclick = function () {
+        post.disabled = true;
+        api('POST', '/admin/community', { version_id: info.v.version_id }).then(function (entry) {
+          admin.community.push(entry);
+          renderAdminAnswers();
+        }).catch(function (err) { post.disabled = false; fail(err); });
       };
-      el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, s, ans); };
-      el.querySelector('[data-act=respondent]').onclick = function () {
+      var who = el.querySelector('[data-act=respondent]');
+      if (who) who.onclick = function () {
         adminRespondent = respondentKey(sess);
         renderAdminAnswers();
         window.scrollTo(0, 0);
       };
-      confirmClick(el.querySelector('[data-act=delete]'), 'Confirm delete?', function () {
-        api('DELETE', '/admin/answers/' + aid).then(function () {
-          sess.answers = sess.answers.filter(function (x) { return x.answer_id !== aid; });
+      confirmClick(el.querySelector('[data-act=delete-version]'), 'Confirm delete?', function () {
+        api('DELETE', '/admin/versions/' + info.v.version_id).then(function () {
+          sess.versions = sess.versions.filter(function (v) { return v !== info.v; });
+          admin.community = admin.community.filter(function (c) { return c.source_version_id !== info.v.version_id; });
           renderAdminAnswers();
-        }).catch(function (err) { showMsg('adm-msg', err.message, true); });
+        }).catch(fail);
       });
-      confirmClick(el.querySelector('[data-act=delete-session]'), 'Delete all ' + sess.answers.length + ' answers?', function () {
+      var delSess = el.querySelector('[data-act=delete-session]');
+      if (delSess) confirmClick(delSess, 'Delete this whole response (' + sess.versions.length + ' versions)?', function () {
         api('DELETE', '/admin/sessions/' + sess.id).then(function () {
-          admin.sessions = admin.sessions.filter(function (x) { return x.id !== sess.id; });
+          var gone = {};
+          sess.versions.forEach(function (v) { gone[v.version_id] = true; });
+          admin.sessions = admin.sessions.filter(function (x) { return x !== sess; });
+          admin.community = admin.community.filter(function (c) { return !gone[c.source_version_id]; });
           renderAdminAnswers();
-        }).catch(function (err) { showMsg('adm-msg', err.message, true); });
+        }).catch(fail);
       });
     });
   }
@@ -609,9 +666,9 @@
     return key.indexOf('response:') === 0 ? 'Respondent unknown (' + key.slice(9, 17) + ')' : 'Respondent ' + key.slice(0, 8);
   }
 
-  // Inline editor using the same input types as the questionnaire.
-  function openEditor(el, s, ans) {
-    var v = ans.answer_value;
+  // Inline editor (same input types as the questionnaire) for a community page copy.
+  function openEditor(el, s, entry) {
+    var v = entry.answer_value;
     var h = '<div class="editor">';
     if (s.type === 'long' || s.type === 'short' || s.type === 'numeric') {
       h += '<textarea data-k="">' + esc(v === null || v === undefined ? '' : v) + '</textarea>';
@@ -651,9 +708,9 @@
     ed.querySelector('[data-act=cancel]').onclick = function () { ed.remove(); };
     ed.querySelector('[data-act=save]').onclick = function () {
       var value = readEditor(ed, s);
-      api('PUT', '/admin/answers/' + ans.answer_id, { answer_value: value, set_value: true }).then(function () {
-        ans.answer_value = value;
-        ans.edited_at = new Date().toISOString();
+      api('PUT', '/admin/community/' + entry.id, { answer_value: value }).then(function () {
+        entry.answer_value = value;
+        entry.edited_at = new Date().toISOString();
         renderAdminAnswers();
       }).catch(function (err) { showMsg('adm-msg', err.message, true); });
     };
