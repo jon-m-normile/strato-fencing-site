@@ -187,3 +187,11 @@ links inside .product-desc.
 
 #41 ✅ Services page: Xenophon service credit note names "Video Review and Tactical Analysis"
 Replaces "Video Analysis"; the rest of the user's wording is kept as written.
+
+#42 ✅ Aristotle: "Waking up the server" banner instead of a failure while Render cold-starts (Xenophon Trello #28 feedback)
+aristotle-questions.js `waitForServer()` polls /api/aristotle/ping (20s timeout, retry every
+3s, gives up after 2.5 min). If the wait is longer than 1.5s, a bottom banner explains the
+server is starting, with a progress bar and elapsed seconds, and says "Server ready" when done.
+Community page: any request that fails with a network error or 502/503/504 waits for the
+server and retries once (so sign-in just completes); the page also starts waking the server
+on load. Questionnaire: Submit does the same. CSS in aristotle.css (.wake-banner).

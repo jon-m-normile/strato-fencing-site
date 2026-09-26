@@ -126,6 +126,66 @@
     return id;
   }
 
+  // Render puts the Xenophon server to sleep when idle; the first requests after that fail
+  // (or hang) for up to a minute while it starts. waitForServer() polls /ping and, if the
+  // wait is noticeable, shows a banner with a progress bar until the server answers.
+  var WAKE_LIMIT_MS = 150000;
+  var wakePromise = null;
+
+  function ping(timeoutMs) {
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = ctrl && setTimeout(function () { ctrl.abort(); }, timeoutMs);
+    return fetch(API + '/ping', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined }).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+    }, function (err) { clearTimeout(timer); throw err; });
+  }
+
+  function waitForServer() {
+    if (wakePromise) return wakePromise;
+    var start = Date.now(), banner = null, tick = null;
+    var showTimer = setTimeout(function () {
+      banner = document.createElement('div');
+      banner.className = 'wake-banner';
+      banner.setAttribute('role', 'status');
+      banner.innerHTML = '<div class="wake-title">Waking up the server…</div>' +
+        '<div class="wake-text">The Aristotle server sleeps when it hasn\'t been used for a while and takes up to a minute to start. ' +
+        'You don\'t need to do anything — this will continue on its own.</div>' +
+        '<div class="wake-bar"><span></span></div><div class="wake-time"></div>';
+      document.body.appendChild(banner);
+      tick = setInterval(function () {
+        var t = (Date.now() - start) / 1000;
+        banner.querySelector('.wake-bar span').style.width = (95 * (1 - Math.exp(-t / 25))) + '%';
+        banner.querySelector('.wake-time').textContent = Math.round(t) + ' seconds';
+      }, 250);
+    }, 1500);  // quick answers never show the banner
+
+    function finish() {
+      clearTimeout(showTimer);
+      clearInterval(tick);
+      wakePromise = null;
+      if (!banner) return;
+      var b = banner;
+      b.querySelector('.wake-bar span').style.width = '100%';
+      b.querySelector('.wake-title').textContent = 'Server ready';
+      setTimeout(function () { b.remove(); }, 700);
+    }
+
+    wakePromise = new Promise(function (resolve, reject) {
+      (function attempt() {
+        ping(20000).then(function () { finish(); resolve(); }, function () {
+          if (Date.now() - start < WAKE_LIMIT_MS) { setTimeout(attempt, 3000); return; }
+          finish();
+          reject(new Error("The server isn't responding. Please try again in a few minutes."));
+        });
+      })();
+    });
+    return wakePromise;
+  }
+
+  // Network failure or Render's "starting up" responses: worth waiting for the server and retrying.
+  function isWaking(err) { return !err.status || err.status === 502 || err.status === 503 || err.status === 504; }
+
   function submittedIds() {
     try { return JSON.parse(localStorage.getItem(SUBMITTED_KEY)) || []; } catch (e) { return []; }
   }
@@ -151,6 +211,8 @@
     answerText: answerText,
     submittedIds: submittedIds,
     rememberSubmitted: rememberSubmitted,
-    respondentId: respondentId
+    respondentId: respondentId,
+    waitForServer: waitForServer,
+    isWaking: isWaking
   };
 })();

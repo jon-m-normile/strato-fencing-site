@@ -57,6 +57,19 @@ nav {
 .nav-links a:hover,
 .nav-links a.active { color: var(--white); border-bottom-color: var(--accent); }
 
+/* ── SERVER WAKE-UP BANNER ── */
+.wake-banner {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%); z-index: 300;
+  width: min(460px, calc(100% - 2rem));
+  background: var(--white); border: 1px solid var(--light); border-top: 3px solid var(--accent);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.18); padding: 1rem 1.2rem;
+}
+.wake-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.wake-text { font-size: 0.9rem; font-weight: 300; line-height: 1.5; margin: 0.3rem 0 0.7rem; }
+.wake-bar { height: 6px; background: var(--light); overflow: hidden; }
+.wake-bar span { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s linear; }
+.wake-time { font-size: 0.8rem; color: var(--muted); margin-top: 0.35rem; text-align: right; }
+
 /* ── HERO ── */
 .hero {
   position: relative;
