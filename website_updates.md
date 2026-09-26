@@ -205,3 +205,16 @@ source respondent/version date, "newer version available", "N posts from this re
 and "Responses" (each response's latest version; "Show earlier versions" lists older ones),
 with Add to community page, Delete version, and Delete whole response. Include checkbox removed.
 Asset versions bumped to ?v=10.
+
+#44 ✅ Aristotle: account holders reopen and edit their questionnaire (Xenophon Trello #31 / Xenophon #368)
+aristotle.html sends the sign-in token (if any) on every questionnaire call. When signed in, the
+page first loads the account's response (GET /my-response) and opens it with the latest answers;
+answers changed in this browser but not yet saved win (unsaved qids are now kept in local
+storage). A local anonymous draft is attached to the account if it has no response yet. After
+submitting, account holders keep their response: the landing buttons read "Edit My Answers"
+(opens Review; "Start over" hidden), Review explains changes update the existing response and
+earlier versions are kept, the button reads "Save Changes", and a "Your Changes Have Been Saved"
+screen links to Answers & Discussion. Signed out (or token rejected), the account's response is
+removed from the browser and the page works anonymously as before.
+aristotle-community.html: "Your Questionnaire" section on the Account page (Edit My Answers /
+Take the Questionnaire) and an "Edit My Answers" link in the results intro. Assets ?v=11.

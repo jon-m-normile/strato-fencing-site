@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=10" />
+  <link rel="stylesheet" href="aristotle.css?v=11" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -125,7 +125,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=10"></script>
+<script src="aristotle-questions.js?v=11"></script>
 <script>
 (function () {
   'use strict';
@@ -384,7 +384,8 @@
       return;
     }
     var h = '<h2 class="section-title">How Other Fencers Answered</h2><div class="section-rule"></div>' +
-      '<p class="body-text">A curated selection of answers from participating fencers, with a discussion thread for each question. Answers are shown anonymously.</p>';
+      '<p class="body-text">A curated selection of answers from participating fencers, with a discussion thread for each question. Answers are shown anonymously.' +
+      (me.has_access ? ' Want to change your own answers? <a href="' + questionnaireHref() + '#/review">Edit My Answers</a>.' : '') + '</p>';
     var cur = null;
     QUESTIONS.forEach(function (s) {
       var sec = s.id.charAt(0);
@@ -468,7 +469,13 @@
       '<label for="f-username">Username</label><input class="q-input" id="f-username" maxlength="30" value="' + esc(me.username || '') + '" />' +
       '<div class="hint">Shown on your comments. 3–30 letters, numbers, dots, dashes or underscores. Changing it also changes it in the Xenophon app.</div>' +
       '<div class="q-nav"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="sign-out">Sign Out</button></div>' +
-      '</form>' + msgHtml('acct-msg') + '</div>');
+      '</form>' + msgHtml('acct-msg') + '</div>' +
+      '<h2 class="section-title" style="margin-top:2.5rem">Your Questionnaire</h2><div class="section-rule"></div>' +
+      '<p class="body-text">' + (me.has_access
+        ? 'Your answers stay with your account. You can reopen the questionnaire and change them at any time.'
+        : 'Questionnaires you take while signed in are saved to your account.') + '</p>' +
+      '<div class="q-nav"><a class="btn primary" style="text-decoration:none" href="' + questionnaireHref() +
+      (me.has_access ? '#/review">Edit My Answers' : '">Take the Questionnaire') + '</a></div>');
     document.getElementById('sign-out').onclick = function () { signOut(); };
     document.getElementById('acct-form').onsubmit = function (e) {
       e.preventDefault();

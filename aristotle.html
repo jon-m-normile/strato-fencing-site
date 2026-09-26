@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=10" />
+  <link rel="stylesheet" href="aristotle.css?v=11" />
 </head>
 <body>
 
@@ -124,7 +124,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=10"></script>
+<script src="aristotle-questions.js?v=11"></script>
 <script>
 (function () {
   'use strict';
@@ -137,9 +137,13 @@
   var TOTAL = SCREENS.length;
 
   // ── Local state (survives reloads in this browser) ──
-  // { id: server session id or null, answers: {qid: value}, pos: last screen index }
+  // { id: server session id or null, answers: {qid: value}, pos: last screen index,
+  //   pending: [qids not yet confirmed saved], owned/submitted: the signed-in account's response (#44) }
   var state = loadState();
   var pending = {};         // qids changed locally but not yet confirmed saved
+  if (state && state.pending) state.pending.forEach(function (q) { pending[q] = true; });
+  var accountOk = false;    // a sign-in token was accepted by the server this page load
+  var accountLoading = false;
   var uncommitted = false;  // changed since the server last recorded answer versions (#43)
   var saveTimer = null;
   var retryTimer = null;
@@ -159,16 +163,23 @@
   }
   function persistLocal() {
     try {
-      if (state) localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      if (state) { state.pending = Object.keys(pending); localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
       else localStorage.removeItem(STORE_KEY);
     } catch (e) { /* storage unavailable — server autosave still works */ }
   }
   function hp() { return document.getElementById('hp-website').value; }
+  function token() { try { return localStorage.getItem(A.TOKEN_KEY); } catch (e) { return null; } }
+  // Signed-in account holders send their token so their response stays editable after submitting.
+  function headers(json) {
+    var h = json ? { 'Content-Type': 'application/json' } : {};
+    if (token()) h.Authorization = 'Bearer ' + token();
+    return h;
+  }
 
   function api(method, path, body, opts) {
     return fetch(API + path, Object.assign({
       method: method,
-      headers: body ? { 'Content-Type': 'application/json' } : {},
+      headers: headers(!!body),
       body: body ? JSON.stringify(body) : undefined
     }, opts || {})).then(function (r) {
       if (!r.ok) { var err = new Error('HTTP ' + r.status); err.status = r.status; throw err; }
@@ -189,6 +200,7 @@
     if (!sessionPromise) {
       sessionPromise = api('POST', '/sessions', { website: hp(), respondent_id: A.respondentId() }).then(function (res) {
         state.id = res.id;
+        if (accountOk) state.owned = true;
         persistLocal();
         return res.id;
       }).finally(function () { sessionPromise = null; });
@@ -225,6 +237,7 @@
     return ensureSession().then(function (id) {
       return api('PUT', '/sessions/' + id + '/answers', { answers: batch, website: hp(), commit: committing });
     }).then(function () {
+      persistLocal();
       if (!Object.keys(pending).length) setStatus('All changes saved');
     }).catch(function (err) {
       qids.forEach(function (q) { pending[q] = true; });
@@ -255,7 +268,7 @@
     try {
       fetch(API + '/sessions/' + state.id + '/answers', {
         method: 'PUT', keepalive: true,
-        headers: { 'Content-Type': 'application/json' },
+        headers: headers(true),
         body: JSON.stringify({ answers: batch, website: hp(), commit: true })
       });
       uncommitted = false;
@@ -269,13 +282,16 @@
   // ── Starting / resuming ──
   function hasProgress() { return !!state && (!!state.id || Object.keys(state.answers).length > 0); }
 
+  function editingSubmitted() { return !!state && !!state.owned && !!state.submitted; }
+
   function start() {
+    if (accountLoading) return;
     if (!state) {
       state = { id: null, answers: {}, pos: 0 };
       persistLocal();
       ensureSession().catch(function () { /* retried on first save */ });
     }
-    location.hash = '#/q/' + ((state.pos || 0) + 1);
+    location.hash = editingSubmitted() ? '#/review' : '#/q/' + ((state.pos || 0) + 1);
   }
 
   function restart() {
@@ -286,9 +302,14 @@
 
   function refreshLanding() {
     var resume = hasProgress();
-    document.getElementById('hero-start').textContent = resume ? 'Resume the Questionnaire' : 'Start the Questionnaire';
-    document.getElementById('cta-start').textContent = resume ? 'Resume the Questionnaire' : 'Start the Questionnaire';
-    document.getElementById('hero-restart').hidden = !resume;
+    var label = accountLoading ? 'Loading Your Answers…' : editingSubmitted() ? 'Edit My Answers'
+      : resume ? 'Resume the Questionnaire' : 'Start the Questionnaire';
+    ['hero-start', 'cta-start'].forEach(function (id) {
+      var b = document.getElementById(id);
+      b.textContent = label;
+      b.disabled = accountLoading;
+    });
+    document.getElementById('hero-restart').hidden = !resume || editingSubmitted() || accountLoading;
   }
 
   // ── Rendering ──
@@ -488,9 +509,12 @@
   }
 
   function renderReview(restoreScroll) {
+    var editing = editingSubmitted();
     var h = '<div class="section-label">Review</div>' +
-      '<h2 class="section-title">Review Your Answers</h2><div class="section-rule"></div>' +
-      '<p class="body-text">Click any question to change your answer. Blank questions are fine; submit whenever you are ready.</p>' +
+      '<h2 class="section-title">' + (editing ? 'Your Answers' : 'Review Your Answers') + '</h2><div class="section-rule"></div>' +
+      '<p class="body-text">' + (editing
+        ? 'Click any question to change your answer, then save your changes. They update your existing response; earlier versions of your answers are kept for the research.'
+        : 'Click any question to change your answer. Blank questions are fine; submit whenever you are ready.') + '</p>' +
       '<div class="progress-row"><span></span><span class="save-status" id="save-status"></span></div>';
     var curSection = null;
     SCREENS.forEach(function (s, idx) {
@@ -508,7 +532,7 @@
         '</button>';
     });
     h += '</div><div class="q-nav"><button class="btn" id="review-back">Back</button></div>' +
-      '<div class="submit-row"><button class="btn-primary" id="submit-btn">Submit Questionnaire</button>' +
+      '<div class="submit-row"><button class="btn-primary" id="submit-btn">' + submitLabel() + '</button>' +
       '<div class="submit-error" id="submit-error" hidden></div></div>';
     document.getElementById('survey-inner').innerHTML = h;
     setStatus(Object.keys(pending).length ? 'Saving…' : '');
@@ -524,11 +548,14 @@
     window.scrollTo(0, restoreScroll ? reviewScroll : 0);
   }
 
+  function submitLabel() { return editingSubmitted() ? 'Save Changes' : 'Submit Questionnaire'; }
+
   function submit(retried) {
     var btn = document.getElementById('submit-btn');
     var errEl = document.getElementById('submit-error');
+    var wasSubmitted = editingSubmitted();
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = wasSubmitted ? 'Saving…' : 'Submitting…';
     errEl.hidden = true;
     clearTimeout(saveTimer);
     clearTimeout(retryTimer);
@@ -536,6 +563,13 @@
       return api('POST', '/sessions/' + id + '/submit', { answers: state.answers, website: hp() });
     }).then(function () {
       A.rememberSubmitted(state.id);
+      if (state.owned) {
+        // Account holders keep their response in the questionnaire so they can come back and edit it.
+        state.submitted = true; pending = {}; uncommitted = false;
+        persistLocal();
+        location.hash = wasSubmitted ? '#/saved' : '#/thanks';
+        return;
+      }
       state = null; pending = {};
       persistLocal();
       location.hash = '#/thanks';
@@ -552,7 +586,7 @@
         return;
       }
       btn.disabled = false;
-      btn.textContent = 'Submit Questionnaire';
+      btn.textContent = submitLabel();
       errEl.hidden = false;
       errEl.textContent = "We couldn't reach the server to submit. Your answers are saved in this browser — please try again in a moment.";
     });
@@ -570,6 +604,16 @@
     document.getElementById('new-response').onclick = function (e) { e.preventDefault(); restart(); };
     window.scrollTo(0, 0);
     claimIfSignedIn();
+  }
+
+  function renderSaved() {
+    document.getElementById('survey-inner').innerHTML =
+      '<div class="section-label">Saved</div>' +
+      '<h2 class="section-title">Your Changes Have Been Saved</h2><div class="section-rule"></div>' +
+      '<p class="body-text">Your response has been updated. You can come back and edit your answers at any time.</p>' +
+      '<div class="q-nav"><a class="btn primary" href="aristotle-community.html' + esc(location.search) + '#/results" style="text-decoration:none">Answers &amp; Discussion</a>' +
+      '<a class="btn" href="#/review" style="text-decoration:none">Back to My Answers</a></div>';
+    window.scrollTo(0, 0);
   }
 
   (function () {
@@ -594,7 +638,7 @@
     }).catch(function () {});
   }
 
-  // ── Routing: #/q/N[/review], #/review[/back], #/thanks, or empty for the landing page ──
+  // ── Routing: #/q/N[/review], #/review[/back], #/thanks, #/saved, or empty for the landing page ──
   function route() {
     var hash = location.hash.replace(/^#\/?/, '');
     var parts = hash.split('/');
@@ -627,6 +671,9 @@
     } else if (view === 'thanks') {
       landing.hidden = true; survey.hidden = false;
       renderThanks();
+    } else if (view === 'saved' && editingSubmitted()) {
+      landing.hidden = true; survey.hidden = false;
+      renderSaved();
     } else {
       survey.hidden = true; landing.hidden = false;
       refreshLanding();
@@ -643,20 +690,52 @@
   // Wake the Render backend early so the first autosave isn't slowed by a cold start.
   fetch(API + '/ping').catch(function () {});
 
-  // On load, confirm the stored session still exists and hasn't been submitted.
-  if (state && state.id) {
-    api('GET', '/sessions/' + state.id).then(function (res) {
-      if (res.submitted) { A.rememberSubmitted(state.id); state = null; persistLocal(); route(); }
-    }).catch(function (err) {
-      if (err.status === 404) {
-        state.id = null;
-        Object.keys(state.answers).forEach(function (q) { pending[q] = true; });
-        persistLocal();
-        save(false);
-      }
-    });
+  // Signed in: open the account's own response (latest answers) instead of starting a new one.
+  // Answers changed in this browser but not yet saved win over the server copy.
+  function dropAccountState() {
+    if (state && state.owned) { state = null; pending = {}; persistLocal(); }
   }
-  route();
+
+  function loadAccount() {
+    if (!token()) { dropAccountState(); return Promise.resolve(); }  // signed out: that response belongs to the account
+    accountLoading = true;
+    refreshLanding();
+    return api('GET', '/my-response').then(function (res) {
+      accountOk = true;
+      if (res.id) {
+        var local = state && state.id === res.id ? state : null;
+        if (local) Object.keys(pending).forEach(function (q) { res.answers[q] = local.answers[q]; });
+        else pending = {};
+        state = { id: res.id, answers: res.answers, pos: local ? local.pos : 0, owned: true, submitted: res.submitted };
+        persistLocal();
+        if (Object.keys(pending).length) save(false);
+      } else if (state && state.id) {
+        return api('POST', '/claim', { session_ids: [state.id] }).then(function (r) {
+          if (r.claimed) { state.owned = true; persistLocal(); }
+        });
+      }
+    }).catch(function (err) {
+      if (err.status === 401) dropAccountState();  // otherwise the server is unreachable: carry on as before
+    })
+      .then(function () { accountLoading = false; });
+  }
+
+  loadAccount().then(function () {
+    // Confirm a stored anonymous session still exists and hasn't been submitted.
+    if (state && state.id && !state.owned) {
+      api('GET', '/sessions/' + state.id).then(function (res) {
+        if (res.submitted) { A.rememberSubmitted(state.id); state = null; persistLocal(); route(); }
+      }).catch(function (err) {
+        if (err.status === 404) {
+          state.id = null;
+          Object.keys(state.answers).forEach(function (q) { pending[q] = true; });
+          persistLocal();
+          save(false);
+        }
+      });
+    }
+    route();
+  });
 })();
 </script>
 
