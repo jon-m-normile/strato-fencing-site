@@ -314,3 +314,7 @@ Q15, Q16 and Q25 charts are now dot plots: one dot per response, stacked at its 
 no longer uses 10-point ranges). The y axis (responses) shows at least 5 and always leaves at
 least one empty row above the tallest stack. Both axes have tick marks (Q25 x axis every 10%). The
 four Q25 plots share one y scale, set by the tallest stack among them. ?v=25.
+
+#62 ✅ Aristotle: light grid on the dot plots
+Added vertical gridlines at each x-axis tick alongside the horizontal ones, drawn in a slightly
+darker light grey so the grid is visible without competing with the dots. ?v=26.

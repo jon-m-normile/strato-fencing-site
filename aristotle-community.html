@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=25" />
+  <link rel="stylesheet" href="aristotle.css?v=26" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -47,7 +47,7 @@
     .dist-title span { font-weight: 400; color: var(--muted); }
     .hist { width: 100%; height: auto; display: block; }
     .hist .dot { fill: var(--accent2); }
-    .hist .grid { stroke: var(--light); }
+    .hist .grid { stroke: #dcdcdc; stroke-width: 0.6; }
     .hist .axis { stroke: var(--muted); }
     .hist text { fill: var(--muted); font-size: 10px; font-family: inherit; }
     .hist .ttl { font-size: 10.5px; }
@@ -138,7 +138,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=25"></script>
+<script src="aristotle-questions.js?v=26"></script>
 <script>
 (function () {
   'use strict';
@@ -476,7 +476,8 @@
         '<text x="' + (L - 7) + '" y="' + (y(n) + 3.5) + '" text-anchor="end">' + n + '</text>';
     }
     for (var v = xmin; v <= xmax; v += xstep) {
-      h += '<line class="axis" x1="' + x(v) + '" x2="' + x(v) + '" y1="' + (T + ph) + '" y2="' + (T + ph + 4) + '"/>' +
+      h += '<line class="grid" x1="' + x(v) + '" x2="' + x(v) + '" y1="' + T + '" y2="' + (T + ph) + '"/>' +
+        '<line class="axis" x1="' + x(v) + '" x2="' + x(v) + '" y1="' + (T + ph) + '" y2="' + (T + ph + 4) + '"/>' +
         '<text x="' + x(v) + '" y="' + (T + ph + 15) + '" text-anchor="middle">' + v + '</text>';
     }
     Object.keys(counts).forEach(function (k) {
