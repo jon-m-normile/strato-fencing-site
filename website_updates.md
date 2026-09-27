@@ -295,3 +295,6 @@ community page ✓" removes it and clicking "Add to community page" adds it, upd
 earlier version that is on the community page stays listed even with "Show earlier versions"
 off. "Edit community copy" edits the posted copy, which then shows its edited text with an
 "edited for the community page" tag. The duplicate-post warning moves onto the row. ?v=22.
+
+#59 ✅ Aristotle: Q25 average note no longer shows the respondent count
+The community page note now reads "Average value across all respondents". ?v=23.
