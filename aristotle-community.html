@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=11" />
+  <link rel="stylesheet" href="aristotle.css?v=12" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -125,7 +125,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=11"></script>
+<script src="aristotle-questions.js?v=12"></script>
 <script>
 (function () {
   'use strict';
@@ -135,6 +135,9 @@
   var QUESTIONS = A.SCREENS;
   var BY_ID = {};
   QUESTIONS.forEach(function (s) { BY_ID[s.id] = s; });
+  // Background questions (section A) are respondent data, not shared on the community page.
+  function onCommunityPage(s) { return s.id.charAt(0) !== 'A'; }
+  var COMMUNITY_QUESTIONS = QUESTIONS.filter(onCommunityPage);
 
   var me = null;          // { username, has_access, is_admin }
   var results = null;     // { answers: {qid: [values]}, comments: {qid: [...]}, is_admin }
@@ -273,10 +276,9 @@
     });
   }
 
-  // Link any questionnaires submitted in this browser, then load the account.
+  // Link questionnaires taken in this browser (submitted ids + its respondent id), then load the account.
   function afterSignIn(fromLogin) {
-    var ids = A.submittedIds();
-    var claim = ids.length ? api('POST', '/claim', { session_ids: ids }).catch(function () {}) : Promise.resolve();
+    var claim = api('POST', '/claim', { session_ids: A.submittedIds(), respondent_id: A.respondentId() }).catch(function () {});
     return claim.then(function () { return api('GET', '/me'); }).then(function (m) {
       me = m;
       results = null;
@@ -387,7 +389,7 @@
       '<p class="body-text">A curated selection of answers from participating fencers, with a discussion thread for each question. Answers are shown anonymously.' +
       (me.has_access ? ' Want to change your own answers? <a href="' + questionnaireHref() + '#/review">Edit My Answers</a>.' : '') + '</p>';
     var cur = null;
-    QUESTIONS.forEach(function (s) {
+    COMMUNITY_QUESTIONS.forEach(function (s) {
       var sec = s.id.charAt(0);
       if (sec !== cur) {
         if (cur) h += '</div>';
@@ -403,7 +405,7 @@
         '<div class="thread-slot">' + threadHtml(s.id) + '</div></div>';
     });
     view(h + '</div>');
-    QUESTIONS.forEach(function (s) { bindThread(s.id); });
+    COMMUNITY_QUESTIONS.forEach(function (s) { bindThread(s.id); });
   }
 
   function refreshThread(qid) {
@@ -564,7 +566,7 @@
       var sec = s.id.charAt(0);
       if (sec !== cur) {
         if (cur) h += '</div>';
-        h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + '</h3>';
+        h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + (sec === 'A' ? ' (not shown on the community page)' : '') + '</h3>';
         cur = sec;
       }
       h += '<div class="rq-block"><div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>';
@@ -575,8 +577,11 @@
         var src = versionInfo[c.source_version_id];
         if (src) { var k = respondentKey(src.sess); perRespondent[k] = (perRespondent[k] || 0) + 1; }
       });
-      h += '<div class="adm-sub">On the community page (' + posted.length + ')</div>';
-      if (!posted.length) h += '<div class="no-answers">None yet.</div>';
+      var postable = onCommunityPage(s);
+      if (postable) {
+        h += '<div class="adm-sub">On the community page (' + posted.length + ')</div>';
+        if (!posted.length) h += '<div class="no-answers">None yet.</div>';
+      }
       posted.forEach(function (c) {
         var src = versionInfo[c.source_version_id];
         var n = src ? perRespondent[respondentKey(src.sess)] : 0;
@@ -605,7 +610,7 @@
             (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' +
                        '<span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + '</span>' : '') +
             '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
-            (on ? '<span class="tag included">On community page ✓</span>' : '<button class="text-btn" data-act="post">Add to community page</button>') +
+            (on ? '<span class="tag included">On community page ✓</span>' : postable ? '<button class="text-btn" data-act="post">Add to community page</button>' : '') +
             '<button class="text-btn danger" data-act="delete-version">Delete version</button>' +
             (i === 0 ? '<button class="text-btn danger" data-act="delete-session">Delete whole response</button>' : '') + '</div></div>';
         });

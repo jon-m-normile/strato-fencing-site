@@ -271,6 +271,7 @@ section { padding: 3rem 3rem; }
 }
 .q-helper p + p { margin-top: 0.5rem; }
 .q-text a { color: var(--accent2); }
+.q-group + .q-group { margin-top: 2.25rem; padding-top: 2rem; border-top: 1px solid var(--light); }
 
 /* Definitions and notes sit in a margin column beside the question */
 .survey-inner.wide { max-width: 1080px; }

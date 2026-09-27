@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=11" />
+  <link rel="stylesheet" href="aristotle.css?v=12" />
 </head>
 <body>
 
@@ -70,7 +70,7 @@
       <div class="section-rule"></div>
       <p class="body-text">What follows is a questionnaire that explores a fencer's thought processes while they are fencing. It does this for a variety of different fencing situations, all with a goal to understand what goes through a fencer's mind during the different moments of a fencing bout. And with better understanding comes wisdom, and through wisdom comes victory.</p>
       <ul class="framework-list">
-        <li>One question per screen: <span id="screen-count"></span> screens in total</li>
+        <li>The background questions share the first screen, then one question per screen: <span id="screen-count"></span> screens in total</li>
         <li>Every question is optional; leave blank anything you don't want to answer.</li>
         <li>You can review and change any answer before you submit.</li>
         <li>Some of the questions might be perceived as ambiguous. Feel free to make any assumptions that you like when answering.</li>
@@ -124,7 +124,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=11"></script>
+<script src="aristotle-questions.js?v=12"></script>
 <script>
 (function () {
   'use strict';
@@ -134,10 +134,19 @@
       ALLOC_KEYS = A.ALLOC_KEYS, esc = A.esc, answered = A.answered, answerText = A.answerText, allocTotal = A.allocTotal;
   var STORE_KEY = 'aristotle_session_v1';
 
-  var TOTAL = SCREENS.length;
+  // Pages of screen indices: the background questions (section A) share one page, then one question per page.
+  var PAGES = [];
+  SCREENS.forEach(function (s, i) {
+    if (s.id.charAt(0) === 'A' && PAGES.length) PAGES[0].push(i); else PAGES.push([i]);
+  });
+  function pageOf(screenIdx) {
+    for (var p = 0; p < PAGES.length; p++) if (PAGES[p].indexOf(screenIdx) >= 0) return p;
+    return 0;
+  }
+  var TOTAL = PAGES.length;
 
   // ── Local state (survives reloads in this browser) ──
-  // { id: server session id or null, answers: {qid: value}, pos: last screen index,
+  // { id: server session id or null, answers: {qid: value}, pos: last page index,
   //   pending: [qids not yet confirmed saved], owned/submitted: the signed-in account's response (#44) }
   var state = loadState();
   var pending = {};         // qids changed locally but not yet confirmed saved
@@ -314,7 +323,7 @@
 
   // ── Rendering ──
   function progressHtml(idx) {
-    return '<div class="progress-row"><span>Question ' + (idx + 1) + ' of ' + TOTAL + '</span>' +
+    return '<div class="progress-row"><span>Page ' + (idx + 1) + ' of ' + TOTAL + '</span>' +
       '<span class="save-status" id="save-status"></span></div>' +
       '<div class="progress-bar"><div class="progress-fill" style="width:' + ((idx + 1) / TOTAL * 100) + '%"></div></div>';
   }
@@ -322,13 +331,13 @@
 
   function inputHtml(s, v) {
     if (s.type === 'long') {
-      return '<textarea id="q-field" maxlength="5000" aria-label="Your answer">' + esc(v || '') + '</textarea>';
+      return '<textarea class="q-field" id="q-field-' + s.id + '" maxlength="5000" aria-label="Your answer">' + esc(v || '') + '</textarea>';
     }
     if (s.type === 'short') {
-      return '<input class="q-input" id="q-field" type="text" maxlength="200" aria-label="Your answer" value="' + esc(v || '') + '" />';
+      return '<input class="q-input q-field" id="q-field-' + s.id + '" type="text" maxlength="200" aria-label="Your answer" value="' + esc(v || '') + '" />';
     }
     if (s.type === 'numeric') {
-      return '<input class="q-input num" id="q-field" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Your answer" value="' + esc(v || '') + '" />' +
+      return '<input class="q-input num q-field" id="q-field-' + s.id + '" type="number" min="0" max="100" step="1" inputmode="numeric" aria-label="Your answer" value="' + esc(v || '') + '" />' +
         '<span class="unit">' + esc(s.unit) + '</span>';
     }
     if (s.type === 'selects') {
@@ -381,17 +390,19 @@
     return '';
   }
 
-  function renderQuestion(idx, fromReview) {
-    var s = SCREENS[idx];
-    var v = state.answers[s.id];
+  function renderQuestion(idx, fromReview, focusQid) {
+    var screens = PAGES[idx].map(function (i) { return SCREENS[i]; });
     var isLast = idx === TOTAL - 1;
+    var sec = screens[0].id.charAt(0);
     var h = progressHtml(idx) +
-      '<div class="section-label">Section ' + s.id.charAt(0) + ' — ' + esc(SECTIONS[s.id.charAt(0)]) + '</div>';
-    h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + '">' +
-        '<div class="q-text">' + (s.textHtml || esc(s.text)) + '</div>' +
-        (s.helper ? '<aside class="q-aside"><div class="q-aside-label">Note</div>' +
-          s.helper.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</aside>' : '') +
-        '<div class="q-answer">' + inputHtml(s, v) + '</div></div>';
+      '<div class="section-label">Section ' + sec + ' — ' + esc(SECTIONS[sec]) + '</div>';
+    screens.forEach(function (s) {
+      h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + (screens.length > 1 ? ' q-group' : '') + '" data-qid="' + s.id + '">' +
+          '<div class="q-text">' + (s.textHtml || esc(s.text)) + '</div>' +
+          (s.helper ? '<aside class="q-aside"><div class="q-aside-label">Note</div>' +
+            s.helper.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</aside>' : '') +
+          '<div class="q-answer">' + inputHtml(s, state.answers[s.id]) + '</div></div>';
+    });
     h += '<div class="q-nav">' +
       '<button class="btn" id="nav-back"' + (idx === 0 ? ' disabled' : '') + '>Back</button>' +
       '<span class="spacer"></span>' +
@@ -400,7 +411,7 @@
       '</div>';
     var inner = document.getElementById('survey-inner');
     inner.innerHTML = h;
-    inner.classList.toggle('wide', !!s.helper);
+    inner.classList.toggle('wide', screens.some(function (s) { return !!s.helper; }));
     setStatus(Object.keys(pending).length ? 'Saving…' : '');
 
     var go = function (target) { return function () { location.hash = target; }; };
@@ -409,23 +420,30 @@
     document.getElementById('nav-next').onclick = go(next);
     if (fromReview) document.getElementById('nav-review').onclick = function () { location.hash = '#/review/back'; };
 
-    bindInputs(s);
-    var first = document.querySelector('#survey-inner textarea, #survey-inner input');
+    screens.forEach(function (s) { bindInputs(s, inner.querySelector('[data-qid="' + s.id + '"]')); });
+    var block = focusQid && inner.querySelector('[data-qid="' + focusQid + '"]');
+    if (block && screens.length > 1) block.scrollIntoView();
+    var first = (block || inner).querySelector('textarea, input, select');
     if (first && window.matchMedia('(min-width: 901px)').matches) first.focus({ preventScroll: true });
   }
 
-  function bindInputs(s) {
+  function bindInputs(s, root) {
     if (s.type === 'long' || s.type === 'short' || s.type === 'numeric') {
-      var f = document.getElementById('q-field');
+      var f = root.querySelector('.q-field');
       f.addEventListener('input', function () { setAnswer(s.id, f.value); });
       f.addEventListener('blur', function () { save(false); });
       if (s.type !== 'long') {
         f.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') { e.preventDefault(); document.getElementById('nav-next').click(); }
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          // On a page with several questions, Enter moves on to the next question before the next page.
+          var nextBlock = root.nextElementSibling;
+          var nextField = nextBlock && nextBlock.dataset.qid && nextBlock.querySelector('textarea, input, select');
+          if (nextField) nextField.focus(); else document.getElementById('nav-next').click();
         });
       }
     } else if (s.type === 'selects') {
-      document.querySelectorAll('.selects select').forEach(function (sel) {
+      root.querySelectorAll('.selects select').forEach(function (sel) {
         sel.addEventListener('change', function () {
           var cur = state.answers[s.id];
           cur = Object.assign({}, cur && typeof cur === 'object' ? cur : {});
@@ -434,7 +452,7 @@
         });
       });
     } else if (s.type === 'checks') {
-      var boxes = document.querySelectorAll('.checks input');
+      var boxes = root.querySelectorAll('.checks input');
       boxes.forEach(function (b) {
         b.addEventListener('change', function () {
           var picked = [];
@@ -443,7 +461,7 @@
         });
       });
     } else if (s.type === 'matrix') {
-      document.querySelectorAll('.matrix textarea').forEach(function (t) {
+      root.querySelectorAll('.matrix textarea').forEach(function (t) {
         t.addEventListener('input', function () {
           var cur = Object.assign({}, state.answers.C10 || {});
           cur[t.dataset.key] = t.value;
@@ -452,7 +470,7 @@
         t.addEventListener('blur', function () { save(false); });
       });
     } else if (s.type === 'alloc') {
-      var inputs = document.querySelectorAll('.alloc input');
+      var inputs = root.querySelectorAll('.alloc input');
       inputs.forEach(function (inp) {
         inp.addEventListener('input', function () { onAllocInput(inp, inputs); });
         inp.addEventListener('blur', function () { save(false); });
@@ -540,7 +558,8 @@
     document.querySelectorAll('.review-item').forEach(function (b) {
       b.onclick = function () {
         reviewScroll = window.scrollY;
-        location.hash = '#/q/' + (parseInt(b.dataset.idx, 10) + 1) + '/review';
+        var i = parseInt(b.dataset.idx, 10);
+        location.hash = '#/q/' + (pageOf(i) + 1) + '/review/' + SCREENS[i].id;
       };
     });
     document.getElementById('review-back').onclick = function () { location.hash = '#/q/' + TOTAL; };
@@ -630,7 +649,7 @@
     fetch(API + '/claim', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ session_ids: A.submittedIds() })
+      body: JSON.stringify({ session_ids: A.submittedIds(), respondent_id: A.respondentId() })
     }).then(function (r) {
       if (!r.ok) return;
       var link = document.getElementById('community-link');
@@ -638,7 +657,7 @@
     }).catch(function () {});
   }
 
-  // ── Routing: #/q/N[/review], #/review[/back], #/thanks, #/saved, or empty for the landing page ──
+  // ── Routing: #/q/N[/review[/QID]], #/review[/back], #/thanks, #/saved, or empty for the landing page ──
   function route() {
     var hash = location.hash.replace(/^#\/?/, '');
     var parts = hash.split('/');
@@ -663,8 +682,8 @@
       state.pos = idx;
       persistLocal();
       landing.hidden = true; survey.hidden = false;
-      renderQuestion(idx, parts[2] === 'review');
       window.scrollTo(0, 0);
+      renderQuestion(idx, parts[2] === 'review', parts[3]);
     } else if (view === 'review') {
       landing.hidden = true; survey.hidden = false;
       renderReview(parts[1] === 'back');
@@ -710,7 +729,7 @@
         persistLocal();
         if (Object.keys(pending).length) save(false);
       } else if (state && state.id) {
-        return api('POST', '/claim', { session_ids: [state.id] }).then(function (r) {
+        return api('POST', '/claim', { session_ids: [state.id], respondent_id: A.respondentId() }).then(function (r) {
           if (r.claimed) { state.owned = true; persistLocal(); }
         });
       }

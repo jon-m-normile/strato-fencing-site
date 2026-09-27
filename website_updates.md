@@ -224,3 +224,19 @@ Clicking (or Enter/Space on) either QR code opens it on a full-screen white over
 the screen. Everything else on the page is inert (links and form can't be clicked or tabbed to)
 and the page doesn't scroll behind it. An × button top-right (or Escape) closes it and returns to
 the previous view. Styles and script are inline in contact.html.
+
+#46 ✅ Aristotle: sign-in links earlier responses from this browser (Xenophon #369)
+aristotle.html and aristotle-community.html send the browser's respondent_id with /claim, so
+signing in (or setting a username) links every earlier response from this browser to the account
+and the respondent's username is written to those answers.
+
+#47 ✅ Aristotle: background questions on a single page
+The four background questions (A1–A4) share the questionnaire's first page; every other question
+keeps its own page (24 pages, progress reads "Page N of 24"). Enter in a background field moves to
+the next question on the page. Editing a background answer from Review opens that page scrolled to
+the question. Landing copy updated. Styling: .q-group separators in aristotle.css.
+
+#48 ✅ Aristotle: background questions removed from the community page
+Answers & Discussion no longer lists section A (no answers or discussion threads). The admin
+Answers tab still shows background responses, labelled "not shown on the community page", with no
+"Add to community page" button. Assets ?v=12.
