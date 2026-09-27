@@ -244,3 +244,21 @@ Answers tab still shows background responses, labelled "not shown on the communi
 #49 ✅ Aristotle: competition level checkboxes on one row
 A3's Local / Regional / National / International checkboxes sit side by side (wrapping only on
 narrow screens). .checks is now a flex row in aristotle.css. Assets ?v=13.
+
+#50 ✅ Aristotle: score-margin questions share a page; C4/C6 reworded
+C3 ("what point deficit feels like losing by a lot") and C5 ("what point lead feels like winning
+by a lot") are on one page, followed by C4 and C6 on their own pages. C5 moved after C3 in the
+question list (ids unchanged). Page grouping is now a `page` key on screens in
+aristotle-questions.js (background questions use it too). C4/C6 now read: How does your thinking
+change when you're losing / winning by "a lot"?
+
+#51 ✅ Aristotle: serial question numbers (Q1, Q2, …)
+Every question shows a serial number in display order: on the questionnaire (before the question
+text), Review, Answers & Discussion and the admin Answers tab (hover shows the internal id).
+Numbers come from SCREENS position (A.SCREENS[i].num).
+
+#52 ✅ Aristotle: C10 (score-situation × bout-phase matrix) retired for now
+Marked `retired: true` in aristotle-questions.js; retired questions are filtered out of SCREENS,
+so they're not asked, reviewed, numbered or shown on the community page. The definition is kept
+for a possible return, the backend still accepts C10, and existing C10 answers stay in the
+database. Questionnaire is now 26 questions on 22 pages. Assets ?v=16.

@@ -14,16 +14,17 @@
     E: 'Reflection on the thinking process'
   };
 
-  // Order is deliberate (see PRD Appendix A) — do not reorder or reword.
-  var SCREENS = [
-    { id: 'A1', type: 'numeric', text: 'How many years have you been fencing?', unit: 'years' },
-    { id: 'A2', type: 'selects', text: 'What is your primary fencing event?', fields: [
+  // Order is deliberate (see PRD Appendix A); C5 follows C3 so the two score margins share a page.
+  // Screens with the same `page` key are shown together on one questionnaire page (at the first one's position).
+  var ALL_SCREENS = [
+    { id: 'A1', page: 'background', type: 'numeric', text: 'How many years have you been fencing?', unit: 'years' },
+    { id: 'A2', page: 'background', type: 'selects', text: 'What is your primary fencing event?', fields: [
       ['gender', 'Gender', ["Men's", "Women's"]],
       ['weapon', 'Weapon', ['Foil', 'Épée', 'Sabre']]
     ] },
-    { id: 'A3', type: 'checks', text: 'At which level do you compete? (Check all that apply.)',
+    { id: 'A3', page: 'background', type: 'checks', text: 'At which level do you compete? (Check all that apply.)',
       options: ['Local', 'Regional', 'National', 'International'] },
-    { id: 'A4', type: 'short', text: 'What is your current FencingTracker strength rating?',
+    { id: 'A4', page: 'background', type: 'short', text: 'What is your current FencingTracker strength rating?',
       textHtml: 'What is your current <a href="https://fencingtracker.com" target="_blank" rel="noopener">FencingTracker</a> strength rating?',
       helper: ["Leave this blank if you don't have one or don't know it."] },
     { id: 'B1', type: 'long', text: 'What are you thinking about on the en garde line immediately before the bout begins?' },
@@ -39,14 +40,14 @@
     { id: 'B8', type: 'long', text: 'What are you thinking about in the break between periods?' },
     { id: 'C1', type: 'long', text: 'How much does the previous touch affect your thinking on the current touch?' },
     { id: 'C2', type: 'long', text: 'How much does the first touch of the bout affect your thinking on later touches?' },
-    { id: 'C3', type: 'numeric', text: 'In your own fencing, what point deficit feels like "losing by a lot"?', unit: 'touches' },
-    { id: 'C4', type: 'long', text: "How does your thinking change when you're losing by that much?" },
-    { id: 'C5', type: 'numeric', text: 'In your own fencing, what point lead feels like "winning by a lot"?', unit: 'touches' },
-    { id: 'C6', type: 'long', text: "How does your thinking change when you're winning by that much?" },
+    { id: 'C3', page: 'score-margins', type: 'numeric', text: 'In your own fencing, what point deficit feels like "losing by a lot"?', unit: 'touches' },
+    { id: 'C5', page: 'score-margins', type: 'numeric', text: 'In your own fencing, what point lead feels like "winning by a lot"?', unit: 'touches' },
+    { id: 'C4', type: 'long', text: 'How does your thinking change when you\'re losing by "a lot"?' },
+    { id: 'C6', type: 'long', text: 'How does your thinking change when you\'re winning by "a lot"?' },
     { id: 'C7', type: 'long', text: 'What are you thinking about when the score is tied?' },
     { id: 'C8', type: 'long', text: 'What are you thinking about if you\'re ahead, but not by "a lot" as you defined it above?' },
     { id: 'C9', type: 'long', text: 'What are you thinking about if you\'re behind, but not by "a lot" as you defined it above?' },
-    { id: 'C10', type: 'matrix',
+    { id: 'C10', type: 'matrix', retired: true,  // site #52: hidden for now (too overwhelming); may return
       text: 'Now consider each of the five score situations above — ahead a lot, ahead a little, tied, behind a little, behind a lot — separately for the beginning, middle, and end of a bout as defined in the note. For each cell, note anything different from what you said above — or leave it blank if nothing changes.',
       helper: [
         'Define the beginning, middle, and end of a bout as follows:',
@@ -60,6 +61,12 @@
     { id: 'E2', type: 'alloc', text: 'How would you allocate the importance of the physical, mental, technical, and tactical aspects of fencing?' },
     { id: 'E3', type: 'long', text: 'Do you feel that you are thinking about fencing the right way during your bouts, or is there anything you would like to be doing differently in the way you are thinking?' }
   ];
+
+  // Retired questions stay defined (and their stored answers kept) but are not asked or shown.
+  var SCREENS = ALL_SCREENS.filter(function (s) { return !s.retired; });
+
+  // Serial question numbers (Q1, Q2, …) in the order respondents see the questions.
+  SCREENS.forEach(function (s, i) { s.num = 'Q' + (i + 1); });
 
   // Rows are score situations, columns are bout phases; stored keys are phase_score.
   var MATRIX_ROWS = [['ahead_lot', 'Ahead a lot'], ['ahead_little', 'Ahead a little'], ['tied', 'Tied'],

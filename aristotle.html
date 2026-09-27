@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=13" />
+  <link rel="stylesheet" href="aristotle.css?v=16" />
 </head>
 <body>
 
@@ -70,7 +70,7 @@
       <div class="section-rule"></div>
       <p class="body-text">What follows is a questionnaire that explores a fencer's thought processes while they are fencing. It does this for a variety of different fencing situations, all with a goal to understand what goes through a fencer's mind during the different moments of a fencing bout. And with better understanding comes wisdom, and through wisdom comes victory.</p>
       <ul class="framework-list">
-        <li>The background questions share the first screen, then one question per screen: <span id="screen-count"></span> screens in total</li>
+        <li>Mostly one question per screen (a few short ones are grouped): <span id="screen-count"></span> screens in total</li>
         <li>Every question is optional; leave blank anything you don't want to answer.</li>
         <li>You can review and change any answer before you submit.</li>
         <li>Some of the questions might be perceived as ambiguous. Feel free to make any assumptions that you like when answering.</li>
@@ -124,7 +124,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=13"></script>
+<script src="aristotle-questions.js?v=16"></script>
 <script>
 (function () {
   'use strict';
@@ -134,10 +134,13 @@
       ALLOC_KEYS = A.ALLOC_KEYS, esc = A.esc, answered = A.answered, answerText = A.answerText, allocTotal = A.allocTotal;
   var STORE_KEY = 'aristotle_session_v1';
 
-  // Pages of screen indices: the background questions (section A) share one page, then one question per page.
-  var PAGES = [];
+  // Pages of screen indices: screens sharing a `page` key go together (e.g. the background questions),
+  // every other screen gets its own page.
+  var PAGES = [], pageByKey = {};
   SCREENS.forEach(function (s, i) {
-    if (s.id.charAt(0) === 'A' && PAGES.length) PAGES[0].push(i); else PAGES.push([i]);
+    if (s.page && pageByKey[s.page]) { pageByKey[s.page].push(i); return; }
+    PAGES.push([i]);
+    if (s.page) pageByKey[s.page] = PAGES[PAGES.length - 1];
   });
   function pageOf(screenIdx) {
     for (var p = 0; p < PAGES.length; p++) if (PAGES[p].indexOf(screenIdx) >= 0) return p;
@@ -398,7 +401,7 @@
       '<div class="section-label">Section ' + sec + ' — ' + esc(SECTIONS[sec]) + '</div>';
     screens.forEach(function (s) {
       h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + (screens.length > 1 ? ' q-group' : '') + '" data-qid="' + s.id + '">' +
-          '<div class="q-text">' + (s.textHtml || esc(s.text)) + '</div>' +
+          '<div class="q-text"><span class="qnum">' + s.num + '</span>' + (s.textHtml || esc(s.text)) + '</div>' +
           (s.helper ? '<aside class="q-aside"><div class="q-aside-label">Note</div>' +
             s.helper.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</aside>' : '') +
           '<div class="q-answer">' + inputHtml(s, state.answers[s.id]) + '</div></div>';
@@ -545,7 +548,7 @@
       var a = answerText(s, state.answers[s.id]);
       h += '<button class="review-item" data-idx="' + idx + '">' +
         '<span class="edit">Edit</span>' +
-        '<div class="rq"><span class="rid">' + s.id + '</span>' + esc(s.text) + '</div>' +
+        '<div class="rq"><span class="rid">' + s.num + '</span>' + esc(s.text) + '</div>' +
         '<div class="ra' + (a === null ? ' empty' : '') + '">' + (a === null ? 'No answer' : esc(a)) + '</div>' +
         '</button>';
     });
