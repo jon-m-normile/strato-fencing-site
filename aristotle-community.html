@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=19" />
+  <link rel="stylesheet" href="aristotle.css?v=20" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -39,6 +39,10 @@
 
     .rq-block { padding: 1.2rem 0; border-bottom: 1px solid var(--light); }
     .rq-block .rq { font-weight: 500; font-size: 1.1rem; line-height: 1.5; margin-bottom: 0.6rem; }
+    .alloc-average { margin: 0.8rem 0 1rem; }
+    .alloc-average .note { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .alloc-average-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 12rem)); gap: 0.5rem 2rem; }
+    .alloc-average-grid div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--light); padding: 0.3rem 0; }
     .rq-block .rq .rid { color: var(--accent); margin-right: 0.4rem; }
     .answers { margin: 0 0 0.8rem 1.2rem; }
     .answers li { font-weight: 300; line-height: 1.6; margin: 0.35rem 0; white-space: pre-wrap; }
@@ -125,7 +129,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=19"></script>
+<script src="aristotle-questions.js?v=20"></script>
 <script>
 (function () {
   'use strict';
@@ -400,12 +404,22 @@
       var vals = (results.answers[s.id] || []).map(function (v, i) { return { v: v, meta: metas[i] }; })
         .filter(function (x) { return A.answered(s, x.v); });
       h += '<div class="rq-block" id="q-' + s.id + '"><div class="rq"><span class="rid">' + s.num + '/</span>' + esc(s.text) + '</div>' +
-        (vals.length ? '<ul class="answers">' + vals.map(function (x) { return answerItems(s, x.v, x.meta); }).join('') + '</ul>'
+        (s.type === 'alloc' ? allocAverageHtml(results.allocation_average) : vals.length ? '<ul class="answers">' + vals.map(function (x) { return answerItems(s, x.v, x.meta); }).join('') + '</ul>'
                      : '<div class="no-answers">No answers selected yet.</div>') +
         '<div class="thread-slot">' + threadHtml(s.id) + '</div></div>';
     });
     view(h + '</div>');
     COMMUNITY_QUESTIONS.forEach(function (s) { bindThread(s.id); });
+  }
+
+  // Allocation question: one average over every respondent instead of individual answers (site #56).
+  function allocAverageHtml(avg) {
+    if (!avg) return '<div class="no-answers">No answers yet.</div>';
+    var pct = function (x) { return (Math.round(x * 10) / 10) + '%'; };
+    return '<div class="alloc-average"><p class="note">Average value across all ' + avg.n + (avg.n === 1 ? ' respondent' : ' respondents') + '</p>' +
+      '<div class="alloc-average-grid">' + A.ALLOC_KEYS.map(function (k) {
+        return '<div><span>' + esc(k[1]) + '</span><strong>' + pct(avg[k[0]]) + '</strong></div>';
+      }).join('') + '</div></div>';
   }
 
   function refreshThread(qid) {
@@ -577,7 +591,7 @@
         var src = versionInfo[c.source_version_id];
         if (src) { var k = respondentKey(src.sess); perRespondent[k] = (perRespondent[k] || 0) + 1; }
       });
-      var postable = onCommunityPage(s);
+      var postable = onCommunityPage(s) && s.type !== 'alloc';  // the allocation question shows an average instead
       if (postable) {
         h += '<div class="adm-sub">On the community page (' + posted.length + ')</div>';
         if (!posted.length) h += '<div class="no-answers">None yet.</div>';

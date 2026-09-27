@@ -275,3 +275,9 @@ Discussion and admin. Assets ?v=18.
 
 #55 ✅ Aristotle: slash after question numbers (replaces #54's dash)
 Question numbers now read "Q5/ What are you thinking…" everywhere they appear. Assets ?v=19.
+
+#56 ✅ Aristotle: Q25 (importance allocation) shows the average on the community page
+Answers & Discussion shows one average for Q25 (Physical / Technical / Tactical / Mental, in the
+2x2 order) labelled "Average value across all N respondents", instead of individual answers. The
+average covers every submitted response whose allocation totals 100% (Xenophon #370). Its
+discussion thread is unchanged. Admin no longer offers "Add to community page" for Q25. ?v=20.
