@@ -298,3 +298,13 @@ off. "Edit community copy" edits the posted copy, which then shows its edited te
 
 #59 ✅ Aristotle: Q25 average note no longer shows the respondent count
 The community page note now reads "Average value across all respondents". ?v=23.
+
+#60 ✅ Aristotle: distribution charts for the numeric questions on the community page
+Q15 (C3), Q16 (C5) and Q25 (E2) show bar charts of every submitted answer instead of curated
+posts: answer on the x axis, number of responses on the y axis (Xenophon #371).
+- Q15/Q16: one bar per touch count from 0 to the highest answer (bars widen for very large
+  values); the note shows the average.
+- Q25: four charts (Physical, Technical / Tactical, Mental) in 10-point ranges (0 = 0-9%,
+  90 = 90-100%), each titled with its average; only allocations that total 100% count.
+Charts are inline SVG and stack to one column on phones. Admin no longer offers "Add to
+community page" for these questions. ?v=24.
