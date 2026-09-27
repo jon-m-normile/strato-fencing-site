@@ -7,6 +7,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .qr-zoom { cursor: zoom-in; }
+    .qr-overlay { position: fixed; inset: 0; z-index: 1000; background: #fff; display: flex; align-items: center; justify-content: center; padding: 4rem 16px 16px; }
+    .qr-overlay[hidden] { display: none; }
+    .qr-overlay img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+    .qr-close { position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; border: none; border-radius: 50%; background: var(--dark); color: #fff; font-size: 1.8rem; line-height: 1; cursor: pointer; }
+    .qr-close:focus-visible { outline: 3px solid var(--accentlt); outline-offset: 2px; }
+    body.qr-open { overflow: hidden; }
+  </style>
 </head>
 <body>
 <nav>
@@ -45,11 +54,11 @@
         <div style="margin-top:2rem; display:flex; gap:2rem; flex-wrap:wrap;">
           <div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">Pay via Venmo — @stratofencing</div>
-            <img src="venmo1.png" alt="Venmo QR code" style="width:210px; height:auto; display:block;" />
+            <img class="qr-zoom" tabindex="0" role="button" src="venmo1.png" alt="Venmo QR code (click to enlarge)" style="width:210px; height:auto; display:block;" />
           </div>
           <div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">Pay via Zelle — 917 669 9660</div>
-            <img src="zelle-qr.png" alt="Zelle QR code" style="width:180px; height:auto; display:block;" />
+            <img class="qr-zoom" tabindex="0" role="button" src="zelle-qr.png" alt="Zelle QR code (click to enlarge)" style="width:180px; height:auto; display:block;" />
           </div>
         </div>
       </div>
@@ -86,7 +95,42 @@
   <div><div class="footer-logo">Strato <span>Fencing</span> Academy</div><div class="footer-schola">Schola Gladii Veritatis</div></div>
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
+<div class="qr-overlay" id="qrOverlay" role="dialog" aria-modal="true" aria-label="Enlarged QR code" hidden>
+  <button class="qr-close" id="qrClose" type="button" aria-label="Close">&times;</button>
+  <img id="qrOverlayImg" alt="" />
+</div>
 <script>
+  // Enlarged QR view: fills the screen and makes the rest of the page inert until closed.
+  (function () {
+    var overlay = document.getElementById('qrOverlay');
+    var overlayImg = document.getElementById('qrOverlayImg');
+    var opener = null;
+    var others = [].slice.call(document.body.children).filter(function (el) { return el !== overlay && el.tagName !== 'SCRIPT'; });
+    function open(img) {
+      opener = img;
+      overlayImg.src = img.src;
+      overlayImg.alt = img.alt.replace(' (click to enlarge)', '');
+      others.forEach(function (el) { el.inert = true; });
+      document.body.classList.add('qr-open');
+      overlay.hidden = false;
+      document.getElementById('qrClose').focus();
+    }
+    function close() {
+      overlay.hidden = true;
+      document.body.classList.remove('qr-open');
+      others.forEach(function (el) { el.inert = false; });
+      if (opener) opener.focus();
+    }
+    document.querySelectorAll('.qr-zoom').forEach(function (img) {
+      img.addEventListener('click', function () { open(img); });
+      img.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(img); }
+      });
+    });
+    document.getElementById('qrClose').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) close(); });
+  })();
+
   document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;

@@ -218,3 +218,9 @@ screen links to Answers & Discussion. Signed out (or token rejected), the accoun
 removed from the browser and the page works anonymously as before.
 aristotle-community.html: "Your Questionnaire" section on the Account page (Edit My Answers /
 Take the Questionnaire) and an "Edit My Answers" link in the results intro. Assets ?v=11.
+
+#45 ✅ Contact page: tap a QR code (Venmo or Zelle) to view it full screen
+Clicking (or Enter/Space on) either QR code opens it on a full-screen white overlay, scaled to fit
+the screen. Everything else on the page is inert (links and form can't be clicked or tabbed to)
+and the page doesn't scroll behind it. An × button top-right (or Escape) closes it and returns to
+the previous view. Styles and script are inline in contact.html.
