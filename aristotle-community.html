@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=24" />
+  <link rel="stylesheet" href="aristotle.css?v=25" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -46,7 +46,7 @@
     .dist-title { font-weight: 600; font-size: 0.95rem; }
     .dist-title span { font-weight: 400; color: var(--muted); }
     .hist { width: 100%; height: auto; display: block; }
-    .hist .bar { fill: var(--accent2); }
+    .hist .dot { fill: var(--accent2); }
     .hist .grid { stroke: var(--light); }
     .hist .axis { stroke: var(--muted); }
     .hist text { fill: var(--muted); font-size: 10px; font-family: inherit; }
@@ -138,7 +138,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=24"></script>
+<script src="aristotle-questions.js?v=25"></script>
 <script>
 (function () {
   'use strict';
@@ -432,44 +432,61 @@
     if (s.type === 'alloc') {
       d = d || {};
       if (!(d.physical || []).length) return '<div class="no-answers">No answers yet.</div>';
-      var bins = [];
-      for (var lo = 0; lo < 100; lo += 10) bins.push({ lo: lo, hi: lo + 10, label: String(lo) });
-      bins[bins.length - 1].hi = 101;  // 90–100 inclusive
-      return '<div class="dist"><p class="note">Distribution of answers across all respondents (bars are 10-point ranges: 0 = 0–9%, 90 = 90–100%).</p>' +
+      var shared = Math.max.apply(null, A.ALLOC_KEYS.map(function (k) { return tallestStack(d[k[0]] || []); }));  // same y scale on all four
+      return '<div class="dist"><p class="note">Distribution of answers across all respondents. Each dot is one response.</p>' +
         '<div class="dist-grid">' + A.ALLOC_KEYS.map(function (k) {
           var xs = d[k[0]] || [];
           return '<div><div class="dist-title">' + esc(k[1]) + ' <span>· average ' + round1(mean(xs)) + '%</span></div>' +
-            histogramSvg(xs, bins, 'Allocation (%)') + '</div>';
+            dotPlotSvg(xs, 0, 100, 10, 'Allocation (%)', shared) + '</div>';
         }).join('') + '</div></div>';
     }
     d = d || [];
     if (!d.length) return '<div class="no-answers">No answers yet.</div>';
-    var max = Math.floor(Math.max.apply(null, d));
-    var w = Math.max(1, Math.ceil((max + 1) / 20));
-    var tb = [];
-    for (var x = 0; x <= max; x += w) tb.push({ lo: x, hi: x + w, label: w === 1 ? String(x) : x + '–' + (x + w - 1) });
-    return '<div class="dist"><p class="note">Distribution of answers across all respondents · average ' + round1(mean(d)) + ' ' + esc(s.unit) + '</p>' +
-      '<div class="dist-one">' + histogramSvg(d, tb, 'Answer (' + s.unit + ')') + '</div></div>';
+    var max = Math.max(5, Math.ceil(Math.max.apply(null, d)));
+    return '<div class="dist"><p class="note">Distribution of answers across all respondents. Each dot is one response. Average: ' + round1(mean(d)) + ' ' + esc(s.unit) + '</p>' +
+      '<div class="dist-one">' + dotPlotSvg(d, 0, max, Math.max(1, Math.ceil(max / 20)), 'Answer (' + s.unit + ')') + '</div></div>';
   }
 
-  function histogramSvg(values, bins, xTitle) {
-    var counts = bins.map(function (b) { return values.filter(function (v) { return v >= b.lo && v < b.hi; }).length; });
-    var top = Math.max(1, Math.max.apply(null, counts));
-    var W = 320, H = 170, L = 34, R = 6, T = 8, B = 38, cw = (W - L - R) / bins.length, ph = H - T - B;
+  // Dot plot: one dot per response, stacked at its exact value. The y axis shows at least 5 and leaves room above the tallest stack.
+  function countBy(values) {
+    var counts = {};
+    values.forEach(function (v) { counts[v] = (counts[v] || 0) + 1; });
+    return counts;
+  }
+  function tallestStack(values) {
+    var counts = countBy(values);
+    return Math.max.apply(null, [0].concat(Object.keys(counts).map(function (k) { return counts[k]; })));
+  }
+
+  function dotPlotSvg(values, xmin, xmax, xstep, xTitle, tallest) {
+    var counts = countBy(values);
+    var top = Math.max(5, (tallest || tallestStack(values)) + 1);
+    var ystep = top <= 10 ? 1 : Math.ceil(top / 5);
+    top = Math.ceil(top / ystep) * ystep;
+    var W = 320, H = 180, L = 36, R = 10, T = 10, B = 40, pw = W - L - R, ph = H - T - B;
+    var pad = pw * 0.03;
+    var x = function (v) { return L + pad + (v - xmin) / (xmax - xmin) * (pw - 2 * pad); };
     var y = function (n) { return T + ph - (n / top) * ph; };
-    var ticks = top <= 5 ? Array.apply(null, Array(top + 1)).map(function (_, i) { return i; }) : [0, Math.round(top / 2), top];
+    var r = Math.min(ph / top / 2 * 0.9, 7);
+    if (xstep === 1) r = Math.min(r, (pw - 2 * pad) / (xmax - xmin) * 0.42);
     var h = '<svg class="hist" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(xTitle) + ' distribution">';
-    ticks.forEach(function (n) {
-      h += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(n) + '" y2="' + y(n) + '"/>' +
-        '<text x="' + (L - 5) + '" y="' + (y(n) + 3.5) + '" text-anchor="end">' + n + '</text>';
-    });
-    counts.forEach(function (n, i) {
-      var x = L + i * cw;
-      if (n) h += '<rect class="bar" x="' + (x + cw * 0.12) + '" y="' + y(n) + '" width="' + (cw * 0.76) + '" height="' + (T + ph - y(n)) + '"><title>' + esc(bins[i].label) + ': ' + n + (n === 1 ? ' response' : ' responses') + '</title></rect>';
-      h += '<text x="' + (x + cw / 2) + '" y="' + (T + ph + 13) + '" text-anchor="middle">' + esc(bins[i].label) + '</text>';
+    for (var n = 0; n <= top; n += ystep) {
+      h += (n ? '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(n) + '" y2="' + y(n) + '"/>' : '') +
+        '<line class="axis" x1="' + (L - 4) + '" x2="' + L + '" y1="' + y(n) + '" y2="' + y(n) + '"/>' +
+        '<text x="' + (L - 7) + '" y="' + (y(n) + 3.5) + '" text-anchor="end">' + n + '</text>';
+    }
+    for (var v = xmin; v <= xmax; v += xstep) {
+      h += '<line class="axis" x1="' + x(v) + '" x2="' + x(v) + '" y1="' + (T + ph) + '" y2="' + (T + ph + 4) + '"/>' +
+        '<text x="' + x(v) + '" y="' + (T + ph + 15) + '" text-anchor="middle">' + v + '</text>';
+    }
+    Object.keys(counts).forEach(function (k) {
+      for (var i = 0; i < counts[k]; i++) {
+        h += '<circle class="dot" cx="' + x(Number(k)) + '" cy="' + y(i + 1) + '" r="' + r + '"><title>' + esc(k) + ': ' + counts[k] + (counts[k] === 1 ? ' response' : ' responses') + '</title></circle>';
+      }
     });
     h += '<line class="axis" x1="' + L + '" x2="' + (W - R) + '" y1="' + (T + ph) + '" y2="' + (T + ph) + '"/>' +
-      '<text class="ttl" x="' + (L + (W - L - R) / 2) + '" y="' + (H - 4) + '" text-anchor="middle">' + esc(xTitle) + '</text>' +
+      '<line class="axis" x1="' + L + '" x2="' + L + '" y1="' + T + '" y2="' + (T + ph) + '"/>' +
+      '<text class="ttl" x="' + (L + pw / 2) + '" y="' + (H - 4) + '" text-anchor="middle">' + esc(xTitle) + '</text>' +
       '<text class="ttl" transform="translate(10 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle">Responses</text></svg>';
     return h;
   }

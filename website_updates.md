@@ -308,3 +308,9 @@ posts: answer on the x axis, number of responses on the y axis (Xenophon #371).
   90 = 90-100%), each titled with its average; only allocations that total 100% count.
 Charts are inline SVG and stack to one column on phones. Admin no longer offers "Add to
 community page" for these questions. ?v=24.
+
+#61 ✅ Aristotle: numeric question charts become dot plots
+Q15, Q16 and Q25 charts are now dot plots: one dot per response, stacked at its exact value (Q25
+no longer uses 10-point ranges). The y axis (responses) shows at least 5 and always leaves at
+least one empty row above the tallest stack. Both axes have tick marks (Q25 x axis every 10%). The
+four Q25 plots share one y scale, set by the tallest stack among them. ?v=25.
