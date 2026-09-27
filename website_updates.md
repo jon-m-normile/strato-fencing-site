@@ -268,3 +268,7 @@ E2 now has a Note beside the question defining Physical, Technical, Tactical and
 allocation grid (and pie, review text, community/admin display) follows that order, top left to
 bottom right: Physical, Technical / Tactical, Mental (ALLOC_KEYS in aristotle-questions.js). Stored
 answer keys unchanged. Assets ?v=17.
+
+#54 ✅ Aristotle: dash after question numbers
+Question numbers read "Q5 - What are you thinking…" on the questionnaire, Review, Answers &
+Discussion and admin. Assets ?v=18.
