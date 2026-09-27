@@ -281,3 +281,17 @@ Answers & Discussion shows one average for Q25 (Physical / Technical / Tactical 
 2x2 order) labelled "Average value across all N respondents", instead of individual answers. The
 average covers every submitted response whose allocation totals 100% (Xenophon #370). Its
 discussion thread is unchanged. Admin no longer offers "Add to community page" for Q25. ?v=20.
+
+#57 ✅ Aristotle admin: respondent shown by account username
+In Admin > Answers, a respondent with an account is labelled by their username (it also applies to
+their other responses from the same browser). Anyone else keeps the short anonymous code. The
+word "Respondent" and the "Response xxxxxxxx" code are gone from the rows, posts and respondent
+filter. ?v=21.
+
+#58 ✅ Aristotle admin: community page selection marked inline
+Removed the separate "On the community page" section from each question. In Responses, a version
+on the community page shows in bold with a green check to the left of its text. Clicking "On
+community page ✓" removes it and clicking "Add to community page" adds it, updating in place. An
+earlier version that is on the community page stays listed even with "Show earlier versions"
+off. "Edit community copy" edits the posted copy, which then shows its edited text with an
+"edited for the community page" tag. The duplicate-post warning moves onto the row. ?v=22.

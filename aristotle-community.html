@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=20" />
+  <link rel="stylesheet" href="aristotle.css?v=22" />
   <style>
     .c-bar {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.2rem;
@@ -76,19 +76,19 @@
     .admin-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
     .admin-tools select { width: auto; }
     .admin-tools .checks-inline { display: flex; align-items: center; gap: 0.4rem; }
-    .adm-sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem; color: var(--muted); margin: 1rem 0 0.2rem; }
     .adm-answer { padding: 0.8rem 0; border-top: 1px dashed var(--light); }
-    .adm-answer.posted { border-left: 3px solid var(--accent2); padding-left: 0.8rem; }
+    .adm-answer .txt-row { display: flex; gap: 0.6rem; align-items: flex-start; }
+    .adm-answer .check { flex: none; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: #2e8b57; color: #fff; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 0.15rem; }
     .adm-answer.old { margin-left: 1.2rem; }
     .adm-answer.old .txt { color: var(--muted); }
     .adm-answer .txt { white-space: pre-wrap; font-weight: 300; line-height: 1.6; }
+    .adm-answer.posted .txt { font-weight: 700; }
     .adm-answer .meta { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin-top: 0.2rem; }
     .tag.warn { background: #fdf3e1; border-color: #e7c27d; color: #7a5410; }
     .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
     .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
     .tag { font-size: 0.75rem; padding: 0.05rem 0.4rem; background: var(--off); border: 1px solid var(--light); }
-    .tag.included { background: #e7eefb; border-color: var(--accent2); color: var(--accent); }
     .table-wrap { overflow-x: auto; }
     table.accounts { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
     table.accounts th, table.accounts td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--light); white-space: nowrap; }
@@ -129,7 +129,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=20"></script>
+<script src="aristotle-questions.js?v=22"></script>
 <script>
 (function () {
   'use strict';
@@ -545,9 +545,11 @@
     var respondents = {};
     sessions.forEach(function (s) {
       var key = respondentKey(s);
-      (respondents[key] = respondents[key] || { n: 0, name: s.claimed_by }).n++;
-      if (s.claimed_by) respondents[key].name = s.claimed_by;
+      (respondents[key] = respondents[key] || { n: 0 }).n++;
     });
+    // Account username for a respondent, from any of their responses (same browser) that is linked to an account.
+    accountNames = {};
+    admin.sessions.forEach(function (s) { if (s.claimed_by) accountNames[respondentKey(s)] = s.claimed_by; });
     if (adminRespondent && !respondents[adminRespondent]) adminRespondent = '';
     if (adminRespondent) sessions = sessions.filter(function (s) { return respondentKey(s) === adminRespondent; });
 
@@ -569,7 +571,7 @@
       Object.keys(respondents).map(function (k) {
         var r = respondents[k];
         return '<option value="' + esc(k) + '"' + (adminRespondent === k ? ' selected' : '') + '>' +
-          esc(respondentLabel(k) + (r.name ? ' · ' + r.name : '') + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
+          esc(respondentLabel(k) + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
       }).join('') + '</select></label>' +
       '<label class="checks-inline"><input type="checkbox" id="adm-history"' + (adminHistory ? ' checked' : '') + ' /> Show earlier versions</label>' +
       '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') +
@@ -585,46 +587,33 @@
       }
       h += '<div class="rq-block"><div class="rq"><span class="rid" title="Question id ' + s.id + '">' + s.num + '/</span>' + esc(s.text) + '</div>';
 
-      var posted = admin.community.filter(function (c) { return c.question_id === s.id; });
       var perRespondent = {};
-      posted.forEach(function (c) {
-        var src = versionInfo[c.source_version_id];
+      admin.community.forEach(function (c) {
+        var src = c.question_id === s.id && versionInfo[c.source_version_id];
         if (src) { var k = respondentKey(src.sess); perRespondent[k] = (perRespondent[k] || 0) + 1; }
       });
       var postable = onCommunityPage(s) && s.type !== 'alloc';  // the allocation question shows an average instead
-      if (postable) {
-        h += '<div class="adm-sub">On the community page (' + posted.length + ')</div>';
-        if (!posted.length) h += '<div class="no-answers">None yet.</div>';
-      }
-      posted.forEach(function (c) {
-        var src = versionInfo[c.source_version_id];
-        var n = src ? perRespondent[respondentKey(src.sess)] : 0;
-        h += '<div class="adm-answer posted" data-cid="' + esc(c.id) + '" data-qid="' + s.id + '">' +
-          '<div class="txt">' + esc(A.answerText(s, c.answer_value) || '(blank)') + '</div><div class="meta">' +
-          (src ? '<span>From ' + esc(respondentLabel(respondentKey(src.sess))) + (src.sess.claimed_by ? ' · ' + esc(src.sess.claimed_by) : '') +
-                 ' · version of ' + esc(fmtTime(src.v.created_at)) + '</span>' : '<span>Source unknown</span>') +
-          (c.edited_at ? '<span class="tag">edited</span>' : '') +
-          (src && !src.latest ? '<span class="tag warn">newer version available</span>' : '') +
-          (n > 1 ? '<span class="tag warn">' + n + ' posts from this respondent</span>' : '') +
-          '<button class="text-btn" data-act="edit">Edit</button>' +
-          '<button class="text-btn danger" data-act="remove">Remove from community page</button></div></div>';
-      });
 
-      h += '<div class="adm-sub">Responses</div>';
       var rows = 0;
       sessions.forEach(function (sess) {
         var vs = sess.versions.filter(function (v) { return v.question_id === s.id; });
         if (!vs.length) return;
-        var shown = adminHistory ? vs.slice().reverse() : vs.slice(-1);
+        // Latest version, plus earlier ones when history is on or when that earlier version is on the community page.
+        var shown = vs.filter(function (v, j) { return adminHistory || j === vs.length - 1 || postedFrom[v.version_id]; }).reverse();
         shown.forEach(function (v, i) {
           rows++;
           var on = postedFrom[v.version_id];
-          h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
-            '<div class="txt">' + esc(A.answerText(s, v.answer_value) || '(blank)') + '</div><div class="meta">' +
-            (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' +
-                       '<span>Response ' + esc(sess.id.slice(0, 8)) + (sess.claimed_by ? ' · ' + esc(sess.claimed_by) : '') + '</span>' : '') +
+          var n = on ? perRespondent[respondentKey(sess)] : 0;
+          h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + (on ? ' posted' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
+            '<div class="txt-row">' + (on ? '<span class="check" title="On the community page">✓</span>' : '') +
+            '<div class="txt">' + esc(A.answerText(s, on ? on.answer_value : v.answer_value) || '(blank)') + '</div></div><div class="meta">' +
+            (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' : '') +
             '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
-            (on ? '<span class="tag included">On community page ✓</span>' : postable ? '<button class="text-btn" data-act="post">Add to community page</button>' : '') +
+            (on && on.edited_at ? '<span class="tag">edited for the community page</span>' : '') +
+            (n > 1 ? '<span class="tag warn">' + n + ' posts from this respondent</span>' : '') +
+            (on ? '<button class="text-btn" data-act="unpost" title="Remove from the community page">On community page ✓</button>' +
+                  '<button class="text-btn" data-act="edit">Edit community copy</button>'
+                : postable ? '<button class="text-btn" data-act="post">Add to community page</button>' : '') +
             '<button class="text-btn danger" data-act="delete-version">Delete version</button>' +
             (i === 0 ? '<button class="text-btn danger" data-act="delete-session">Delete whole response</button>' : '') + '</div></div>';
         });
@@ -639,17 +628,6 @@
     document.getElementById('adm-history').onchange = function () { adminHistory = this.checked; renderAdminAnswers(); };
     var fail = function (err) { showMsg('adm-msg', err.message, true); };
 
-    document.querySelectorAll('.adm-answer[data-cid]').forEach(function (el) {
-      var entry = admin.community.filter(function (c) { return c.id === el.dataset.cid; })[0];
-      el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, BY_ID[el.dataset.qid], entry); };
-      confirmClick(el.querySelector('[data-act=remove]'), 'Confirm remove?', function () {
-        api('DELETE', '/admin/community/' + entry.id).then(function () {
-          admin.community = admin.community.filter(function (c) { return c !== entry; });
-          renderAdminAnswers();
-        }).catch(fail);
-      });
-    });
-
     document.querySelectorAll('.adm-answer[data-vid]').forEach(function (el) {
       var info = versionInfo[el.dataset.vid];
       var sess = info.sess;
@@ -661,6 +639,16 @@
           renderAdminAnswers();
         }).catch(function (err) { post.disabled = false; fail(err); });
       };
+      var entry = postedFrom[info.v.version_id];
+      if (entry) {
+        el.querySelector('[data-act=edit]').onclick = function () { openEditor(el, BY_ID[el.dataset.qid], entry); };
+        confirmClick(el.querySelector('[data-act=unpost]'), 'Remove from community page?', function () {
+          api('DELETE', '/admin/community/' + entry.id).then(function () {
+            admin.community = admin.community.filter(function (c) { return c !== entry; });
+            renderAdminAnswers();
+          }).catch(fail);
+        });
+      }
       var who = el.querySelector('[data-act=respondent]');
       if (who) who.onclick = function () {
         adminRespondent = respondentKey(sess);
@@ -688,8 +676,10 @@
   }
 
   function respondentKey(s) { return s.respondent_id || 'response:' + s.id; }
+  var accountNames = {};
+  // Account username when the respondent has one, otherwise a short anonymous code.
   function respondentLabel(key) {
-    return key.indexOf('response:') === 0 ? 'Respondent unknown (' + key.slice(9, 17) + ')' : 'Respondent ' + key.slice(0, 8);
+    return accountNames[key] || (key.indexOf('response:') === 0 ? key.slice(9, 17) : key.slice(0, 8));
   }
 
   // Inline editor (same input types as the questionnaire) for a community page copy.
