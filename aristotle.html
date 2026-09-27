@@ -70,7 +70,7 @@
       <div class="section-rule"></div>
       <p class="body-text">What follows is a questionnaire that explores a fencer's thought processes while they are fencing. It does this for a variety of different fencing situations, all with a goal to understand what goes through a fencer's mind during the different moments of a fencing bout. And with better understanding comes wisdom, and through wisdom comes victory.</p>
       <ul class="framework-list">
-        <li>Mostly one question per screen (a few short ones are grouped): <span id="screen-count"></span> screens in total</li>
+        <li><span id="question-count"></span> questions covering different aspects of a fencer's thoughts during a fencing bout.</li>
         <li>Every question is optional; leave blank anything you don't want to answer.</li>
         <li>You can review and change any answer before you submit.</li>
         <li>Some of the questions might be perceived as ambiguous. Feel free to make any assumptions that you like when answering.</li>
@@ -702,7 +702,7 @@
     }
   }
 
-  document.getElementById('screen-count').textContent = TOTAL;
+  document.getElementById('question-count').textContent = SCREENS.length;
   document.getElementById('hero-start').onclick = start;
   document.getElementById('cta-start').onclick = start;
   document.getElementById('how-start').onclick = start;

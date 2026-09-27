@@ -318,3 +318,8 @@ four Q25 plots share one y scale, set by the tallest stack among them. ?v=25.
 #62 ✅ Aristotle: light grid on the dot plots
 Added vertical gridlines at each x-axis tick alongside the horizontal ones, drawn in a slightly
 darker light grey so the grid is visible without competing with the dots. ?v=26.
+
+#63 ✅ Aristotle landing: question count instead of screen count
+Replaced "Mostly one question per screen ...: N screens in total" with "N questions covering different
+aspects of a fencer's thoughts during a fencing bout." N is computed from the active question list
+(currently 26; C10 is retired), so it stays correct when questions change.
