@@ -262,3 +262,9 @@ Marked `retired: true` in aristotle-questions.js; retired questions are filtered
 so they're not asked, reviewed, numbered or shown on the community page. The definition is kept
 for a possible return, the backend still accepts C10, and existing C10 answers stay in the
 database. Questionnaire is now 26 questions on 22 pages. Assets ?v=16.
+
+#53 ✅ Aristotle: E2 (importance allocation) term definitions + grid order
+E2 now has a Note beside the question defining Physical, Technical, Tactical and Mental. The 2x2
+allocation grid (and pie, review text, community/admin display) follows that order, top left to
+bottom right: Physical, Technical / Tactical, Mental (ALLOC_KEYS in aristotle-questions.js). Stored
+answer keys unchanged. Assets ?v=17.
