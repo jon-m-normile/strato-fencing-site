@@ -240,3 +240,7 @@ the question. Landing copy updated. Styling: .q-group separators in aristotle.cs
 Answers & Discussion no longer lists section A (no answers or discussion threads). The admin
 Answers tab still shows background responses, labelled "not shown on the community page", with no
 "Add to community page" button. Assets ?v=12.
+
+#49 ✅ Aristotle: competition level checkboxes on one row
+A3's Local / Regional / National / International checkboxes sit side by side (wrapping only on
+narrow screens). .checks is now a flex row in aristotle.css. Assets ?v=13.

@@ -311,6 +311,7 @@ input.q-input.num { width: 9rem; }
 .selects { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
 .selects label { display: block; font-weight: 500; margin-bottom: 0.3rem; }
 .selects select { width: 12rem; }
+.checks { display: flex; flex-wrap: wrap; gap: 0 2rem; }
 .checks label { display: flex; align-items: center; gap: 0.6rem; font-size: 1.05rem; padding: 0.35rem 0; cursor: pointer; }
 .checks input { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); }
 .unit { margin-left: 0.6rem; color: var(--muted); }
