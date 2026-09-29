@@ -618,13 +618,14 @@
   function adminError(err) { document.getElementById('admin-body').innerHTML = '<div class="msg error">' + esc(err.message) + '</div>'; }
 
   function renderAccounts(r) {
-    var rows = r.accounts.map(function (a) {
+    var list = Array.isArray(r) ? r : r.accounts;
+    var rows = list.map(function (a) {
       return '<tr><td>' + esc(a.username || '') + '</td><td>' + esc([a.first_name, a.last_name].filter(Boolean).join(' ')) + '</td><td>' + esc(a.email) + '</td>' +
         '<td>' + esc(fmtTime(a.joined_at)) + '</td><td>' + esc(fmtTime(a.last_seen_at)) + '</td>' +
         '<td>' + (a.has_access ? 'Yes' : 'No') + '</td><td>' + a.submitted_count + '</td><td>' + a.comment_count + '</td></tr>';
     }).join('');
     document.getElementById('admin-body').innerHTML =
-      '<p class="body-text">' + r.accounts.length + ' account' + (r.accounts.length === 1 ? '' : 's') + ' have signed in to Aristotle.</p>' +
+      '<p class="body-text">' + list.length + ' account' + (list.length === 1 ? '' : 's') + ' have signed in to Aristotle.</p>' +
       '<div class="table-wrap"><table class="accounts"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Joined</th><th>Last seen</th><th>Access</th><th>Submitted</th><th>Comments</th></tr></thead><tbody>' +
       rows + '</tbody></table></div>';
   }
