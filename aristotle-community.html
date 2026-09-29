@@ -98,9 +98,11 @@
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
     .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
     .adm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 2rem; align-items: start; }
-    .adm-rail { position: sticky; top: 100px; border: 1px solid var(--light); background: var(--off); padding: 1rem 1.2rem; }
-    .adm-rail h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; color: var(--muted); margin: 0 0 0.6rem; }
-    .adm-stat { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.45rem 0; border-top: 1px solid var(--light); font-size: 0.92rem; }
+    .adm-rail { position: sticky; top: 100px; border: 2px solid var(--accent); background: var(--white); padding: 0 1.2rem 0.4rem; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); }
+    .adm-rail:empty { display: none; }
+    .adm-rail h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 1rem; color: var(--white); background: var(--accent); margin: 0 -1.2rem 0.3rem; padding: 0.55rem 1.2rem; }
+    .adm-stat { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.5rem 0; border-top: 1px solid var(--light); font-size: 0.92rem; }
+    .adm-stat:first-of-type { border-top: none; }
     .adm-stat b { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
     @media (max-width: 900px) { .adm-layout { grid-template-columns: minmax(0, 1fr); } .adm-rail { position: static; order: -1; } }
     .tag { font-size: 0.75rem; padding: 0.05rem 0.4rem; background: var(--off); border: 1px solid var(--light); }
@@ -560,6 +562,10 @@
       '<div class="form"><form id="acct-form">' +
       '<label for="f-username">Username</label><input class="q-input" id="f-username" maxlength="30" value="' + esc(me.username || '') + '" />' +
       '<div class="hint">Shown on your comments. 3–30 letters, numbers, dots, dashes or underscores. Changing it also changes it in the Xenophon app.</div>' +
+      '<label for="f-email">Email</label><input class="q-input" id="f-email" type="email" maxlength="254" autocomplete="email" value="' + esc(me.email || '') + '" />' +
+      '<div class="hint">Used to sign in and for password resets, here and in the Xenophon app.</div>' +
+      '<div id="pw-wrap" hidden><label for="f-password">Current password</label><input class="q-input" id="f-password" type="password" autocomplete="current-password" />' +
+      '<div class="hint">Needed to change your email.</div></div>' +
       '<div class="q-nav"><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="sign-out">Sign Out</button></div>' +
       '</form>' + msgHtml('acct-msg') + '</div>' +
       '<h2 class="section-title" style="margin-top:2.5rem">Your Questionnaire</h2><div class="section-rule"></div>' +
@@ -569,14 +575,24 @@
       '<div class="q-nav"><a class="btn primary" style="text-decoration:none" href="' + questionnaireHref() +
       (me.has_access ? '#/review">Edit My Answers' : '">Take the Questionnaire') + '</a></div>');
     document.getElementById('sign-out').onclick = function () { signOut(); };
+    var emailEl = document.getElementById('f-email'), pwEl = document.getElementById('f-password');
+    var emailChanged = function () { return emailEl.value.trim().toLowerCase() !== (me.email || ''); };
+    emailEl.oninput = function () { document.getElementById('pw-wrap').hidden = !emailChanged(); };
     document.getElementById('acct-form').onsubmit = function (e) {
       e.preventDefault();
-      var username = document.getElementById('f-username').value.trim();
-      api('PUT', '/me', { username: username }).then(function (r) {
+      var changed = emailChanged();
+      if (changed && !pwEl.value) { showMsg('acct-msg', 'Enter your current password to change your email.', true); pwEl.focus(); return; }
+      var body = { username: document.getElementById('f-username').value.trim() };
+      if (changed) { body.email = emailEl.value.trim(); body.current_password = pwEl.value; }
+      api('PUT', '/me', body).then(function (r) {
         me.username = r.username;
+        me.email = r.email;
         results = null;  // comment author names changed
         renderBar('account');
-        showMsg('acct-msg', 'Username saved.', false);
+        emailEl.value = r.email;
+        pwEl.value = '';
+        document.getElementById('pw-wrap').hidden = true;
+        showMsg('acct-msg', changed ? 'Saved. Sign in with ' + r.email + ' from now on.' : 'Saved.', false);
       }).catch(function (err) { showMsg('acct-msg', err.message, true); });
     };
   }
@@ -588,14 +604,15 @@
     tab = tab === 'accounts' ? 'accounts' : 'answers';
     var h = '<h2 class="section-title">Admin</h2><div class="section-rule"></div>' +
       '<div class="tabs" style="max-width:420px"><button id="tab-answers" class="' + (tab === 'answers' ? 'active' : '') + '">Answers</button>' +
-      '<button id="tab-accounts" class="' + (tab === 'accounts' ? 'active' : '') + '">Accounts</button></div><div id="admin-body"><p class="body-text">Loading…</p></div>';
+      '<button id="tab-accounts" class="' + (tab === 'accounts' ? 'active' : '') + '">Accounts</button></div>' +
+      '<div class="adm-layout"><div class="adm-main" id="admin-body"><p class="body-text">Loading…</p></div><aside class="adm-rail" id="adm-rail"></aside></div>';
     view(h);
     document.getElementById('tab-answers').onclick = function () { location.hash = '#/admin/answers'; };
     document.getElementById('tab-accounts').onclick = function () { location.hash = '#/admin/accounts'; };
     if (tab === 'accounts') {
-      api('GET', '/admin/accounts').then(renderAccounts).catch(adminError);
+      api('GET', '/admin/accounts').then(function (r) { renderStats(r.stats); renderAccounts(r); }).catch(adminError);
     } else {
-      api('GET', '/admin/answers').then(function (r) { admin = r; renderAdminAnswers(); }).catch(adminError);
+      api('GET', '/admin/answers').then(function (r) { admin = r; renderStats(r.stats); renderAdminAnswers(); }).catch(adminError);
     }
   }
   function adminError(err) { document.getElementById('admin-body').innerHTML = '<div class="msg error">' + esc(err.message) + '</div>'; }
@@ -700,8 +717,7 @@
       if (!rows) h += '<div class="no-answers">No answers.</div>';
       h += '</div>';
     });
-    document.getElementById('admin-body').innerHTML =
-      '<div class="adm-layout"><div class="adm-main">' + h + '</div></div>' + statsRail(admin.stats) + '</div>';
+    document.getElementById('admin-body').innerHTML = h + '</div>';
 
     document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
     document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
@@ -755,12 +771,11 @@
     });
   }
 
-  function statsRail(st) {
-    if (!st) return '';
-    return '<aside class="adm-rail"><h4>Summary</h4>' + [
+  function renderStats(st) {
+    document.getElementById('adm-rail').innerHTML = !st ? '' : '<h4>Summary</h4>' + [
       ['Accounts', st.accounts], ['Total answers', st.total], ['On the community page', st.community],
       ['Answers without an account', st.no_account], ['Answers, past 24 hours', st.last_24h], ['Answers, past 7 days', st.last_7d]
-    ].map(function (r) { return '<div class="adm-stat"><span>' + r[0] + '</span><b>' + (r[1] == null ? '–' : r[1]) + '</b></div>'; }).join('') + '</aside>';
+    ].map(function (r) { return '<div class="adm-stat"><span>' + r[0] + '</span><b>' + (r[1] == null ? '–' : r[1]) + '</b></div>'; }).join('');
   }
 
   // Background questions (section A): one row per response, one column per question, latest answers.

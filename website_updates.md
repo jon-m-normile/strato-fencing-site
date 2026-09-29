@@ -340,3 +340,12 @@ The Background table's usernames are plain text; the click-to-filter links were 
 #66 ✅ Aristotle dot plots: more visible grid
 The #62 grid lines (#dcdcdc, 0.6 stroke) scaled to under a pixel and were barely visible. Now #d2d6de at stroke 1,
 so the horizontal (count) and vertical (value) grid reads clearly while staying lighter than the axes.
+
+#67 ✅ Aristotle account: edit email
+The Account page has an Email field. Changing it reveals a Current password field, which is required to save
+(the email is the sign-in and password-reset address). Wrong password, an invalid email, or an email already used by
+another account show an error. On success: "Saved. Sign in with <email> from now on." (Xenophon #380)
+
+#68 ✅ Aristotle admin: sharper Summary box, on both tabs
+The Summary rail box has a solid accent border, a filled accent header bar, white background and shadow. It now
+appears on both the Answers and Accounts admin tabs (Accounts endpoint returns stats, Xenophon #381).
