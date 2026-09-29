@@ -97,8 +97,12 @@
     .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
     .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
-    .adm-stats { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; margin: 1rem 0 0; font-size: 0.95rem; color: var(--muted); }
-    .adm-stats b { color: var(--text); }
+    .adm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 2rem; align-items: start; }
+    .adm-rail { position: sticky; top: 100px; border: 1px solid var(--light); background: var(--off); padding: 1rem 1.2rem; }
+    .adm-rail h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; color: var(--muted); margin: 0 0 0.6rem; }
+    .adm-stat { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.45rem 0; border-top: 1px solid var(--light); font-size: 0.92rem; }
+    .adm-stat b { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+    @media (max-width: 900px) { .adm-layout { grid-template-columns: minmax(0, 1fr); } .adm-rail { position: static; order: -1; } }
     .tag { font-size: 0.75rem; padding: 0.05rem 0.4rem; background: var(--off); border: 1px solid var(--light); }
     .table-wrap { overflow-x: auto; }
     table.accounts { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
@@ -646,10 +650,7 @@
           esc(respondentLabel(k) + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
       }).join('') + '</select></label>' +
       '<label class="checks-inline"><input type="checkbox" id="adm-history"' + (adminHistory ? ' checked' : '') + ' /> Show earlier versions</label>' +
-      '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') +
-      admin.community.length + ' on the community page</span></div>' + msgHtml('adm-msg');
-    if (admin.stats) h += '<div class="adm-stats"><span><b>' + admin.stats.total + '</b> answers in total</span>' +
-      '<span><b>' + admin.stats.last_24h + '</b> in the past 24 hours</span><span><b>' + admin.stats.last_7d + '</b> in the past 7 days</span></div>';
+      '<span>' + sessions.length + (sessions.length === 1 ? ' response' : ' responses') + '</span></div>' + msgHtml('adm-msg');
 
     var cur = null;
     QUESTIONS.forEach(function (s) {
@@ -699,15 +700,13 @@
       if (!rows) h += '<div class="no-answers">No answers.</div>';
       h += '</div>';
     });
-    document.getElementById('admin-body').innerHTML = h + '</div>';
+    document.getElementById('admin-body').innerHTML =
+      '<div class="adm-layout"><div class="adm-main">' + h + '</div></div>' + statsRail(admin.stats) + '</div>';
 
     document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
     document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
     document.getElementById('adm-history').onchange = function () { adminHistory = this.checked; renderAdminAnswers(); };
     var fail = function (err) { showMsg('adm-msg', err.message, true); };
-    document.querySelectorAll('.bg-table [data-key]').forEach(function (b) {
-      b.onclick = function () { adminRespondent = b.dataset.key; renderAdminAnswers(); window.scrollTo(0, 0); };
-    });
 
     document.querySelectorAll('.adm-answer[data-vid]').forEach(function (el) {
       var info = versionInfo[el.dataset.vid];
@@ -756,6 +755,14 @@
     });
   }
 
+  function statsRail(st) {
+    if (!st) return '';
+    return '<aside class="adm-rail"><h4>Summary</h4>' + [
+      ['Accounts', st.accounts], ['Total answers', st.total], ['On the community page', st.community],
+      ['Answers without an account', st.no_account], ['Answers, past 24 hours', st.last_24h], ['Answers, past 7 days', st.last_7d]
+    ].map(function (r) { return '<div class="adm-stat"><span>' + r[0] + '</span><b>' + (r[1] == null ? '–' : r[1]) + '</b></div>'; }).join('') + '</aside>';
+  }
+
   // Background questions (section A): one row per response, one column per question, latest answers.
   function backgroundTable(sessions) {
     var qs = QUESTIONS.filter(function (s) { return s.id.charAt(0) === 'A'; });
@@ -763,8 +770,7 @@
       var latest = {};
       sess.versions.forEach(function (v) { latest[v.question_id] = v; });
       if (!qs.some(function (s) { return latest[s.id]; })) return '';
-      var key = respondentKey(sess);
-      return '<tr><td><button class="text-btn" data-key="' + esc(key) + '" title="Show only this respondent\'s answers">' + esc(respondentLabel(key)) + '</button></td>' +
+      return '<tr><td>' + esc(respondentLabel(respondentKey(sess))) + '</td>' +
         qs.map(function (s) { return '<td>' + esc(latest[s.id] ? A.answerText(s, latest[s.id].answer_value) : '') + '</td>'; }).join('') +
         '<td>' + esc(fmtTime(sess.updated_at)) + '</td></tr>';
     }).join('');
@@ -878,6 +884,7 @@
       });
       return;
     }
+    document.querySelector('.survey-inner').classList.toggle('wide', page === 'admin');
     if (page === 'account') renderAccount();
     else if (page === 'admin') renderAdmin(parts[1]);
     else { results = null; renderResults(); }  // always fresh: admin curation may have changed

@@ -330,3 +330,9 @@ many were answered or changed in the past 24 hours and past 7 days (Xenophon #37
 The Background section (Q1-Q4) is now a table: one row per response, labelled by username (or respondent code), a column
 per question with the latest answer, and an Updated column. Clicking a username filters to that respondent. Background
 rows no longer have per-answer delete buttons; delete a response from its answers in the other sections.
+
+#65 ✅ Aristotle admin answers: summary side box; plain usernames in Background table
+Admin / Answers: the answer counts moved from the line under the filters into a Summary box in a right-hand rail
+(sticky on wide screens, above the filters on phones), listing Accounts, Total answers, On the community page, Answers
+without an account, Answers past 24 hours and past 7 days (Xenophon #379). The admin view uses the wide page width.
+The Background table's usernames are plain text; the click-to-filter links were removed.
