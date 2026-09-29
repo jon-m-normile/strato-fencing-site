@@ -349,3 +349,9 @@ another account show an error. On success: "Saved. Sign in with <email> from now
 #68 ✅ Aristotle admin: sharper Summary box, on both tabs
 The Summary rail box has a solid accent border, a filled accent header bar, white background and shadow. It now
 appears on both the Answers and Accounts admin tabs (Accounts endpoint returns stats, Xenophon #381).
+
+#69 ✅ Aristotle admin answers: control line on top, pill buttons
+On Admin / Answers, each answer's metadata and control line (respondent, version/date, tags, and the Add to community
+page / On community page / Edit community copy / Delete version / Delete whole response actions) now sits above the
+answer text instead of below it. The actions are pill-shaped buttons instead of underlined links: accent outline,
+red outline for deletes, filled green for "On community page ✓"; filled on hover.

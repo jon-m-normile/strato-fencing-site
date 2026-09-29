@@ -92,7 +92,14 @@
     .adm-answer.old .txt { color: var(--muted); }
     .adm-answer .txt { white-space: pre-wrap; font-weight: 300; line-height: 1.6; }
     .adm-answer.posted .txt { font-weight: 700; }
-    .adm-answer .meta { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin-top: 0.2rem; }
+    .adm-answer .meta { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+    .adm-answer .meta .text-btn { font-size: 0.78rem; font-weight: 500; line-height: 1.2; text-decoration: none; padding: 0.25rem 0.75rem; border: 1px solid var(--accent); border-radius: 999px; background: #fff; transition: background 0.15s, color 0.15s; }
+    .adm-answer .meta .text-btn:hover { background: var(--accent); color: #fff; }
+    .adm-answer .meta .text-btn.danger { border-color: var(--error); }
+    .adm-answer .meta .text-btn.danger:hover { background: var(--error); color: #fff; }
+    .adm-answer .meta .text-btn[data-act=unpost] { background: #2e8b57; border-color: #2e8b57; color: #fff; }
+    .adm-answer .meta .text-btn[data-act=unpost]:hover { background: #256f46; }
+    .adm-answer .meta .text-btn:disabled { opacity: 0.5; cursor: default; }
     .tag.warn { background: #fdf3e1; border-color: #e7c27d; color: #7a5410; }
     .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
@@ -702,8 +709,7 @@
           var on = postedFrom[v.version_id];
           var n = on ? perRespondent[respondentKey(sess)] : 0;
           h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + (on ? ' posted' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
-            '<div class="txt-row">' + (on ? '<span class="check" title="On the community page">✓</span>' : '') +
-            '<div class="txt">' + esc(A.answerText(s, on ? on.answer_value : v.answer_value) || '(blank)') + '</div></div><div class="meta">' +
+            '<div class="meta">' +
             (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' : '') +
             '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
             (on && on.edited_at ? '<span class="tag">edited for the community page</span>' : '') +
@@ -712,7 +718,9 @@
                   '<button class="text-btn" data-act="edit">Edit community copy</button>'
                 : postable ? '<button class="text-btn" data-act="post">Add to community page</button>' : '') +
             '<button class="text-btn danger" data-act="delete-version">Delete version</button>' +
-            (i === 0 ? '<button class="text-btn danger" data-act="delete-session">Delete whole response</button>' : '') + '</div></div>';
+            (i === 0 ? '<button class="text-btn danger" data-act="delete-session">Delete whole response</button>' : '') + '</div>' +
+            '<div class="txt-row">' + (on ? '<span class="check" title="On the community page">✓</span>' : '') +
+            '<div class="txt">' + esc(A.answerText(s, on ? on.answer_value : v.answer_value) || '(blank)') + '</div></div></div>';
         });
       });
       if (!rows) h += '<div class="no-answers">No answers.</div>';
