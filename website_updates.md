@@ -323,3 +323,10 @@ darker light grey so the grid is visible without competing with the dots. ?v=26.
 Replaced "Mostly one question per screen ...: N screens in total" with "N questions covering different
 aspects of a fencer's thoughts during a fencing bout." N is computed from the active question list
 (currently 26; C10 is retired), so it stays correct when questions change.
+
+#64 ✅ Aristotle admin answers: answer counts + background table
+Admin / Answers shows a line under the filters (above the Background heading): total answers in the database, and how
+many were answered or changed in the past 24 hours and past 7 days (Xenophon #375; counts ignore the page filters).
+The Background section (Q1-Q4) is now a table: one row per response, labelled by username (or respondent code), a column
+per question with the latest answer, and an Updated column. Clicking a username filters to that respondent. Background
+rows no longer have per-answer delete buttons; delete a response from its answers in the other sections.

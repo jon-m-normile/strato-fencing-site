@@ -97,6 +97,8 @@
     .adm-answer .editor textarea { min-height: 80px; font-size: 0.95rem; }
     .adm-answer .editor .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; }
     .adm-answer .editor label { display: block; font-size: 0.85rem; font-weight: 500; margin-top: 0.4rem; }
+    .adm-stats { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; margin: 1rem 0 0; font-size: 0.95rem; color: var(--muted); }
+    .adm-stats b { color: var(--text); }
     .tag { font-size: 0.75rem; padding: 0.05rem 0.4rem; background: var(--off); border: 1px solid var(--light); }
     .table-wrap { overflow-x: auto; }
     table.accounts { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
@@ -646,6 +648,8 @@
       '<label class="checks-inline"><input type="checkbox" id="adm-history"' + (adminHistory ? ' checked' : '') + ' /> Show earlier versions</label>' +
       '<span>' + sessions.length + (sessions.length === 1 ? ' response · ' : ' responses · ') +
       admin.community.length + ' on the community page</span></div>' + msgHtml('adm-msg');
+    if (admin.stats) h += '<div class="adm-stats"><span><b>' + admin.stats.total + '</b> answers in total</span>' +
+      '<span><b>' + admin.stats.last_24h + '</b> in the past 24 hours</span><span><b>' + admin.stats.last_7d + '</b> in the past 7 days</span></div>';
 
     var cur = null;
     QUESTIONS.forEach(function (s) {
@@ -654,6 +658,10 @@
         if (cur) h += '</div>';
         h += '<div class="review-section"><h3>' + esc(A.SECTIONS[sec]) + (sec === 'A' ? ' (not shown on the community page)' : '') + '</h3>';
         cur = sec;
+      }
+      if (sec === 'A') {
+        if (s === QUESTIONS[0]) h += backgroundTable(sessions);
+        return;
       }
       h += '<div class="rq-block"><div class="rq"><span class="rid" title="Question id ' + s.id + '">' + s.num + '/</span>' + esc(s.text) + '</div>';
 
@@ -697,6 +705,9 @@
     document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
     document.getElementById('adm-history').onchange = function () { adminHistory = this.checked; renderAdminAnswers(); };
     var fail = function (err) { showMsg('adm-msg', err.message, true); };
+    document.querySelectorAll('.bg-table [data-key]').forEach(function (b) {
+      b.onclick = function () { adminRespondent = b.dataset.key; renderAdminAnswers(); window.scrollTo(0, 0); };
+    });
 
     document.querySelectorAll('.adm-answer[data-vid]').forEach(function (el) {
       var info = versionInfo[el.dataset.vid];
@@ -744,6 +755,25 @@
       });
     });
   }
+
+  // Background questions (section A): one row per response, one column per question, latest answers.
+  function backgroundTable(sessions) {
+    var qs = QUESTIONS.filter(function (s) { return s.id.charAt(0) === 'A'; });
+    var rows = sessions.map(function (sess) {
+      var latest = {};
+      sess.versions.forEach(function (v) { latest[v.question_id] = v; });
+      if (!qs.some(function (s) { return latest[s.id]; })) return '';
+      var key = respondentKey(sess);
+      return '<tr><td><button class="text-btn" data-key="' + esc(key) + '" title="Show only this respondent\'s answers">' + esc(respondentLabel(key)) + '</button></td>' +
+        qs.map(function (s) { return '<td>' + esc(latest[s.id] ? A.answerText(s, latest[s.id].answer_value) : '') + '</td>'; }).join('') +
+        '<td>' + esc(fmtTime(sess.updated_at)) + '</td></tr>';
+    }).join('');
+    if (!rows) return '<div class="no-answers">No answers.</div>';
+    return '<div class="table-wrap"><table class="accounts bg-table"><thead><tr><th>Username</th>' +
+      qs.map(function (s) { return '<th title="' + esc(s.text) + '">' + s.num + ' ' + esc(BG_LABELS[s.id] || s.id) + '</th>'; }).join('') +
+      '<th>Updated</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  var BG_LABELS = { A1: 'Years fencing', A2: 'Primary event', A3: 'Competition level', A4: 'FencingTracker rating' };
 
   function respondentKey(s) { return s.respondent_id || 'response:' + s.id; }
   var accountNames = {};
