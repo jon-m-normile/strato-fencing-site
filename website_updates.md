@@ -336,3 +336,7 @@ Admin / Answers: the answer counts moved from the line under the filters into a 
 (sticky on wide screens, above the filters on phones), listing Accounts, Total answers, On the community page, Answers
 without an account, Answers past 24 hours and past 7 days (Xenophon #379). The admin view uses the wide page width.
 The Background table's usernames are plain text; the click-to-filter links were removed.
+
+#66 ✅ Aristotle dot plots: more visible grid
+The #62 grid lines (#dcdcdc, 0.6 stroke) scaled to under a pixel and were barely visible. Now #d2d6de at stroke 1,
+so the horizontal (count) and vertical (value) grid reads clearly while staying lighter than the axes.
