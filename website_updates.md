@@ -355,3 +355,8 @@ On Admin / Answers, each answer's metadata and control line (respondent, version
 page / On community page / Edit community copy / Delete version / Delete whole response actions) now sits above the
 answer text instead of below it. The actions are pill-shaped buttons instead of underlined links: accent outline,
 red outline for deletes, filled green for "On community page ✓"; filled on hover.
+
+#70 ✅ Aristotle admin answers: clear the single-respondent filter
+When the answers are filtered to one respondent (via the Respondent dropdown or a respondent pill on an answer), the
+filter bar shows "Showing only <respondent>" and a "× Show all respondents" pill button that clears the filter.
+Clicking the respondent pill on an answer again also clears it.

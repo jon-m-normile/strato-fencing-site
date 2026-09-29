@@ -85,6 +85,8 @@
     .admin-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
     .admin-tools select { width: auto; }
     .admin-tools .checks-inline { display: flex; align-items: center; gap: 0.4rem; }
+    .pill-btn { font: inherit; font-size: 0.85rem; font-weight: 500; padding: 0.3rem 0.9rem; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+    .pill-btn:hover { background: #fff; color: var(--accent); }
     .adm-answer { padding: 0.8rem 0; border-top: 1px dashed var(--light); }
     .adm-answer .txt-row { display: flex; gap: 0.6rem; align-items: flex-start; }
     .adm-answer .check { flex: none; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: #2e8b57; color: #fff; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 0.15rem; }
@@ -675,7 +677,9 @@
           esc(respondentLabel(k) + ' · ' + r.n + (r.n === 1 ? ' response' : ' responses')) + '</option>';
       }).join('') + '</select></label>' +
       '<label class="checks-inline"><input type="checkbox" id="adm-history"' + (adminHistory ? ' checked' : '') + ' /> Show earlier versions</label>' +
-      '<span>' + sessions.length + (sessions.length === 1 ? ' response' : ' responses') + '</span></div>' + msgHtml('adm-msg');
+      '<span>' + sessions.length + (sessions.length === 1 ? ' response' : ' responses') + '</span>' +
+      (adminRespondent ? '<span>Showing only ' + esc(respondentLabel(adminRespondent)) + '</span><button class="pill-btn" id="adm-clear-respondent"><span aria-hidden="true">×</span> Show all respondents</button>' : '') +
+      '</div>' + msgHtml('adm-msg');
 
     var cur = null;
     QUESTIONS.forEach(function (s) {
@@ -710,7 +714,7 @@
           var n = on ? perRespondent[respondentKey(sess)] : 0;
           h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + (on ? ' posted' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
             '<div class="meta">' +
-            (i === 0 ? '<button class="text-btn" data-act="respondent" title="Show only this respondent\'s answers">' + esc(respondentLabel(respondentKey(sess))) + '</button>' : '') +
+            (i === 0 ? '<button class="text-btn" data-act="respondent" title="' + (adminRespondent ? 'Show all respondents' : 'Show only this respondent\'s answers') + '">' + esc(respondentLabel(respondentKey(sess))) + '</button>' : '') +
             '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
             (on && on.edited_at ? '<span class="tag">edited for the community page</span>' : '') +
             (n > 1 ? '<span class="tag warn">' + n + ' posts from this respondent</span>' : '') +
@@ -730,6 +734,8 @@
 
     document.getElementById('adm-filter').onchange = function () { adminFilter = this.value; renderAdminAnswers(); };
     document.getElementById('adm-respondent').onchange = function () { adminRespondent = this.value; renderAdminAnswers(); };
+    var clearR = document.getElementById('adm-clear-respondent');
+    if (clearR) clearR.onclick = function () { adminRespondent = ''; renderAdminAnswers(); };
     document.getElementById('adm-history').onchange = function () { adminHistory = this.checked; renderAdminAnswers(); };
     var fail = function (err) { showMsg('adm-msg', err.message, true); };
 
@@ -756,7 +762,7 @@
       }
       var who = el.querySelector('[data-act=respondent]');
       if (who) who.onclick = function () {
-        adminRespondent = respondentKey(sess);
+        adminRespondent = adminRespondent ? '' : respondentKey(sess);
         renderAdminAnswers();
         window.scrollTo(0, 0);
       };
