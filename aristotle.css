@@ -272,6 +272,7 @@ section { padding: 3rem 3rem; }
 .q-helper p + p { margin-top: 0.5rem; }
 .q-text a { color: var(--accent2); }
 .q-text .qnum { color: var(--accent); font-weight: 600; margin-right: 0.5rem; }
+.legacy-tag { font-size: 0.7em; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: 0.1em; }
 .q-group + .q-group { margin-top: 2.25rem; padding-top: 2rem; border-top: 1px solid var(--light); }
 
 /* Definitions and notes sit in a margin column beside the question */

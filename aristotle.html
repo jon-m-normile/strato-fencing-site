@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="aristotle.css?v=20" />
+  <link rel="stylesheet" href="aristotle.css?v=21" />
 </head>
 <body>
 
@@ -124,7 +124,7 @@
   <div class="footer-copy">&copy; 2025 Strato Fencing LLC &nbsp;·&nbsp; Millburn, NJ</div>
 </footer>
 
-<script src="aristotle-questions.js?v=20"></script>
+<script src="aristotle-questions.js?v=21"></script>
 <script>
 (function () {
   'use strict';
@@ -136,17 +136,28 @@
 
   // Pages of screen indices: screens sharing a `page` key go together (e.g. the background questions),
   // every other screen gets its own page.
-  var PAGES = [], pageByKey = {};
-  SCREENS.forEach(function (s, i) {
-    if (s.page && pageByKey[s.page]) { pageByKey[s.page].push(i); return; }
-    PAGES.push([i]);
-    if (s.page) pageByKey[s.page] = PAGES[PAGES.length - 1];
-  });
+  var PAGES, TOTAL;
+  // Legacy questions are shown only to a respondent with a saved answer to them. Refreshed outside the
+  // question pages, so clearing one doesn't reshuffle pages mid-way; it is gone from the next review on.
+  var legacyShown = null;
+  function shown(s) { return !s.legacy || legacyShown[s.id]; }
+  function refreshPages() {
+    legacyShown = {};
+    SCREENS.forEach(function (s) { if (s.legacy && state && answered(s, state.answers[s.id])) legacyShown[s.id] = true; });
+    PAGES = [];
+    var pageByKey = {};
+    SCREENS.forEach(function (s, i) {
+      if (!shown(s)) return;
+      if (s.page && pageByKey[s.page]) { pageByKey[s.page].push(i); return; }
+      PAGES.push([i]);
+      if (s.page) pageByKey[s.page] = PAGES[PAGES.length - 1];
+    });
+    TOTAL = PAGES.length;
+  }
   function pageOf(screenIdx) {
     for (var p = 0; p < PAGES.length; p++) if (PAGES[p].indexOf(screenIdx) >= 0) return p;
     return 0;
   }
-  var TOTAL = PAGES.length;
 
   // ── Local state (survives reloads in this browser) ──
   // { id: server session id or null, answers: {qid: value}, pos: last page index,
@@ -401,7 +412,7 @@
       '<div class="section-label">Section ' + sec + ' — ' + esc(SECTIONS[sec]) + '</div>';
     screens.forEach(function (s) {
       h += '<div class="q-layout type-' + s.type + (s.helper ? ' has-aside' : '') + (screens.length > 1 ? ' q-group' : '') + '" data-qid="' + s.id + '">' +
-          '<div class="q-text"><span class="qnum">' + s.num + '/</span>' + (s.textHtml || esc(s.text)) + '</div>' +
+          '<div class="q-text"><span class="qnum">' + A.numLabel(s) + '</span>' + (s.textHtml || esc(s.text)) + '</div>' +
           (s.helper ? '<aside class="q-aside"><div class="q-aside-label">Note</div>' +
             s.helper.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') + '</aside>' : '') +
           '<div class="q-answer">' + inputHtml(s, state.answers[s.id]) + '</div></div>';
@@ -539,6 +550,7 @@
       '<div class="progress-row"><span></span><span class="save-status" id="save-status"></span></div>';
     var curSection = null;
     SCREENS.forEach(function (s, idx) {
+      if (!shown(s)) return;
       var sec = s.id.charAt(0);
       if (sec !== curSection) {
         if (curSection) h += '</div>';
@@ -548,7 +560,7 @@
       var a = answerText(s, state.answers[s.id]);
       h += '<button class="review-item" data-idx="' + idx + '">' +
         '<span class="edit">Edit</span>' +
-        '<div class="rq"><span class="rid">' + s.num + '/</span>' + esc(s.text) + '</div>' +
+        '<div class="rq"><span class="rid">' + A.numLabel(s) + '</span>' + esc(s.text) + '</div>' +
         '<div class="ra' + (a === null ? ' empty' : '') + '">' + (a === null ? 'No answer' : esc(a)) + '</div>' +
         '</button>';
     });
@@ -680,6 +692,7 @@
     }
 
     prevRoute = view;
+    if (view !== 'q' || !PAGES) refreshPages();
     if (view === 'q') {
       var idx = Math.min(Math.max((parseInt(parts[1], 10) || 1) - 1, 0), TOTAL - 1);
       state.pos = idx;
@@ -702,7 +715,7 @@
     }
   }
 
-  document.getElementById('question-count').textContent = SCREENS.length;
+  document.getElementById('question-count').textContent = A.ACTIVE_SCREENS.length;
   document.getElementById('hero-start').onclick = start;
   document.getElementById('cta-start').onclick = start;
   document.getElementById('how-start').onclick = start;

@@ -360,3 +360,11 @@ red outline for deletes, filled green for "On community page ✓"; filled on hov
 When the answers are filtered to one respondent (via the Respondent dropdown or a respondent pill on an answer), the
 filter bar shows "Showing only <respondent>" and a "× Show all respondents" pill button that clears the filter.
 Clicking the respondent pill on an answer again also clears it.
+
+#71 ✅ Aristotle: two new questions after Q11; Q13/Q14 (C1/C2) become legacy
+New Q12 (B9) "In between touches, what are you thinking about if you just scored?" and Q13 (B10) "In between
+touches, what are you thinking about if your opponent just scored?"; later questions shift down by two (26 total).
+C1/C2 are marked `legacy`: not asked of new respondents and unnumbered ("Earlier question" tag). A respondent who
+already answered them still sees them in the questionnaire and review, and can edit or clear the answer; once cleared,
+they are gone from that respondent's review. The community page still shows them with their posted answers, with no
+discussion thread. Backend: Xenophon #384.

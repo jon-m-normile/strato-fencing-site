@@ -37,9 +37,12 @@
     { id: 'B5', type: 'long', text: 'What are you thinking about when you see your opponent make a preparation?' },
     { id: 'B6', type: 'long', text: 'What are you thinking about when you are making an action to score against your opponent?' },
     { id: 'B7', type: 'long', text: 'What are you thinking about when your opponent makes an action to score against you?' },
+    { id: 'B9', type: 'long', text: 'In between touches, what are you thinking about if you just scored?' },
+    { id: 'B10', type: 'long', text: 'In between touches, what are you thinking about if your opponent just scored?' },
     { id: 'B8', type: 'long', text: 'What are you thinking about in the break between periods?' },
-    { id: 'C1', type: 'long', text: 'How much does the previous touch affect your thinking on the current touch?' },
-    { id: 'C2', type: 'long', text: 'How much does the first touch of the bout affect your thinking on later touches?' },
+    // C1, C2 legacy (site #71): not asked any more; kept for respondents who answered them and on the community page.
+    { id: 'C1', type: 'long', legacy: true, text: 'How much does the previous touch affect your thinking on the current touch?' },
+    { id: 'C2', type: 'long', legacy: true, text: 'How much does the first touch of the bout affect your thinking on later touches?' },
     { id: 'C3', page: 'score-margins', type: 'numeric', text: 'In your own fencing, what point deficit feels like "losing by a lot"?', unit: 'touches' },
     { id: 'C5', page: 'score-margins', type: 'numeric', text: 'In your own fencing, what point lead feels like "winning by a lot"?', unit: 'touches' },
     { id: 'C4', type: 'long', text: 'How does your thinking change when you\'re losing by "a lot"?' },
@@ -69,10 +72,16 @@
   ];
 
   // Retired questions stay defined (and their stored answers kept) but are not asked or shown.
+  // Legacy questions are not asked, but stay on the community page and in the questionnaire for
+  // respondents who already answered them.
   var SCREENS = ALL_SCREENS.filter(function (s) { return !s.retired; });
+  var ACTIVE_SCREENS = SCREENS.filter(function (s) { return !s.legacy; });
 
-  // Serial question numbers (Q1, Q2, …) in the order respondents see the questions.
-  SCREENS.forEach(function (s, i) { s.num = 'Q' + (i + 1); });
+  // Serial question numbers (Q1, Q2, …) in the order respondents see the questions; legacy ones get none.
+  ACTIVE_SCREENS.forEach(function (s, i) { s.num = 'Q' + (i + 1); });
+
+  // Number shown before a question's text.
+  function numLabel(s) { return s.legacy ? '<span class="legacy-tag">Earlier question</span>' : s.num + '/'; }
 
   // Rows are score situations, columns are bout phases; stored keys are phase_score.
   var MATRIX_ROWS = [['ahead_lot', 'Ahead a lot'], ['ahead_little', 'Ahead a little'], ['tied', 'Tied'],
@@ -216,6 +225,8 @@
     TOKEN_KEY: 'aristotle_token',
     SECTIONS: SECTIONS,
     SCREENS: SCREENS,
+    ACTIVE_SCREENS: ACTIVE_SCREENS,
+    numLabel: numLabel,
     MATRIX_ROWS: MATRIX_ROWS,
     MATRIX_COLS: MATRIX_COLS,
     ALLOC_KEYS: ALLOC_KEYS,
