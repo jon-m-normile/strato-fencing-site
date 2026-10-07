@@ -368,3 +368,8 @@ C1/C2 are marked `legacy`: not asked of new respondents and unnumbered ("Earlier
 already answered them still sees them in the questionnaire and review, and can edit or clear the answer; once cleared,
 they are gone from that respondent's review. The community page still shows them with their posted answers, with no
 discussion thread. Backend: Xenophon #384.
+
+#72 ✅ Aristotle: stop asking for first/last name at sign-up
+Removed the optional First name / Last name fields from the Create Account form on the community page; new accounts
+send only username, email and password (the backend already defaults the names to empty). Existing accounts' names
+are untouched and still appear in the admin Accounts table.
