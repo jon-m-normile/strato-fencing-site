@@ -379,3 +379,8 @@ Rolled back: the fields were already labelled optional and never shown publicly,
 "How do you implement any change to your tactics within a bout that you've decided to make?" →
 "Within the bout, how do you implement a change to your tactics?" Text-only change in `aristotle-questions.js`;
 existing answers keep their D2 id.
+
+#74 ✅ Aristotle: Q23 (D2) wording refined
+Follow-up to #73. Now: "Within the bout, how do you implement a change to your tactics? Specifically, how do you
+ensure that your conscious choices of deciding to do 'this' and not 'that' become realized in the instant moment of a
+fencing action?"
