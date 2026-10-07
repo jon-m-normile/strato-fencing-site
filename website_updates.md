@@ -384,3 +384,7 @@ existing answers keep their D2 id.
 Follow-up to #73. Now: "Within the bout, how do you implement a change to your tactics? Specifically, how do you
 ensure that your conscious choices of deciding to do 'this' and not 'that' become realized in the instant moment of a
 fencing action?"
+
+#75 ✅ Aristotle: Q23 (D2) wording tweak
+Follow-up to #74: "become realized" → "actually happen" ("...deciding to do 'this' and not 'that' actually happen in
+the instant moment of a fencing action?").
