@@ -401,3 +401,8 @@ do 'this' and not 'that' actually happens".
 Schedule label + pill moved out of the left-column contact list into a `.contact-schedule` row above the two-column
 grid, centered across the page. Pill enlarged (1.3rem text, bigger padding) and relabelled "Book a Session".
 `.btn-pill` no longer scoped to `.contact-val`. Stylesheet cache-busted `?v=3`.
+
+#79 ✅ Contact page: Book a Session as a third column, top right
+"Schedule" label removed. The pill now sits in a third grid column (`.contact-grid` 1fr 1fr auto) at the top right,
+level with the Address row and the Your Name field. Page switched to `content-wrap-wide` (1200px) so the two
+existing columns keep their width. On narrow screens (≤900px) the button stacks first, centered. CSS `?v=4`.
