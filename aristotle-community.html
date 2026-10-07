@@ -246,6 +246,8 @@
              '<div class="hint">3–30 letters, numbers, dots, dashes or underscores. This is the only name other fencers see.</div>' : '') +
       '<label for="f-email">Email</label><input class="q-input" id="f-email" type="email" autocomplete="email" required />' +
       '<label for="f-password">Password</label><input class="q-input" id="f-password" type="password" autocomplete="' + (reg ? 'new-password' : 'current-password') + '" required />' +
+      (reg ? '<label for="f-first">First name <span class="opt">(optional, never shown publicly)</span></label><input class="q-input" id="f-first" autocomplete="given-name" />' +
+             '<label for="f-last">Last name <span class="opt">(optional, never shown publicly)</span></label><input class="q-input" id="f-last" autocomplete="family-name" />' : '') +
       '<div class="q-nav"><button class="btn primary" type="submit" id="auth-submit">' + (reg ? 'Create Account' : 'Sign In') + '</button>' +
       (reg ? '' : '<button class="text-btn" type="button" id="forgot">Forgot password?</button>') + '</div>' +
       '</form>' + msgHtml('auth-msg') + '</div>'
@@ -271,6 +273,8 @@
       if (!body.email || !body.password) { showMsg('auth-msg', 'Please enter your email and password.', true); return; }
       if (reg) {
         body.username = document.getElementById('f-username').value.trim();
+        body.first_name = document.getElementById('f-first').value.trim();
+        body.last_name = document.getElementById('f-last').value.trim();
         if (!/^[A-Za-z0-9_.-]{3,30}$/.test(body.username)) { showMsg('auth-msg', 'Username must be 3–30 letters, numbers, dots, dashes or underscores.', true); return; }
         if (body.password.length < 8) { showMsg('auth-msg', 'Please choose a password of at least 8 characters.', true); return; }
       }

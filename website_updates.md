@@ -369,7 +369,8 @@ already answered them still sees them in the questionnaire and review, and can e
 they are gone from that respondent's review. The community page still shows them with their posted answers, with no
 discussion thread. Backend: Xenophon #384.
 
-#72 ✅ Aristotle: stop asking for first/last name at sign-up
+#72 ↩ Rolled back — Aristotle: stop asking for first/last name at sign-up
 Removed the optional First name / Last name fields from the Create Account form on the community page; new accounts
 send only username, email and password (the backend already defaults the names to empty). Existing accounts' names
 are untouched and still appear in the admin Accounts table.
+Rolled back: the fields were already labelled optional and never shown publicly, so they stay on the form.
