@@ -388,3 +388,7 @@ fencing action?"
 #75 ✅ Aristotle: Q23 (D2) wording tweak
 Follow-up to #74: "become realized" → "actually happen" ("...deciding to do 'this' and not 'that' actually happen in
 the instant moment of a fencing action?").
+
+#76 ✅ Aristotle: Q23 (D2) wording tweak
+Follow-up to #75: "conscious choices of deciding to do 'this' and not 'that' actually happen" → "conscious choice to
+do 'this' and not 'that' actually happens".
