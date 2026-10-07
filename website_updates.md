@@ -374,3 +374,8 @@ Removed the optional First name / Last name fields from the Create Account form 
 send only username, email and password (the backend already defaults the names to empty). Existing accounts' names
 are untouched and still appear in the admin Accounts table.
 Rolled back: the fields were already labelled optional and never shown publicly, so they stay on the form.
+
+#73 ✅ Aristotle: reword Q23 (D2)
+"How do you implement any change to your tactics within a bout that you've decided to make?" →
+"Within the bout, how do you implement a change to your tactics?" Text-only change in `aristotle-questions.js`;
+existing answers keep their D2 id.

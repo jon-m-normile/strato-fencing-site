@@ -59,7 +59,7 @@
         "Leave any box blank if your answer doesn't change from what you wrote above."
       ] },
     { id: 'D1', type: 'long', text: 'How do you decide when you need to make a change to what you are doing in a fencing match?' },
-    { id: 'D2', type: 'long', text: "How do you implement any change to your tactics within a bout that you've decided to make?" },
+    { id: 'D2', type: 'long', text: "Within the bout, how do you implement a change to your tactics?" },
     { id: 'E1', type: 'long', text: 'Are you aware of your emotions during a match, and do you seek to manage those emotions in any way?' },
     { id: 'E2', type: 'alloc', text: 'How would you allocate the importance of the physical, mental, technical, and tactical aspects of fencing?',
       helper: [
