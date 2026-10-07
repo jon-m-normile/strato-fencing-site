@@ -392,3 +392,7 @@ the instant moment of a fencing action?").
 #76 ✅ Aristotle: Q23 (D2) wording tweak
 Follow-up to #75: "conscious choices of deciding to do 'this' and not 'that' actually happen" → "conscious choice to
 do 'this' and not 'that' actually happens".
+
+#77 ✅ Contact page: "Book a session here" as a Columbia Blue pill button
+`contact.html` link gets `.btn-pill` (`css/style.css`): rounded pill, Columbia Blue `#b9d9eb` fill with Columbia navy
+`#1d4f91` text; hover inverts to navy fill / white text. Stylesheet link cache-busted `?v=2` on contact.html.

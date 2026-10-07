@@ -281,6 +281,14 @@ nav {
 .contact-val { font-size: 1rem; font-weight: 300; }
 .contact-val a { color: var(--black); text-decoration: none; transition: color 0.2s; }
 .contact-val a:hover { color: var(--accent); }
+.contact-val a.btn-pill {
+  display: inline-block; padding: 0.45rem 1.3rem; border-radius: 999px;
+  background: #b9d9eb; color: #1d4f91; border: 1px solid #9bc4dd;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem;
+  font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.contact-val a.btn-pill:hover { background: #1d4f91; color: #ffffff; border-color: #1d4f91; transform: translateY(-1px); }
 
 /* ── CONTACT FORM ── */
 .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
