@@ -396,3 +396,8 @@ do 'this' and not 'that' actually happens".
 #77 ✅ Contact page: "Book a session here" as a Columbia Blue pill button
 `contact.html` link gets `.btn-pill` (`css/style.css`): rounded pill, Columbia Blue `#b9d9eb` fill with Columbia navy
 `#1d4f91` text; hover inverts to navy fill / white text. Stylesheet link cache-busted `?v=2` on contact.html.
+
+#78 ✅ Contact page: Book a Session moved to top, centered, larger
+Schedule label + pill moved out of the left-column contact list into a `.contact-schedule` row above the two-column
+grid, centered across the page. Pill enlarged (1.3rem text, bigger padding) and relabelled "Book a Session".
+`.btn-pill` no longer scoped to `.contact-val`. Stylesheet cache-busted `?v=3`.
