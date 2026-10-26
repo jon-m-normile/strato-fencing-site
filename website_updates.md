@@ -413,3 +413,7 @@ The Show dropdown on `aristotle-community.html#/admin/answers` gains four answer
 individual answer versions across all responses (submitted or not); a response is listed only if it has a matching
 answer, and the Background table shows only matching answers. "Show earlier versions" still applies on top. When the
 latest version is filtered out, an earlier one shown first is still labelled "Earlier version". Client-side only.
+
+#81 ✅ Aristotle admin Answers: blank answers never count as recent answers
+Follow-up to #80: the past 24 hours / 7 days filters skip answer versions whose value is blank (cleared text, empty
+selection). Pairs with Xenophon #408, which fixes the Answers (24h / 7d) stat tiles.

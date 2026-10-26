@@ -646,7 +646,7 @@
     // #80: answer-level filters pick individual versions across all responses.
     var since = { day: 864e5, week: 7 * 864e5 }[adminFilter];
     var matches = function (v) {
-      if (since) return Date.now() - new Date(v.created_at).getTime() < since;
+      if (since) return A.answered(null, v.answer_value) && Date.now() - new Date(v.created_at).getTime() < since;
       if (adminFilter === 'published') return !!postedFrom[v.version_id];
       if (adminFilter === 'unpublished') return !postedFrom[v.version_id];
       return true;
