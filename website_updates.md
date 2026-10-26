@@ -406,3 +406,10 @@ grid, centered across the page. Pill enlarged (1.3rem text, bigger padding) and 
 "Schedule" label removed. The pill now sits in a third grid column (`.contact-grid` 1fr 1fr auto) at the top right,
 level with the Address row and the Your Name field. Page switched to `content-wrap-wide` (1200px) so the two
 existing columns keep their width. On narrow screens (≤900px) the button stacks first, centered. CSS `?v=4`.
+
+#80 ✅ Aristotle admin Answers: Show filters for recent / published / unpublished answers
+The Show dropdown on `aristotle-community.html#/admin/answers` gains four answer-level options: answers in the past
+24 hours, answers in the past 7 days, answers not on the community page, answers on the community page. These filter
+individual answer versions across all responses (submitted or not); a response is listed only if it has a matching
+answer, and the Background table shows only matching answers. "Show earlier versions" still applies on top. When the
+latest version is filtered out, an earlier one shown first is still labelled "Earlier version". Client-side only.

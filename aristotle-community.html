@@ -641,7 +641,19 @@
 
   // #43: questionnaire answers keep every version; the community page shows admin-made copies.
   function renderAdminAnswers() {
+    var postedFrom = {};
+    admin.community.forEach(function (c) { if (c.source_version_id) postedFrom[c.source_version_id] = c; });
+    // #80: answer-level filters pick individual versions across all responses.
+    var since = { day: 864e5, week: 7 * 864e5 }[adminFilter];
+    var matches = function (v) {
+      if (since) return Date.now() - new Date(v.created_at).getTime() < since;
+      if (adminFilter === 'published') return !!postedFrom[v.version_id];
+      if (adminFilter === 'unpublished') return !postedFrom[v.version_id];
+      return true;
+    };
+    var answerFilter = since || adminFilter === 'published' || adminFilter === 'unpublished';
     var sessions = admin.sessions.filter(function (s) {
+      if (answerFilter) return s.versions.some(matches);
       return adminFilter === 'all' || (adminFilter === 'submitted') === s.submitted;
     });
     // Responses without a respondent id (taken before #364) each count as their own respondent.
@@ -663,11 +675,11 @@
       sess.versions.forEach(function (v) { lastOf[v.question_id] = v.version_id; });
       sess.versions.forEach(function (v) { versionInfo[v.version_id] = { v: v, sess: sess, latest: lastOf[v.question_id] === v.version_id }; });
     });
-    var postedFrom = {};
-    admin.community.forEach(function (c) { if (c.source_version_id) postedFrom[c.source_version_id] = c; });
 
     var h = '<div class="admin-tools"><label>Show <select class="q-input" id="adm-filter">' +
-      [['submitted', 'Submitted responses'], ['abandoned', 'Unsubmitted responses'], ['all', 'All responses']].map(function (o) {
+      [['submitted', 'Submitted responses'], ['abandoned', 'Unsubmitted responses'], ['all', 'All responses'],
+        ['day', 'Answers in the past 24 hours'], ['week', 'Answers in the past 7 days'],
+        ['unpublished', 'Answers not on the community page'], ['published', 'Answers on the community page']].map(function (o) {
         return '<option value="' + o[0] + '"' + (adminFilter === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
       }).join('') + '</select></label>' +
       '<label>Respondent <select class="q-input" id="adm-respondent"><option value="">All respondents (' + Object.keys(respondents).length + ')</option>' +
@@ -690,7 +702,7 @@
         cur = sec;
       }
       if (sec === 'A') {
-        if (s === QUESTIONS[0]) h += backgroundTable(sessions);
+        if (s === QUESTIONS[0]) h += backgroundTable(sessions, matches);
         return;
       }
       h += '<div class="rq-block"><div class="rq"><span class="rid" title="Question id ' + s.id + '">' + A.numLabel(s) + '</span>' + esc(s.text) + '</div>';
@@ -707,15 +719,16 @@
         var vs = sess.versions.filter(function (v) { return v.question_id === s.id; });
         if (!vs.length) return;
         // Latest version, plus earlier ones when history is on or when that earlier version is on the community page.
-        var shown = vs.filter(function (v, j) { return adminHistory || j === vs.length - 1 || postedFrom[v.version_id]; }).reverse();
+        var shown = vs.filter(function (v, j) { return (adminHistory || j === vs.length - 1 || postedFrom[v.version_id]) && matches(v); }).reverse();
         shown.forEach(function (v, i) {
           rows++;
           var on = postedFrom[v.version_id];
+          var old = v !== vs[vs.length - 1];
           var n = on ? perRespondent[respondentKey(sess)] : 0;
-          h += '<div class="adm-answer' + (i > 0 ? ' old' : '') + (on ? ' posted' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
+          h += '<div class="adm-answer' + (old ? ' old' : '') + (on ? ' posted' : '') + '" data-vid="' + esc(v.version_id) + '" data-qid="' + s.id + '">' +
             '<div class="meta">' +
             (i === 0 ? '<button class="text-btn" data-act="respondent" title="' + (adminRespondent ? 'Show all respondents' : 'Show only this respondent\'s answers') + '">' + esc(respondentLabel(respondentKey(sess))) + '</button>' : '') +
-            '<span>' + (i > 0 ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
+            '<span>' + (old ? 'Earlier version · ' : (vs.length > 1 ? 'Latest of ' + vs.length + ' versions · ' : '')) + esc(fmtTime(v.created_at)) + '</span>' +
             (on && on.edited_at ? '<span class="tag">edited for the community page</span>' : '') +
             (n > 1 ? '<span class="tag warn">' + n + ' posts from this respondent</span>' : '') +
             (on ? '<button class="text-btn" data-act="unpost" title="Remove from the community page">On community page ✓</button>' +
@@ -794,11 +807,11 @@
   }
 
   // Background questions (section A): one row per response, one column per question, latest answers.
-  function backgroundTable(sessions) {
+  function backgroundTable(sessions, matches) {
     var qs = QUESTIONS.filter(function (s) { return s.id.charAt(0) === 'A'; });
     var rows = sessions.map(function (sess) {
       var latest = {};
-      sess.versions.forEach(function (v) { latest[v.question_id] = v; });
+      sess.versions.forEach(function (v) { if (matches(v)) latest[v.question_id] = v; });
       if (!qs.some(function (s) { return latest[s.id]; })) return '';
       return '<tr><td>' + esc(respondentLabel(respondentKey(sess))) + '</td>' +
         qs.map(function (s) { return '<td>' + esc(latest[s.id] ? A.answerText(s, latest[s.id].answer_value) : '') + '</td>'; }).join('') +
